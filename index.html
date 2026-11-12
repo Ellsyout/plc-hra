@@ -142,10 +142,20 @@ details.hint p{margin:8px 0 10px}
 .rungs{overflow-x:auto;padding:0 6px}
 .rung{min-width:max-content}
 .rung + .rung{border-top:1px solid var(--line)}
-.rung-h{display:flex;align-items:center;gap:10px;padding:8px 10px 0;font-family:var(--mono);font-size:11px;color:var(--dim)}
+.rung-h{display:flex;align-items:center;gap:10px;padding:8px 10px 0;position:sticky;left:0;box-sizing:border-box;max-width:var(--rw,100%);font-family:var(--mono);font-size:11px;color:var(--dim)}
 .rung-h .net{color:var(--fg2);font-weight:600;letter-spacing:.06em}
-.rung-h .mini{margin-left:auto;background:none;border:1px solid transparent;color:var(--dim);font-family:var(--mono);font-size:11px;padding:2px 8px;border-radius:4px;cursor:pointer}
-.rung-h .mini:hover{border-color:var(--line);color:var(--err)}
+.rung-h .tools{margin-left:auto;display:flex;gap:4px;flex-shrink:0}
+.rung-h .mini{background:none;border:1px solid var(--line);color:var(--fg2);font-family:var(--mono);font-size:11px;padding:2px 8px;border-radius:4px;cursor:pointer;min-height:26px}
+.rung-h .mini:hover:not(:disabled){border-color:var(--line);color:var(--fg2)}
+.rung-h .mini.del:hover{color:var(--err)}
+.rung-h .mini.add{color:var(--live)}
+.rung-h .mini:disabled{opacity:.3;cursor:default}
+.rung-h .out-l{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.rung.flash{animation:rflash 1.2s ease-out}
+@keyframes rflash{from{background:rgba(70,200,140,.18)}to{background:transparent}}
+.card-h .addnet{font-family:var(--mono);font-size:11px;letter-spacing:.06em;background:none;border:1px solid var(--line);color:var(--live);border-radius:4px;padding:3px 9px;cursor:pointer}
+.card-h .addnet:hover{border-color:var(--live)}
+.card-h .hgrp{display:flex;align-items:center;gap:10px}
 .rung-h .mini.arm{border-color:var(--err);color:var(--err)}
 .lad{display:block}
 .lad .w{stroke:var(--wire);stroke-width:2}
@@ -233,6 +243,8 @@ table.watch td.v.on{color:var(--live)}
 .th-foot{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}
 .scroll-hint{display:none;font-family:var(--mono);font-size:11px;color:var(--dim);padding:6px 14px 0}
 @media (max-width:640px){
+  .rung-h .mini{min-height:34px;min-width:34px;padding:4px 9px;font-size:12px}
+  .rung-h{flex-wrap:wrap;row-gap:4px}
   body{padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
   header{padding-block:0 10px}
   .brand h1{font-size:19px}
@@ -372,7 +384,7 @@ table.watch td.v.on{color:var(--live)}
     <aside class="card lesson" id="lesson" aria-live="polite"></aside>
 
     <section class="card" aria-label="Program v žebříčkovém diagramu">
-      <div class="card-h"><span>LAD · OB1 „Main“</span><span class="live" id="liveLad"><i></i>Online sledování</span></div>
+      <div class="card-h"><span>LAD · OB1 „Main“</span><span class="hgrp"><span class="live" id="liveLad"><i></i>Online sledování</span><button class="addnet" id="btnAddTop" aria-label="Přidat novou síť na konec programu">+ Síť</button></span></div>
       <div class="ladder-body">
         <div class="scroll-hint">Žebříček je široký: posouvej ho prstem do strany ←→</div>
         <div class="rungs" id="rungs"></div>
@@ -1458,15 +1470,20 @@ function outLabel(o){
   const k = o.kind === 'set' ? 'nastaví' : o.kind === 'reset' ? 'vynuluje' : 'řídí';
   return `${k}: ${mainLab(o.tag).name}`;
 }
-let armedDel = -1, armTimer = 0;
+let armedDel = -1, armTimer = 0, flashRung = -1;
+const MAXR = 30;
 function renderLadder(){
   const online = mode !== 'stop';
   const opt = {nslot:NSLOT, sw:SW, ow:OW, on:online, hits:true, lab:mainLab,
     timer: n => online ? (sim.timers[n] || sim.timers.T1) : {et:0}, counter: n => online ? (sim.counters[n] || sim.counters.C1) : {cv:0}};
   $('rungs').innerHTML = program.map((r, ri) =>
-    `<div class="rung"><div class="rung-h"><span class="net">Síť ${ri + 1}</span><span>${esc(outLabel(r.out))}</span>` +
-    `<button class="mini ${armedDel === ri ? 'arm' : ''}" data-act="delrung" data-r="${ri}">${armedDel === ri ? 'Opravdu smazat?' : 'Smazat síť'}</button></div>` +
+    `<div class="rung${flashRung === ri ? ' flash' : ''}" data-ri="${ri}"><div class="rung-h"><span class="net">Síť ${ri + 1}</span><span class="out-l">${esc(outLabel(r.out))}</span><span class="tools">` +
+    `<button class="mini" data-act="up" data-r="${ri}" ${ri === 0 ? 'disabled' : ''} title="Posunout síť nahoru" aria-label="Síť ${ri + 1}: posunout nahoru">▲</button>` +
+    `<button class="mini" data-act="down" data-r="${ri}" ${ri === program.length - 1 ? 'disabled' : ''} title="Posunout síť dolů" aria-label="Síť ${ri + 1}: posunout dolů">▼</button>` +
+    `<button class="mini add" data-act="insrung" data-r="${ri}" ${program.length >= MAXR ? 'disabled' : ''} title="Vložit novou prázdnou síť pod tuto" aria-label="Vložit novou síť pod síť ${ri + 1}">+ síť pod</button>` +
+    `<button class="mini del ${armedDel === ri ? 'arm' : ''}" data-act="delrung" data-r="${ri}" title="Smazat síť" aria-label="Smazat síť ${ri + 1}">${armedDel === ri ? 'Opravdu?' : '✕'}</button></span></div>` +
     drawRung(r, online ? vis[ri] : null, {...opt, ri}) + `</div>`).join('');
+  $('rungs').style.setProperty('--rw', ($('rungs').clientWidth - 12) + 'px');
   $('liveLad').classList.toggle('on', online);
   $('liveProc').classList.toggle('on', online);
 }
@@ -1740,6 +1757,12 @@ function ladderAct(t){
   if (act === 'slot') openContact(r, +t.dataset.k, 0, true);
   else if (act === 'contact') openContact(r, +t.dataset.k, +t.dataset.i, false);
   else if (act === 'out') openOut(r);
+  else if (act === 'insrung') addRung(r + 1);
+  else if (act === 'up' || act === 'down') {
+    const j = act === 'up' ? r - 1 : r + 1;
+    if (j < 0 || j >= program.length) return;
+    [program[r], program[j]] = [program[j], program[r]]; armedDel = -1; flashRung = j; changed(); afterAdd(j);
+  }
   else if (act === 'delrung') {
     if (armedDel === r) { program.splice(r, 1); if (!program.length) program.push(emptyRung()); armedDel = -1; changed(); }
     else { armedDel = r; clearTimeout(armTimer); armTimer = setTimeout(() => { armedDel = -1; lastSig = ''; }, 3000); lastSig = ''; }
@@ -1772,7 +1795,18 @@ panelEl.addEventListener('pointercancel', release);
 $('btnRun').addEventListener('click', run);
 $('btnStop').addEventListener('click', stop);
 $('btnSpeed').addEventListener('click', () => { speed = speed === 1 ? 2 : speed === 2 ? 4 : 1; $('btnSpeed').textContent = `Rychlost ${speed}×`; });
-$('btnAddRung').addEventListener('click', () => { if (program.length < 30) { program.push(emptyRung()); changed(); } });
+function afterAdd(i){
+  renderLadder();
+  const el = $('rungs').querySelector(`[data-ri="${i}"]`);
+  if (el) el.scrollIntoView({block:'nearest', behavior:'smooth'});
+  setTimeout(() => { flashRung = -1; }, 1200);
+}
+function addRung(at){
+  if (program.length >= MAXR) return;
+  program.splice(at, 0, emptyRung()); armedDel = -1; flashRung = at; changed(); afterAdd(at);
+}
+$('btnAddRung').addEventListener('click', () => addRung(program.length));
+$('btnAddTop').addEventListener('click', () => addRung(program.length));
 let clearArm = false, clearT = 0;
 $('btnClear').addEventListener('click', e => {
   if (clearArm) { program = [emptyRung()]; clearArm = false; e.target.textContent = 'Vymazat program'; changed(); stop(); return; }
@@ -1788,7 +1822,7 @@ function fitProcess(){
   $('proc').setAttribute('viewBox', narrow ? '190 10 810 370' : '0 0 1000 380');
   $('crateG').setAttribute('transform', narrow ? 'translate(176 -6)' : '');
 }
-window.addEventListener('resize', fitProcess);
+window.addEventListener('resize', () => { fitProcess(); lastSig = ''; });
 fitProcess();
 
 // ---------- boot ----------
