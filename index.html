@@ -1,4 +1,5 @@
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>PLC Plnicí linka</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -228,6 +229,28 @@ table.watch td.v.on{color:var(--live)}
 .lamp{font-family:var(--mono);font-size:12px;padding:6px 11px;border-radius:999px;border:1px solid var(--line);color:var(--dim)}
 .lamp.on{border-color:#2a6b50;color:var(--live);background:#12271e}
 .th-foot{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+.scroll-hint{display:none;font-family:var(--mono);font-size:11px;color:var(--dim);padding:6px 14px 0}
+@media (max-width:640px){
+  body{padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
+  header{padding-block:0 10px}
+  .brand h1{font-size:19px}
+  .ctrl{position:fixed;left:0;right:0;bottom:0;z-index:15;justify-content:center;flex-wrap:nowrap;gap:6px;background:var(--panel);border-top:1px solid var(--wire);padding:8px max(10px,env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-left,0px));box-shadow:0 -6px 18px rgba(0,0,0,.45)}
+  .ctrl .btn{padding:10px 12px;font-size:14px}
+  .cpu{padding:6px 8px;gap:8px}
+  .cpu > span:last-child{display:none}
+  #proc .tn{font-size:25px}
+  #proc .ta,#proc .tv,#proc .pct{font-size:23px}
+  #proc .sm{font-size:21px}
+  #proc .sma{font-size:19px}
+  .panel{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .panel .pb{min-width:0;padding:10px 8px}
+  .panel .lampx{justify-content:flex-start}
+  .panel .oplog{grid-column:1/-1}
+  .scroll-hint{display:block}
+  .lesson{padding:14px 14px 16px}
+  .th-card{padding:18px 14px 20px}
+  .th-card h2{font-size:22px}
+}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
@@ -292,7 +315,7 @@ table.watch td.v.on{color:var(--live)}
         <g id="scaleG" hidden>
           <rect x="526" y="316" width="68" height="9" rx="2" class="st"/>
           <text x="610" y="344" class="tn">Váha</text>
-          <text x="660" y="344" class="ta">%IW64</text>
+          <text x="676" y="344" class="ta">%IW64</text>
           <text x="610" y="364" class="tv on" id="scaleVal">0 g</text>
         </g>
         <rect x="16" y="300" width="934" height="14" rx="7" class="belt"/>
@@ -336,6 +359,7 @@ table.watch td.v.on{color:var(--live)}
     <section class="card" aria-label="Program v žebříčkovém diagramu">
       <div class="card-h"><span>LAD · OB1 „Main“</span><span class="live" id="liveLad"><i></i>Online sledování</span></div>
       <div class="ladder-body">
+        <div class="scroll-hint">Žebříček je široký: posouvej ho prstem do strany ←→</div>
         <div class="rungs" id="rungs"></div>
         <div class="ladder-foot">
           <button class="btn small" id="btnAddRung">+ Přidat síť</button>
@@ -1552,6 +1576,16 @@ $('btnClear').addEventListener('click', e => {
   clearTimeout(clearT); clearT = setTimeout(() => { clearArm = false; e.target.textContent = 'Vymazat program'; }, 3000);
 });
 $('btnUnlock').addEventListener('click', () => { for (const L of LEVELS) prog[L.id] = L.steps.length + 1; save(); renderAll(); });
+
+// ---------- responsive process view ----------
+// On a phone, crop the empty left part of the line so the stations and labels get bigger.
+function fitProcess(){
+  const narrow = window.innerWidth <= 640;
+  $('proc').setAttribute('viewBox', narrow ? '190 10 810 370' : '0 0 1000 380');
+  $('crateG').setAttribute('transform', narrow ? 'translate(176 -6)' : '');
+}
+window.addEventListener('resize', fitProcess);
+fitProcess();
 
 // ---------- boot ----------
 function start(data){
