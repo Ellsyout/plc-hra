@@ -2,7 +2,7 @@
 
 Výuková hra o programování PLC v žebříčkovém diagramu (LAD) ve stylu Siemens S7-1200 / TIA Portal.
 
-Hráč skládá program pro plnicí linku lahví a simulace hned ukáže, jestli linka funguje. Před každým úkolem je teorie s interaktivními ukázkami.
+Hráč skládá program pro výrobní linku a simulace hned ukáže, jestli linka funguje. Před každým úkolem je teorie s interaktivními ukázkami.
 
 ## Úrovně
 
@@ -13,6 +13,15 @@ Hráč skládá program pro plnicí linku lahví a simulace hned ukáže, jestli
 5. **Poruchy a alarmy** – hlídací časovač, taktovací paměť (blikání), kvitování poruchy
 6. **Kontrola kvality** – kamera, vyhazovač s impulzním časovačem TP, druhý čítač zmetků
 7. **Ruční a automat** – přepínač režimů, ruční posuv, kontakty hrany -|P|- a -|N|-
+8. **Balení do krabic** – nová hala shora, balička a handshake se strojem, kamerová kontrola krabic
+9. **Robot a paletizace** – robot s dorazem a startem na hranu, paleta, kamera nad paletou, konec zakázky čítačem
+
+## Moje hala
+
+Volná hra, která se otevře po úrovni 1. Hráč si na mřížce postaví vlastní výrobní halu:
+vybere výrobek (džus, sušenky, med, voda, ozubená kola, jogurt, plechovky) a zakázku,
+poskládá linku z komponent a napíše pro ni program. Každá komponenta dostane adresy %I/%Q sama.
+Nové komponenty (pec, víčkovačka, kamera, balička, robot, paleta…) se odemykají splněním úrovní.
 
 ## Spuštění
 

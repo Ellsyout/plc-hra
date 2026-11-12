@@ -268,6 +268,62 @@ table.watch td.v.on{color:var(--live)}
   .th-card{padding:18px 14px 20px}
   .th-card h2{font-size:22px}
 }
+/* hall */
+.hallwrap{overflow-x:auto}
+.hallwrap svg{display:block;width:100%;height:auto;min-width:400px}
+.hallwrap.sb svg{min-width:560px}
+#hall .hgrid{fill:#11171a;stroke:#1b2327;stroke-width:1}
+#hall .hcell{fill:transparent;cursor:pointer}
+#hall .hcell:hover{fill:rgba(243,174,61,.1);stroke:var(--amber);stroke-dasharray:4 3}
+#hall .off .hcell{cursor:default}
+#hall .off .hcell:hover{fill:transparent;stroke:none}
+#hall .hbelt{fill:#1d272c;stroke:var(--wire);stroke-width:1.5}
+#hall .hchev{fill:none;stroke:#3a474f;stroke-width:2.5}
+#hall .hchev.on{stroke:var(--live)}
+#hall .hg{font:600 9px var(--mono);fill:var(--dim);paint-order:stroke;stroke:#0f1416;stroke-width:3px}
+#hall .hg.on{fill:var(--live)}
+#hall .hn{font:600 10.5px var(--body);fill:var(--fg2);paint-order:stroke;stroke:#0f1416;stroke-width:3px;stroke-linejoin:round}
+#hall .ha{font:600 8.5px var(--mono);fill:var(--amber);paint-order:stroke;stroke:#0f1416;stroke-width:3px;stroke-linejoin:round}
+#hall .ha .on{fill:var(--live)}
+#hall .hcnt{font:700 13px var(--mono);fill:var(--live)}
+#hall .hst{fill:var(--panel2);stroke:var(--fg2);stroke-width:1.5}
+#hall .hbeam{fill:none;stroke:var(--dim);stroke-width:1.3;stroke-dasharray:3 3}
+#hall .hbeam.on{stroke:var(--amber);stroke-width:2}
+#hall .hbeam.ok{stroke:var(--live);stroke-width:2}
+#hall .hbeam.bad{stroke:var(--err);stroke-width:2.5}
+#hall .hmach{fill:rgba(180,192,199,.05);stroke:var(--fg2);stroke-width:2}
+#hall .hmach.on{stroke:var(--amber);fill:rgba(243,174,61,.13)}
+#hall .hcyl{fill:var(--panel2);stroke:var(--fg2);stroke-width:1.5}
+#hall .hcyl.on{stroke:var(--live)}
+#hall .hrod{fill:var(--fg2)}
+#hall .hbin{fill:#2a1513;stroke:var(--err);stroke-width:1.2}
+#hall .hsrc{fill:#1a2226;stroke:var(--fg2);stroke-width:1.5}
+#hall .hsrc.on{stroke:var(--amber)}
+#hall .hout{fill:#12271e;stroke:#2a6b50;stroke-width:1.5}
+#hall .hrob{fill:var(--panel2);stroke:var(--fg2);stroke-width:2}
+#hall .hrob.on{stroke:var(--amber)}
+#hall .harm{stroke:#c9a24a;stroke-width:7;stroke-linecap:round}
+#hall .hpal{fill:#5a4630;stroke:#8a6d48;stroke-width:1.5}
+#hall .hslat{stroke:#3f3020;stroke-width:2}
+#hall .hph{fill:none;stroke:var(--wire);stroke-dasharray:4 4}
+#hall .hbar{fill:var(--amber)}
+#hall .ibox{fill:#7a5a32;stroke:#c29a5e;stroke-width:1.5}
+#hall .ibox.open{fill:#4a3620}
+#hall .itape{stroke:#c29a5e;stroke-width:1.5}
+#hall .icnt{font:700 11px var(--mono);fill:#f6e7c8;text-anchor:middle}
+#hall .ib{fill:#1c262b;stroke:var(--fg2);stroke-width:1.5}
+#hall .idefl{stroke:var(--err);stroke-width:3;stroke-linecap:round}
+#hall .idef{fill:var(--err)}
+.bld{display:flex;flex-direction:column;gap:8px}
+.bld .lbl{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-top:4px}
+.bld .note{font-size:13px;color:var(--dim);margin:0}
+.lesson .seg button:disabled{opacity:.4;cursor:not-allowed}
+.pal{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:6px}
+.pal button{border:1px solid var(--line);background:var(--panel2);border-radius:7px;padding:6px 8px;text-align:left;cursor:pointer;font-size:13px;line-height:1.2}
+.pal button small{display:block;font-family:var(--mono);font-size:10px;color:var(--dim);margin-top:2px}
+.pal button.on{border-color:var(--amber);background:#2a2214}
+.pal button:disabled{opacity:.4;cursor:not-allowed}
+.lvl.sbx{border-style:dashed}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
@@ -365,6 +421,9 @@ table.watch td.v.on{color:var(--live)}
         </g>
         <g id="bottles"></g>
       </svg>
+      <div class="hallwrap" id="hallWrap" hidden>
+        <svg id="hall" viewBox="0 0 800 480" role="img" aria-label="Výrobní hala shora"><g id="hallGrid"></g><g id="hallDyn"></g><g id="hallHit"></g></svg>
+      </div>
       <div class="panel" id="panel" hidden>
         <button class="pb start" data-pb="start">START<small>%I0.1</small></button>
         <button class="pb stop" data-pb="stop">STOP<small>%I0.2 · NC</small></button>
@@ -378,7 +437,7 @@ table.watch td.v.on{color:var(--live)}
         <span class="oplog" id="oplog"></span>
       </div>
       <div class="stats">
-        <span class="good">Správně naplněno: <b id="stGood">0</b><span id="stGoal"></span></span>
+        <span class="good"><span id="stGoodL">Správně naplněno</span>: <b id="stGood">0</b><span id="stGoal"></span></span>
         <span class="bad">Chyby: <b id="stErr">0</b></span>
         <span>Čas: <b id="stTime">0.0 s</b></span>
         <span>Cyklus OB1: <b>10 ms</b></span>
@@ -419,6 +478,9 @@ table.watch td.v.on{color:var(--live)}
           <details><summary>Taktovací paměť</summary><p>Bity, které CPU samo přepíná danou frekvencí. Zapínají se ve vlastnostech CPU, typicky bajt <code>%MB100</code>. <code>%M100.5</code> bliká 1 Hz.</p></details>
           <details><summary>Impulz TP</summary><p>Po náběžné hraně na IN sepne Q přesně na dobu PT, bez ohledu na délku vstupního signálu.</p></details>
           <details><summary>Hrany -|P|- a -|N|-</summary><p>Kontakt hrany propustí proud jen v jednom cyklu, kdy se proměnná změní (P: 0→1, N: 1→0).</p></details>
+          <details><summary>Handshake</summary><p>Domluva PLC se strojem: stroj hlásí stav (připraven, kus, hotovo, v klidu) a PLC mu dává povel (start, vložit, vydat). Povel jen když stroj hlásí, že ho zvládne.</p></details>
+          <details><summary>Doraz</summary><p>Mechanická zarážka na konci pásu. Kus se o ni zastaví a čeká, i když pás jede dál.</p></details>
+          <details><summary>Paletizace</summary><p>Skládání krabic na paletu. Dělá ji robot. Plnou paletu odveze vozík k nakládce a přiveze prázdnou.</p></details>
           <details><summary>Čítač CTU</summary><p>Při každé náběžné hraně na CU přičte 1 k CV. Když CV dosáhne PV, sepne Q. Vstup R čítač vynuluje.</p></details>
         </div>
       </div>
@@ -443,7 +505,7 @@ const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const fmt = n => (Math.round(n * 10) / 10).toString();
 
-const TAGS = [
+const BASE_TAGS = [
   {id:'I0.0', name:'Senzor', ad:'%I0.0', lvl:1},
   {id:'I0.1', name:'Start', ad:'%I0.1', lvl:2},
   {id:'I0.2', name:'Stop', ad:'%I0.2', lvl:2},
@@ -478,7 +540,8 @@ const TAGS = [
   {id:'M2.0', name:'Ruční pás', ad:'%M2.0', lvl:7, w:true},
   {id:'M2.1', name:'Auto pás', ad:'%M2.1', lvl:7, w:true},
 ];
-const TAG = Object.fromEntries(TAGS.map(t => [t.id, t]));
+let TAGS = BASE_TAGS;
+let TAG = Object.fromEntries(TAGS.map(t => [t.id, t]));
 const boolTags = () => TAGS.filter(t => t.lvl <= level && !t.analog).map(t => t.id);
 const writeTags = () => TAGS.filter(t => t.lvl <= level && t.w).map(t => t.id);
 const anaTags = () => TAGS.filter(t => t.lvl <= level && t.analog).map(t => t.id);
@@ -582,6 +645,87 @@ const DEMO = {
   blink: () => Object.assign(dspec({p:V('Porucha','%M1.0'), t:V('Takt 1 Hz','%M100.5'), q:V('Kontrolka','%Q0.5')},
          [{tag:'p'}], ['q'], [[[C('NO','p'), C('NO','t')], coil('q')]]), {clock:'t'}),
 };
+
+// ---------- hall: products, components, preset layouts ----------
+const CS = 80, HC = 10, HR = 6, HSPEED = 1.25, HGAP = 0.62, SANDBOX = 10;
+const DIRS = [[1, 0], [0, 1], [-1, 0], [0, -1]];
+const OPN = {fill:'plnění', bake:'pečení', label:'etiketa', cap:'víčko', press:'lisování', drill:'vrtání', seal:'zatavení fólie', seam:'zavíčkování'};
+const PRODUCTS = {
+  cup:   {name:'Džus v kelímku', recipe:['fill'], unlock:1},
+  cookie:{name:'Sušenky', recipe:['bake'], unlock:2},
+  honey: {name:'Med ve sklenici', recipe:['fill', 'label'], unlock:3},
+  water: {name:'Lahev vody', recipe:['fill', 'cap'], unlock:4},
+  gear:  {name:'Ozubené kolo', recipe:['press', 'drill'], unlock:4},
+  yogurt:{name:'Jogurt', recipe:['fill', 'seal'], unlock:5},
+  can:   {name:'Plechovka limonády', recipe:['fill', 'seam'], unlock:5},
+};
+const MIO = n => [['q', 'Q', n + ' {n}'], ['in', 'I', n + ' {n} kus'], ['d', 'I', n + ' {n} hotovo']];
+const MDESC = (what, t) => `${what} Signály: výstup „start“, vstup „kus“ (kus stojí ve stroji) a vstup „hotovo“. Práce trvá ${t} s a pás u stroje musí stát.`;
+const COMPS = {
+  belt:  {name:'Dopravník', unlock:1, belt:true, io:[], desc:'Veze kusy ve směru šipky. Dopravníky se stejným číslem pásu mají společný motor (výstup „Pás N“).'},
+  src:   {name:'Podavač', unlock:1, io:[['q', 'Q', 'Podavač {n}']], desc:'Zásobník výrobků. Dokud je jeho výstup v 1, vydá na pás nový kus, kdykoli je před ním místo. Šipka ukazuje, kam sype.'},
+  sens:  {name:'Senzor', unlock:1, belt:true, io:[['s', 'I', 'Senzor {n}']], desc:'Světelná závora nad pásem. Hlásí 1, když je kus uprostřed políčka.'},
+  fill:  {name:'Plnička', unlock:1, belt:true, op:'fill', T:2, io:MIO('Plnička'), desc:MDESC('Naplní kelímek, sklenici, lahev, jogurt nebo plechovku.', 2)},
+  out:   {name:'Expedice', unlock:1, io:[], desc:'Konec linky. Sem dojíždějí hotové výrobky nebo krabice a odcházejí k zákazníkovi. Nehotový nebo vadný kus tu neprojde.'},
+  bake:  {name:'Pec', unlock:2, belt:true, op:'bake', T:3, io:MIO('Pec'), desc:MDESC('Upeče sušenky.', 3)},
+  label: {name:'Etiketovačka', unlock:3, belt:true, op:'label', T:1, io:MIO('Etiketa'), desc:MDESC('Nalepí etiketu.', 1)},
+  cap:   {name:'Víčkovačka', unlock:4, belt:true, op:'cap', T:1, io:MIO('Víčko'), desc:MDESC('Našroubuje víčko na lahev.', 1)},
+  press: {name:'Lis', unlock:4, belt:true, op:'press', T:1.5, io:MIO('Lis'), desc:MDESC('Vylisuje ozubené kolo z plechu.', 1.5)},
+  drill: {name:'Vrtačka', unlock:4, belt:true, op:'drill', T:1.5, io:MIO('Vrtačka'), desc:MDESC('Vyvrtá díru pro hřídel.', 1.5)},
+  seal:  {name:'Zatavovačka', unlock:5, belt:true, op:'seal', T:1, io:MIO('Fólie'), desc:MDESC('Zataví jogurt hliníkovou fólií.', 1)},
+  seam:  {name:'Zavíčkovačka', unlock:5, belt:true, op:'seam', T:1, io:MIO('Plech'), desc:MDESC('Nalisuje víčko na plechovku.', 1)},
+  beacon:{name:'Majáček', unlock:5, io:[['g', 'Q', 'Majáček {n} zel.'], ['r', 'Q', 'Majáček {n} červ.']], desc:'Signální sloup nad halou. Zelené a červené světlo, každé má svůj výstup.'},
+  cam:   {name:'Kamera', unlock:6, belt:true, io:[['ok', 'I', 'Kamera {n} OK'], ['bad', 'I', 'Kamera {n} vada']], desc:'Zkontroluje kus nebo krabici uprostřed políčka. „OK“ svítí u dobrého kusu, „vada“ u vadného nebo nehotového. Signál trvá jen chvilku.'},
+  push:  {name:'Vyhazovač', unlock:6, belt:true, io:[['q', 'Q', 'Vyhazovač {n}']], desc:'Pneumatický válec u pásu. Když je zapnutý aspoň 0,2 s, shodí kus z políčka do koše.'},
+  pack:  {name:'Balička', unlock:8, io:[['in', 'I', 'Balička {n} kus'], ['full', 'I', 'Krabice {n} plná'], ['rdy', 'I', 'Krabice {n} připr.'], ['put', 'Q', 'Balička {n} vložit'], ['out', 'Q', 'Balička {n} vydat']],
+          desc:'Kusy přijíždějí z pásu ze zadní strany a čekají na vstupu. „Vložit“ dá kus do krabice (4 kusy), „vydat“ pošle krabici ve směru šipky na další pás.'},
+  robot: {name:'Robot', unlock:9, io:[['go', 'Q', 'Robot {n} start'], ['part', 'I', 'Robot {n} kus'], ['home', 'I', 'Robot {n} v klidu']],
+          desc:'Šipka míří ke konci pásu, odkud bere kusy (pás tam končí dorazem). Na opačné straně musí stát paleta. Cyklus spustí náběžná hrana výstupu „start“.'},
+  pal:   {name:'Paleta', unlock:9, io:[['full', 'I', 'Paleta {n} plná'], ['rdy', 'I', 'Paleta {n} připr.'], ['ok', 'I', 'Paleta {n} OK'], ['go', 'Q', 'Paleta {n} odvézt']],
+          desc:'Místo pro paletu (4 krabice nebo kusy). „Odvézt“ pošle plnou paletu k nakládce, prázdná přijede za 3 s. Kamera nad paletou hlásí „OK“.'},
+};
+const COMP_ORDER = ['belt', 'src', 'sens', 'fill', 'out', 'bake', 'label', 'cap', 'press', 'drill', 'seal', 'seam', 'beacon', 'cam', 'push', 'pack', 'robot', 'pal'];
+const HALL_BASE = [
+  {id:'I0.1', name:'Start', ad:'%I0.1'}, {id:'I0.2', name:'Stop', ad:'%I0.2'}, {id:'I0.3', name:'E-STOP', ad:'%I0.3'}, {id:'I0.4', name:'Kvitovat', ad:'%I0.4'},
+  {id:'Q0.2', name:'Kontrolka chodu', ad:'%Q0.2', w:true}, {id:'Q0.5', name:'Kontrolka poruchy', ad:'%Q0.5', w:true},
+  {id:'M0.2', name:'Chod', ad:'%M0.2', w:true}, {id:'M1.0', name:'Porucha', ad:'%M1.0', w:true},
+  ...[0, 1, 2, 3, 4, 5].map(i => ({id:`M10.${i}`, name:`Pomocný ${i + 1}`, ad:`%M10.${i}`, w:true})),
+  {id:'M100.5', name:'Takt 1 Hz', ad:'%M100.5'},
+  ...['T1', 'T2', 'T3', 'T4', 'C1', 'C2', 'C3'].map(n => ({id:n + '.Q', name:n + '.Q', ad:`"${n}".Q`, fb:true})),
+].map(t => ({...t, lvl:0}));
+const HP = (x, y, t, d, o = {}) => ({x, y, t, d, n:1, m:1, io:{}, ...o});
+const mkHall = (comps, groups) => ({cells:Object.fromEntries(comps.map(c => [c.x + ',' + c.y, c])), groups, boxN:4, palN:4});
+const HALL8 = mkHall([
+  HP(0, 0, 'src', 0, {io:{q:'Q2.2'}, cfg:{prod:'cookie', done:['bake'], every:1.3}}),
+  HP(1, 0, 'belt', 0), HP(2, 0, 'belt', 0), HP(3, 0, 'belt', 0), HP(4, 0, 'belt', 1),
+  HP(4, 1, 'pack', 1, {io:{in:'I2.0', full:'I2.1', rdy:'I2.2', put:'Q2.3', out:'Q2.4'}}),
+  HP(4, 2, 'belt', 2, {m:2}), HP(3, 2, 'cam', 2, {m:2, io:{ok:'I2.3', bad:'I2.4'}}), HP(2, 2, 'push', 2, {m:2, io:{q:'Q2.5'}}),
+  HP(1, 2, 'belt', 2, {m:2}), HP(0, 2, 'out', 2),
+], {1:'Q2.0', 2:'Q2.1'});
+const HALL9 = mkHall([
+  HP(0, 0, 'src', 0, {io:{q:'Q2.1'}, cfg:{prod:'yogurt', kind:'box', every:2.6}}),
+  HP(1, 0, 'belt', 0), HP(2, 0, 'cam', 0, {io:{ok:'I2.0', bad:'I2.1'}}), HP(3, 0, 'push', 0, {io:{q:'Q2.2'}}),
+  HP(4, 0, 'belt', 1), HP(4, 1, 'belt', 1), HP(4, 2, 'belt', 2), HP(3, 2, 'belt', 2),
+  HP(2, 2, 'robot', 0, {io:{go:'Q2.3', part:'I2.2', home:'I2.3'}}),
+  HP(1, 2, 'pal', 2, {io:{full:'I2.4', rdy:'I2.5', ok:'I2.6', go:'Q2.4'}}),
+], {1:'Q2.0'});
+const H8base = () => [latch(true), lamp()];
+const H8S1 = () => [...H8base(), R([C('NO','M0.2')], coil('Q2.2')), R([C('NO','M0.2')], coil('Q2.0')),
+  R([C('NO','I2.0'), C('NO','I2.2'), C('NC','I2.1')], coil('Q2.3')), R([C('NO','I2.1')], coil('Q2.4')), R([C('NO','M0.2')], coil('Q2.1'))];
+const H8S2 = () => [...H8S1(), R([C('NO','I2.4')], {kind:'tp', timer:'T1', pt:1, then:coil('Q2.5')})];
+const H9base = () => [latch(true), lamp(), R([C('NO','M0.2')], coil('Q2.1')), R([C('NO','M0.2')], coil('Q2.0')),
+  R([C('NO','I2.1')], {kind:'tp', timer:'T1', pt:1, then:coil('Q2.2')})];
+const H9S1 = () => [...H9base(), R([C('NO','I2.2'), C('NO','I2.3'), C('NO','I2.5'), C('NC','I2.4'), C('NO','M0.2')], coil('Q2.3'))];
+const H9S2 = () => [...H9S1(), R([C('NO','I2.4'), C('NO','I2.6')], coil('Q2.4')),
+  R([C('NO','Q2.4')], {kind:'ctu', counter:'C1', pv:2, r:'I0.4', then:{kind:'reset', tag:'M0.2'}})];
+Object.assign(DEMO, {
+  pack: () => dspec({k:V('Balička 1 kus','%I2.0'), r:V('Krabice 1 připr.','%I2.2'), f:V('Krabice 1 plná','%I2.1'), v:V('Vložit','%Q2.3'), o:V('Vydat','%Q2.4')},
+         [{tag:'k'},{tag:'r'},{tag:'f'}], ['v','o'], [[[C('NO','k'), C('NO','r'), C('NC','f')], coil('v')], [[C('NO','f')], coil('o')]]),
+  robot: () => dspec({p:V('Robot 1 kus','%I2.2'), h:V('Robot 1 v klidu','%I2.3'), r:V('Paleta 1 připr.','%I2.5'), f:V('Paleta 1 plná','%I2.4'), s:V('Robot 1 start','%Q2.3')},
+         [{tag:'p'},{tag:'h'},{tag:'r'},{tag:'f'}], ['s'], [[[C('NO','p'), C('NO','h'), C('NO','r'), C('NC','f')], coil('s')]]),
+  station: () => dspec({c:V('Chod','%M0.2'), k:V('Plnička 1 kus','%I2.1'), d:V('Plnička 1 hotovo','%I2.2'), p:V('Pás 1','%Q2.0'), q:V('Plnička 1','%Q2.2')},
+         [{tag:'c'},{tag:'k'},{tag:'d'}], ['p','q'], [[[C('NO','c'), [C('NC','k'), C('NO','d')]], coil('p')], [[C('NO','k'), C('NC','d'), C('NO','c')], coil('q')]]),
+});
 
 // ---------- levels ----------
 const LEVELS = [
@@ -1008,7 +1152,7 @@ const LEVELS = [
     {when:s => s.good - s.goodBase >= 2, timeout:30, timeoutFail:['Linka se nerozjela', 'Po novém stisku START se do 30 s nenaplnily 2 lahve.']},
     {win:true},
    ],
-   win:['Hra dokončena!', 'Máš za sebou celou linku: kontakty, časovače, čítače, porovnání, pneumatiku, poruchy, kontrolu kvality, režimy i hrany. To je pořádný základ pro práci s PLC.'],
+   win:['Úroveň 7 hotová!', 'Plnicí linka je hotová: kontakty, časovače, čítače, porovnání, pneumatika, poruchy, kontrola kvality, režimy i hrany. Další úroveň tě zavede do nové haly, kde se výrobky balí do krabic.'],
    theory:{title:'Hrany signálu',
     intro:'Někdy nezáleží na tom, jestli je signál 1, ale na okamžiku, kdy se změní. Tomu se říká hrana.',
     items:[
@@ -1018,6 +1162,106 @@ const LEVELS = [
      {t:'Start na hranu', wide:true,
       p:'Se spínacím kontaktem START stačí, aby tlačítko zůstalo dole, a linka se po každém STOP hned znovu rozjede. S hranou -|P|- zapne chod jen nový stisk. Vyzkoušej: zapni Start a nech ho zapnutý, pak stiskni a pusť Stop. Chod zůstane vypnutý.',
       demo:'pstart'},
+    ]}},
+  ]},
+ {id:8, name:'Balení do krabic', hall:HALL8, panel:true, base:H8base,
+  steps:[
+  {title:'Balička do krabic',
+   text:'Nová hala! Podavač sype upečené sušenky na pás 1 a ten je veze do baličky. Balička vloží čekající kus do krabice, když dostane výstup „Balička 1 vložit“. Plnou krabici (4 kusy) zavře a pošle na pás 2 výstup „Balička 1 vydat“. Nová prázdná krabice je připravená asi za 1,5 s.',
+   goal:'Pošli na expedici 3 plné krabice.',
+   hint:'Chod a kontrolku už máš. Přidej sítě: spínací „Chod“ → cívka „Podavač 1“, „Chod“ → „Pás 1“, „Chod“ → „Pás 2“. Vkládání: spínací „Balička 1 kus“ + spínací „Krabice 1 připr.“ + rozpínací „Krabice 1 plná“ → cívka „Balička 1 vložit“. Vydání: spínací „Krabice 1 plná“ → cívka „Balička 1 vydat“.',
+   sol:H8S1,
+   script:[
+    {at:0.5, press:['start'], log:'Obsluha stiskla START'},
+    {when:s => s.H.boxesOut >= 3, timeout:60, timeoutFail:['Krabice nedorazily', 'Za 60 s nedorazily na expedici 3 plné krabice. Běží podavač, oba pásy a vkládá balička kusy do krabice?']},
+    {win:true}],
+   win:['Krabice jedou', 'Balička plní krabice po 4 kusech a plné posílá dál. PLC a stroj si „podávají ruce“: stroj hlásí stav na vstupy a PLC mu odpovídá výstupy.'],
+   theory:{title:'Nová hala: balení',
+    intro:'Plnicí linku máš hotovou. Teď se přesuneme do haly, kde se hotové výrobky balí. Stroje tu mají vlastní řízení a s PLC se domlouvají signály: hlásí, v jakém jsou stavu, a čekají na povel.',
+    items:[
+     {t:'Hala shora', wide:true, p:'Halu teď vidíš z ptačí perspektivy. Každé políčko je jedna komponenta. Šipky na dopravníku ukazují, kam pás veze, a zeleně se rozsvítí, když jeho motor běží. Pod každou komponentou jsou její adresy.'},
+     {t:'Podavač', ad:'%Q2.2', p:'Zásobník upečených sušenek. Dokud je jeho výstup v 1, vydá na pás nový kus, jakmile je na začátku pásu volno. Když pás stojí, kusy se nahromadí a podavač počká.'},
+     {t:'Dva pásy, dva motory', ad:'%Q2.0 · %Q2.1', p:'Pás 1 veze sušenky do baličky, pás 2 odváží krabice. Každý má svůj motor. Před baličkou je doraz, takže se kusy zastaví a čekají, i když pás 1 jede dál.'},
+     {t:'Balička', wide:true, p:'Balička má pět signálů:',
+      ul:['Balička 1 kus (%I2.0): kus čeká na vstupu baličky.', 'Krabice 1 připr. (%I2.2): v baličce stojí krabice.', 'Krabice 1 plná (%I2.1): v krabici jsou 4 kusy.', 'Balička 1 vložit (%Q2.3): vloží čekající kus do krabice. Trvá to 0,4 s.', 'Balička 1 vydat (%Q2.4): zavře krabici a vysune ji na pás 2.'],
+      p2:'Vkládej jen když kus čeká, krabice je připravená a ještě není plná. Vyzkoušej si to:', demo:'pack'},
+     {t:'Handshake', p:'Takhle spolu mluví PLC a každý chytrý stroj. Stroj hlásí „jsem připravený“, PLC odpoví „udělej to“ a stroj pak potvrdí „hotovo“. Povel nikdy nedávej naslepo, bez potvrzení, že ho stroj zvládne.'},
+    ]}},
+  {title:'Kamera kontroluje krabice',
+   text:'Občas se sušenka zlomí. Krabice s rozlámaným kusem nesmí odejít k zákazníkovi. Kamera nad pásem 2 se podívá do každé krabice a hlásí „Kamera 1 OK“ nebo „Kamera 1 vada“. Vadnou krabici musí shodit vyhazovač, který stojí o políčko dál.',
+   goal:'Vyřaď 2 vadné krabice a pošli 3 dobré.',
+   hint:'Nová síť: spínací „Kamera 1 vada“ → impulzní časovač TP "T1", PT = 1 s → cívka „Vyhazovač 1“. Vyhazovač stojí až za kamerou, a proto potřebuje delší impulz.',
+   sol:H8S2, defects:[6, 15],
+   script:[
+    {at:0.5, press:['start'], log:'Obsluha stiskla START'},
+    {when:s => s.H.rej >= 2 && s.H.boxesOut >= 3, timeout:80, timeoutFail:['Kontrola nedoběhla', 'Za 80 s se nepodařilo vyřadit 2 vadné krabice a poslat 3 dobré.']},
+    {win:true}],
+   win:['Úroveň 8 hotová!', 'Na expedici jdou jen plné a celé krabice. Další úroveň: robot je naskládá na paletu.'],
+   theory:{title:'Kamerová kontrola balení',
+    intro:'Kameru a vyhazovač znáš z úrovně 6. Teď ale kontroluješ celou krabici: jestli je plná a jestli jsou všechny kusy v pořádku.',
+    items:[
+     {t:'Kamera nad pásem', ad:'%I2.3 · %I2.4', p:'Kamera se podívá do každé krabice, která pod ní projede. „Kamera 1 OK“ svítí u dobré krabice, „Kamera 1 vada“ u krabice s rozlámaným kusem nebo s méně než 4 kusy. Signál trvá asi třetinu sekundy.'},
+     {t:'Vyhazovač za kamerou', ad:'%Q2.5', p:'Vyhazovač stojí o políčko dál. Než k němu krabice dojede, signál kamery už zmizí. Prodlouží ho impulzní časovač TP: s PT = 1 s je vyhazovač vysunutý právě ve chvíli, kdy krabice projíždí kolem.', demo:'tp'},
+     {t:'Kontrola v praxi', p:'Ve skutečných provozech kamera kontroluje i datum spotřeby, zavření krabice nebo čárový kód. Výsledky ukládá a obsluha na HMI vidí, kolik kusů se vyřadilo a proč.'},
+    ]}},
+  ]},
+ {id:9, name:'Robot a paletizace', hall:HALL9, panel:true, base:H9base,
+  steps:[
+  {title:'Robot skládá na paletu',
+   text:'Krabice s jogurty přijíždějí z balení. Kamera s vyhazovačem už fungují, máš je v programu. Na konci pásu je doraz a za ním robot. Na náběžnou hranu výstupu „Robot 1 start“ robot vezme krabici z dorazu a položí ji na paletu. Dokud se hýbe, nehlásí „v klidu“.',
+   goal:'Naplň paletu 4 krabicemi.',
+   hint:'Nová síť: spínací „Robot 1 kus“ + „Robot 1 v klidu“ + „Paleta 1 připr.“ + rozpínací „Paleta 1 plná“ + spínací „Chod“ → cívka „Robot 1 start“.',
+   sol:H9S1,
+   script:[
+    {at:0.5, press:['start'], log:'Obsluha stiskla START'},
+    {when:s => s.H.c['1,2'].items.length >= 4, timeout:45, timeoutFail:['Paleta se neplní', 'Za 45 s se paleta nenaplnila. Startuje robot, když na dorazu čeká krabice?']},
+    {after:3, log:'Paleta je plná, obsluha sleduje robota'},
+    {win:true}],
+   win:['Paleta je plná', 'Robot bere krabice jen když na něj čekají a když má kam je položit. Na plnou paletu už nic nedal.'],
+   theory:{title:'Průmyslový robot',
+    intro:'Na konci linky pracuje robot. Bere krabice a skládá je na paletu. Robot má vlastní řídicí systém s naprogramovanou dráhou pohybu. PLC mu jen říká, kdy má začít, a hlídá, aby začal jen ve správnou chvíli.',
+    items:[
+     {t:'Doraz na konci pásu', p:'Pás vede až k robotu. Krabice se zastaví o mechanický doraz a čeká, i když pás jede dál. Robot ji tak najde vždycky na stejném místě.'},
+     {t:'Signály robota', ad:'%Q2.3 · %I2.2 · %I2.3', p:'Robot hlásí svůj stav a čeká na povel:',
+      ul:['Robot 1 start (%Q2.3): cyklus spustí náběžná hrana tohoto výstupu.', 'Robot 1 kus (%I2.2): na dorazu stojí krabice.', 'Robot 1 v klidu (%I2.3): robot je v základní poloze a čeká.']},
+     {t:'Paleta', ad:'%I2.4 · %I2.5', p:'„Paleta 1 připr.“ znamená, že paleta stojí na svém místě. „Paleta 1 plná“ svítí při 4 krabicích. Na plnou paletu ani do prázdného místa robot nesmí nic položit.'},
+     {t:'Podmínky startu', wide:true, p:'Robot smí vyrazit, jen když platí všechno najednou: krabice čeká, robot je v klidu, paleta je připravená a není plná. Vyzkoušej si to:', demo:'robot'},
+     {t:'Bezpečnost', p:'Kolem skutečného robota je plot se zamčenými dveřmi a světelné závory. Když někdo vstoupí do buňky, bezpečnostní obvod robota okamžitě zastaví. To ale řeší bezpečnostní PLC, ne náš program.'},
+    ]}},
+  {title:'Odvoz palet a konec zakázky',
+   text:'Plnou paletu odveze vozík k nakládce na kamion a za 3 s přiveze prázdnou. Kamera nad paletou ještě zkontroluje náklad: „Paleta 1 OK“ svítí, jen když je paleta plná a všechny krabice jsou v pořádku. Zakázka jsou 2 palety. Pak se musí linka sama zastavit.',
+   goal:'Odvez 2 palety a pak zastav linku.',
+   hint:'Odvoz: spínací „Paleta 1 plná“ + spínací „Paleta 1 OK“ → cívka „Paleta 1 odvézt“. Počítání: spínací „Paleta 1 odvézt“ → CTU "C1", PV = 2, R = „Kvitovat“, za ním Reset „Chod“.',
+   sol:H9S2, defects:[3],
+   script:[
+    {at:0.5, press:['start'], log:'Obsluha stiskla START'},
+    {when:s => s.H.pallets >= 2, timeout:90, timeoutFail:['Palety neodjely', 'Za 90 s neodjely 2 plné palety. Odvoz spusť výstupem „Paleta 1 odvézt“, když je paleta plná a v pořádku.']},
+    {after:2.5, check:s => (s.img['Q2.1'] || s.img['Q2.0'] || s.img['M0.2']) ? ['Linka jede dál', 'Zakázka 2 palet je hotová, ale linka pořád vyrábí. Spočítej odvezené palety čítačem CTU "C1" s PV = 2 a jeho výstupem resetuj „Chod“.'] : null},
+    {win:true}],
+   win:['Hra dokončena!', 'Máš za sebou celou výrobu: plnění, balení, kontrolu kvality, robota i expedici. V „Moje hala“ máš teď odemčené všechny komponenty a můžeš si postavit vlastní továrnu.'],
+   theory:{title:'Nakládka a konec zakázky',
+    intro:'Plná paleta musí odjet a místo ní přijet prázdná. A když je zakázka hotová, linka se má sama zastavit.',
+    items:[
+     {t:'Odvoz palety', ad:'%Q2.4', p:'Výstup „Paleta 1 odvézt“ zavolá vozík. Ten odveze plnou paletu k nakládce na kamion a asi za 3 s přiveze prázdnou. Do té doby je „Paleta 1 připr.“ v nule a robot musí čekat.'},
+     {t:'Kamera nad paletou', ad:'%I2.6', p:'Než paleta odjede, zkontroluje ji kamera shora. „Paleta 1 OK“ svítí, jen když je plná a všechny krabice jsou v pořádku. Odvoz proto podmiň tímto signálem. Kdyby se na paletu dostala vadná krabice, paleta zůstane stát a obsluha ji opraví.'},
+     {t:'Počítání palet', wide:true, p:'Zakázka jsou 2 palety. Spočítej povely k odvozu čítačem CTU a jeho výstupem resetuj „Chod“. Linka se zastaví a čeká. Kvitování čítač vynuluje pro další zakázku.', demo:'ctu'},
+    ]}},
+  ]},
+ {id:SANDBOX, name:'Moje hala', sandbox:true, panel:true, base:() => [emptyRung()],
+  steps:[
+  {title:'Moje hala',
+   text:'Postav si vlastní výrobu. Vyber výrobek a zakázku, poskládej linku z komponent a napiš pro ni program. Nové komponenty a výrobky se odemykají splněním úrovní.',
+   goal:'', hint:'', sol:null,
+   check(s){ if (s.good >= userHall.order.n) return win(); },
+   get win(){ return ['Zakázka splněna!', `Hala odeslala ${sim.good} × ${PRODUCTS[userHall.product].name} za ${sim.t.toFixed(0)} s. Zkus linku zrychlit, vyber jiný výrobek nebo větší zakázku.`]; },
+   theory:{title:'Moje hala',
+    intro:'Tady si postavíš vlastní výrobu. Vybereš výrobek, poskládáš linku z komponent a napíšeš pro ni program v žebříčku. Komponenty se odemykají postupně, jak plníš úrovně.',
+    items:[
+     {t:'Stavění', p:'V panelu vyber komponentu a klikni do haly. Kliknutím na stejnou komponentu ji otočíš. „Smazat“ ji odstraní. Stavět jde jen když PLC stojí (STOP). „Vzorová linka“ postaví rovnou linku pro zvolený výrobek.'},
+     {t:'Adresy se přidělí samy', p:'Každá komponenta dostane své vstupy %I a výstupy %Q. Najdeš je pod komponentou v hale, ve sledovací tabulce i v editoru kontaktů. Dopravníky se stejným číslem pásu mají společný motor.'},
+     {t:'Výrobky a jejich postup', wide:true, p:'Každý výrobek musí projít stroji ve správném pořadí:', ul:Object.values(PRODUCTS).map(p => `${p.name}: ${p.recipe.map(o => OPN[o]).join(' → ')} (od úrovně ${p.unlock})`)},
+     {t:'Program jedné stanice', wide:true, p:'Typický stroj: pás jede, když ve stroji není kus, nebo když už je hotový. Stroj pracuje, když kus čeká a ještě není hotový. Vyzkoušej si to:', demo:'station'},
+     {t:'Odemykání komponent', p:'Nové komponenty získáš splněním úrovní:', ul:['Úroveň 1: podavač, dopravník, senzor, plnička, expedice', 'Úroveň 2: pec', 'Úroveň 3: etiketovačka', 'Úroveň 4: víčkovačka, lis, vrtačka', 'Úroveň 5: zatavovačka, zavíčkovačka, majáček', 'Úroveň 6: kamera a vyhazovač', 'Úroveň 8: balička do krabic', 'Úroveň 9: robot a paleta']},
     ]}},
   ]},
 ];
@@ -1033,7 +1277,7 @@ const ST = () => LV().steps[step - 1];
 let sim = newSim();
 
 const KEY = 'plc-linka-v2';
-function save(){ programs[level] = program; try { localStorage.setItem(KEY, JSON.stringify({programs, level, step, prog, seen})); } catch(e){} }
+function save(){ programs[level] = program; try { localStorage.setItem(KEY, JSON.stringify({programs, level, step, prog, seen, hall:userHall})); } catch(e){} }
 const sanitize = p => Array.isArray(p) && p.length ? p.map(r => ({slots: pad(r.slots), out: r.out || {kind:'none'}})) : null;
 function load(d){
   try {
@@ -1045,8 +1289,12 @@ function load(d){
       seen = s.seen || {};
       level = Math.min(LEVELS.length, Math.max(1, s.level || 1));
       step = Math.min(LV().steps.length, Math.max(1, s.step || 1));
+      if (s.hall && s.hall.cells && s.hall.order && PRODUCTS[s.hall.product]) userHall = s.hall;
     }
   } catch(e){}
+  if (!userHall) userHall = sampleHall('cup');
+  if (lvDone(1)) prog[SANDBOX] = Math.max(prog[SANDBOX] || 0, 1);
+  if ((prog[level] || 0) < 1) { level = 1; step = 1; }
   program = programs[level] || initProgram(level);
 }
 function initProgram(l){
@@ -1060,10 +1308,11 @@ function mkBottle(s, x){ return {x, fill:0, rate: level >= 3 ? RATES[s.nb++ % RA
 function newSim(){
   const s = {t:0, phase:0, bottles:[], nb:0, spill:0, good:0, errors:0, idle:0, hold:0, valveEver:false,
     img:{'IW64':0, 'I0.2':true, 'I0.3':true},
-    timers:{T1:{et:0, q:false}, T2:{et:0, q:false}, T3:{et:0, q:false}}, counters:{C1:{cv:0, q:false, prev:false}, C2:{cv:0, q:false, prev:false}}, edges:new WeakMap(),
+    timers:{T1:{et:0, q:false}, T2:{et:0, q:false}, T3:{et:0, q:false}, T4:{et:0, q:false}}, counters:{C1:{cv:0, q:false, prev:false}, C2:{cv:0, q:false, prev:false}, C3:{cv:0, q:false, prev:false}}, edges:new WeakMap(),
     manual:{}, held:{}, pulses:{}, sp:0, phStart:null, log:'', crate:{count:0, swaps:0}, lampT:0, stopT:0,
     pist:0, capN:0, capBase:0, tankEmpty:false, blinkEdges:0, prevQ05:false, alarmSeen:false,
     rejN:0, qcGood:0, qcBase:0, badReject:false, goodBase:0, ph0:0};
+  if (isHall()) { s.H = newHallState(curHall()); return s; }
   for (const x of [420, 200, -20]) s.bottles.push(mkBottle(s, x));
   return s;
 }
@@ -1129,8 +1378,442 @@ const MX = {
   counter: n => sim.counters[n] || sim.counters.C1,
 };
 
+// ---------- hall engine ----------
+let userHall = null, bTool = 'belt', bDir = 0, bGrp = 1, hallVer = 0;
+function isHall(){ return !!(LV().hall || LV().sandbox); }
+function curHall(){ return LV().sandbox ? userHall : LV().hall; }
+const ck = c => c.x + ',' + c.y;
+const cellAt = (H, x, y) => H.cells[x + ',' + y];
+const lvDone = n => (prog[n] || 0) > LEVELS[n - 1].steps.length;
+const unlockedC = t => lvDone(COMPS[t].unlock);
+const unlockedP = p => lvDone(PRODUCTS[p].unlock);
+const addrKey = id => (id[0] === 'I' ? 0 : 1000) + (+id.slice(1).split('.')[0]) * 8 + (+id.split('.')[1]);
+const beltish = c => !!c && (COMPS[c.t].belt || c.t === 'pack');
+const cname = c => `${COMPS[c.t].name} ${c.n}`;
+
+function hallTags(H){
+  const comps = Object.values(H.cells), ex = [];
+  const used = [...new Set(comps.filter(c => COMPS[c.t].belt).map(c => c.m))].sort();
+  for (const m of used) if (H.groups[m]) ex.push({id:H.groups[m], name:`Pás ${m}`, ad:'%' + H.groups[m], w:true, lvl:0});
+  for (const c of comps) for (const [k, kind, tpl] of COMPS[c.t].io) if (c.io[k]) ex.push({id:c.io[k], name:tpl.replace('{n}', c.n), ad:'%' + c.io[k], w:kind === 'Q', lvl:0});
+  ex.sort((a, b) => addrKey(a.id) - addrKey(b.id));
+  return HALL_BASE.concat(ex);
+}
+function refreshTags(){ TAGS = isHall() ? hallTags(curHall()) : BASE_TAGS; TAG = Object.fromEntries(TAGS.map(t => [t.id, t])); }
+function allocIO(H, kind){
+  const used = new Set(Object.values(H.groups));
+  for (const c of Object.values(H.cells)) for (const v of Object.values(c.io || {})) used.add(v);
+  for (let b = 2; b < 10; b++) for (let i = 0; i < 8; i++) { const id = `${kind}${b}.${i}`; if (!used.has(id)) return id; }
+  return null;
+}
+function addComp(H, x, y, t, d, m){
+  const ns = new Set(Object.values(H.cells).filter(c => c.t === t).map(c => c.n));
+  let n = 1; while (ns.has(n)) n++;
+  const c = {x, y, t, d, m, n, io:{}};
+  H.cells[x + ',' + y] = c;
+  for (const [k, kind] of COMPS[t].io) c.io[k] = allocIO(H, kind);
+  if (COMPS[t].belt && !H.groups[m]) H.groups[m] = allocIO(H, 'Q');
+  return c;
+}
+function sampleHall(prod, keep){
+  const H = {cells:{}, groups:{}, boxN:4, palN:4, product:prod, order:keep ? keep.order : {n:8, pack:'loose'}, defects:keep ? keep.defects : false};
+  const seq = ['src', 'belt', ...PRODUCTS[prod].recipe.flatMap(o => [o, 'belt']), 'out'];
+  seq.forEach((t, i) => addComp(H, i + 1, 2, t, 0, 1));
+  return H;
+}
+function isBad(it, H){
+  if (it.kind === 'box') return it.contents.length < H.boxN || it.contents.some(x => isBad(x, H));
+  return !!it.defect || PRODUCTS[it.prod].recipe.some(o => !it.ops.includes(o));
+}
+const unitsOf = it => it.kind === 'box' ? it.contents.length : 1;
+const mkItem = (h, prod, x, y, done, defect) => ({id:++h.nid, kind:'item', prod, ops:[...(done || [])], defect:!!defect, x, y, lastM:0});
+function rel(it, c){ const [dx, dy] = DIRS[c.d], ox = it.x - (c.x + .5), oy = it.y - (c.y + .5); return {a:ox * dx + oy * dy, p:-ox * dy + oy * dx}; }
+const inCell = (it, c) => !it.gone && Math.floor(it.x) === c.x && Math.floor(it.y) === c.y;
+const atCenter = (h, c, za) => h.items.find(it => { if (!inCell(it, c)) return false; const r = rel(it, c); return Math.abs(r.a) <= za && Math.abs(r.p) <= 0.25; });
+const pickCell = (H, c) => { const p = cellAt(H, c.x + DIRS[c.d][0], c.y + DIRS[c.d][1]); return beltish(p) ? p : null; };
+const placeCell = (H, c) => cellAt(H, c.x - DIRS[c.d][0], c.y - DIRS[c.d][1]);
+const pickItem = (h, pc) => h.items.find(it => inCell(it, pc) && rel(it, pc).a >= 0.25);
+function newHallState(H){
+  const st = {items:[], serial:0, nid:0, units:0, rej:0, boxesOut:0, pallets:0, ph:{}, c:{}, idle:0, log:''};
+  for (const [k, c] of Object.entries(H.cells)) {
+    if (c.t === 'src') st.c[k] = {last:-99};
+    else if (c.t === 'pack') st.c[k] = {box:{contents:[]}, readyAt:0, putT:0};
+    else if (c.t === 'robot') st.c[k] = {busy:false, t:0, held:null, prev:false, grabbed:false};
+    else if (c.t === 'pal') st.c[k] = {items:[], present:true, readyAt:0, gone:null};
+    else if (COMPS[c.t].op) st.c[k] = {prog:0, over:0, spill:0, item:-1};
+    else st.c[k] = {};
+  }
+  return st;
+}
+function srcCfg(c, H){
+  if (LV().sandbox) return {prod:H.product, every:1.5, kind:'item', done:[], defects:H.defects ? 'auto' : []};
+  const S = ST();
+  return {kind:'item', done:[], ...c.cfg, defects:S.defects || []};
+}
+const OVERF = {
+  fill:  n => ['Přeteklo', `Stroj „${n}“ plnil dál, i když byl kus plný. Vypni ho, jakmile svítí „${n} hotovo“.`],
+  bake:  n => ['Spálené sušenky', `Stroj „${n}“ pekl dál i po upečení. Vypni ho, jakmile svítí „${n} hotovo“.`],
+};
+function shipOut(it, H, h){
+  if (isBad(it, H)) {
+    if (it.kind === 'box') return fail(it.contents.length < H.boxN
+      ? ['Neúplná krabice odešla', `V krabici byly jen ${it.contents.length} z ${H.boxN} kusů. Krabici vydávej, až když svítí „Krabice plná“.`]
+      : ['Vadná krabice odešla k zákazníkovi', it.seen ? 'Kamera vadu nahlásila, ale vyhazovač krabici nevyřadil. Signál kamery trvá jen zlomek sekundy a krabice dojede k vyhazovači až později. Prodluž ho impulzním časovačem TP (třeba 1 s).' : 'V krabici byl rozlámaný kus. Před expedicí ji musí zkontrolovat kamera a vyřadit vyhazovač.']);
+    const P = PRODUCTS[it.prod], miss = P.recipe.filter(o => !it.ops.includes(o));
+    if (it.defect && !miss.length) return fail(['Vadný výrobek odešel k zákazníkovi', it.seen ? 'Kamera vadu nahlásila, ale vyhazovač kus nevyřadil. Prodluž signál kamery impulzem TP.' : 'Kus měl vadu. Před expedici patří kamera a vyhazovač (odemkne je úroveň 6).']);
+    return fail(['Nehotový výrobek odešel', `${P.name} ještě potřeboval: ${miss.map(o => OPN[o]).join(', ')}. Postup: ${P.recipe.map(o => OPN[o]).join(' → ')}.`]);
+  }
+  if (LV().sandbox) {
+    const pk = H.order.pack;
+    if (pk === 'box' && it.kind !== 'box') return fail(['Výrobek měl být v krabici', 'Zakázka chce výrobky zabalené v krabicích. Postav před expedici baličku.']);
+    if (pk === 'pallet') return fail(['Zakázka chce palety', 'Výrobky mají odjet na paletách. Na konec linky dej robota a paletu místo expedice.']);
+  }
+  if (it.kind === 'box') h.boxesOut++;
+  h.units += unitsOf(it);
+  return false;
+}
+
+function hallTick(dt){
+  const s = sim, h = s.H, H = curHall(), img = s.img, S = ST();
+  s.t += dt;
+  img['I0.1'] = pressed('start'); img['I0.2'] = !pressed('stop'); img['I0.3'] = !pressed('estop'); img['I0.4'] = pressed('ack');
+  img['M100.5'] = Math.floor(s.t * 2) % 2 === 0;
+  const cells = Object.values(H.cells);
+  for (const c of cells) {
+    const st = h.c[ck(c)], io = c.io, K = COMPS[c.t];
+    if (c.t === 'sens') img[io.s] = !!atCenter(h, c, 0.14);
+    else if (K.op) { const it = atCenter(h, c, 0.15); img[io.in] = !!it; img[io.d] = !!(it && it.kind === 'item' && it.ops.includes(K.op)); }
+    else if (c.t === 'cam') { const it = atCenter(h, c, 0.2); const bad = !!it && isBad(it, H); img[io.ok] = !!it && !bad; img[io.bad] = bad; if (it) it.seen = true; }
+    else if (c.t === 'pack') { img[io.in] = h.items.some(it => it.infeed === ck(c)); img[io.rdy] = !!st.box; img[io.full] = !!st.box && st.box.contents.length >= H.boxN; }
+    else if (c.t === 'robot') { const pc = pickCell(H, c), it = pc && pickItem(h, pc); img[io.part] = !!it && !it.moved; img[io.home] = !st.busy; }
+    else if (c.t === 'pal') { img[io.rdy] = st.present; img[io.full] = st.present && st.items.length >= H.palN; img[io.ok] = img[io.full] && !st.items.some(x => isBad(x, H)); }
+  }
+  vis = scanRungs(program, MX, dt);
+  const on = m => !!img[H.groups[m]];
+  for (const m of Object.keys(H.groups)) if (on(m)) h.ph[m] = (h.ph[m] || 0) + HSPEED * dt;
+  // sources
+  for (const c of cells) {
+    if (c.t !== 'src' || !img[c.io.q]) continue;
+    const st = h.c[ck(c)], cf = srcCfg(c, H);
+    if (s.t - st.last < cf.every) continue;
+    const [dx, dy] = DIRS[c.d], x = c.x + .5 + dx * .62, y = c.y + .5 + dy * .62;
+    if (h.items.some(o => !o.gone && Math.hypot(o.x - x, o.y - y) < HGAP)) continue;
+    const nc = cellAt(H, c.x + dx, c.y + dy);
+    if (!nc || !(beltish(nc) || nc.t === 'out')) return fail(['Podavač sype mimo pás', `${cname(c)} vydal kus, ale před ním není dopravník. Otoč podavač šipkou k pásu, nebo pás přistav.`]);
+    st.last = s.t; h.serial++;
+    const bad = cf.defects === 'auto' ? h.serial % 6 === 4 : cf.defects.includes(h.serial);
+    let it;
+    if (cf.kind === 'box') {
+      const cont = []; for (let i = 0; i < H.boxN; i++) cont.push(mkItem(h, cf.prod, 0, 0, PRODUCTS[cf.prod].recipe, bad && i === 1));
+      it = {id:++h.nid, kind:'box', prod:cf.prod, contents:cont, x, y, lastM:0};
+    } else it = mkItem(h, cf.prod, x, y, cf.done, bad);
+    it.lastM = nc.m || 0;
+    h.items.push(it);
+  }
+  // conveyor movement
+  let anyMove = false;
+  for (const it of h.items) {
+    it.moved = false; it.infeed = null;
+    const cx = Math.floor(it.x), cy = Math.floor(it.y), c = cellAt(H, cx, cy);
+    if (!c) return fail(['Výrobek spadl z pásu', `Kus dojel na konec dopravníku, kde nic nenavazuje (políčko ${cx + 1}, ${cy + 1}), a spadl na zem. Prodluž pás až k dalšímu stroji nebo k expedici.`]);
+    if (c.t === 'out') { it.gone = true; if (shipOut(it, H, h)) return true; continue; }
+    if (!beltish(c)) return fail(['Výrobek narazil', `Kus vjel do políčka se strojem „${COMPS[c.t].name}“, který kusy z pásu nepřijímá.`]);
+    if (COMPS[c.t].belt) it.lastM = c.m;
+    const isPack = c.t === 'pack', m = isPack ? it.lastM : c.m, r = rel(it, c);
+    if (isPack && it.kind === 'item' && r.a >= -0.31) it.infeed = ck(c);
+    if (!on(m)) continue;
+    const [dx, dy] = DIRS[c.d], v = HSPEED * dt;
+    let na = r.a + v;
+    const np = Math.abs(r.p) <= v ? 0 : r.p - Math.sign(r.p) * v;
+    let lim = null;
+    if (isPack && it.kind === 'item') lim = -0.3;
+    else { const nx = cellAt(H, cx + dx, cy + dy); if (nx && !beltish(nx) && nx.t !== 'out') lim = 0.38; }
+    if (lim !== null && na > lim) na = Math.max(r.a, lim);
+    const x = c.x + .5 + na * dx - np * dy, y = c.y + .5 + na * dy + np * dx;
+    const mx = x - it.x, my = y - it.y;
+    if (Math.abs(mx) < 1e-9 && Math.abs(my) < 1e-9) continue;
+    const blocked = h.items.some(o => o !== it && !o.gone && Math.hypot(o.x - x, o.y - y) < HGAP && (o.x - it.x) * mx + (o.y - it.y) * my > 0);
+    if (blocked) continue;
+    it.x = x; it.y = y; it.moved = true; anyMove = true;
+    if (isPack && it.kind === 'item' && na >= -0.31) it.infeed = ck(c);
+  }
+  h.items = h.items.filter(it => !it.gone);
+  // stations
+  let anyWork = false;
+  for (const c of cells) {
+    const st = h.c[ck(c)], K = COMPS[c.t], io = c.io, q = !!img[io.q];
+    if (K.op) {
+      const it = atCenter(h, c, 0.15), n = cname(c);
+      if (!it || it.id !== st.item) { st.prog = 0; st.over = 0; st.item = it ? it.id : -1; }
+      if (!q) { st.spill = 0; st.over = 0; continue; }
+      if (!it) { if (K.op === 'fill') { st.spill += dt; if (st.spill > 0.5) return fail(['Plnička plní naprázdno', `Stroj „${n}“ je zapnutý, ale nestojí v něm žádný kus, takže obsah teče na pás. Zapínej ho jen když svítí „${n} kus“.`]); } continue; }
+      if (it.moved) return fail(['Stroj pracoval za jízdy', `Stroj „${n}“ pracoval, zatímco pás kus posouval. U stroje musí pás stát, dokud nesvítí „${n} hotovo“.`]);
+      if (it.kind === 'box') return fail(['Stroj nemůže pracovat na krabici', `Stroj „${n}“ dostal povel, ale stojí v něm zavřená krabice.`]);
+      const P = PRODUCTS[it.prod], idx = P.recipe.indexOf(K.op), steps = P.recipe.map(o => OPN[o]).join(' → ');
+      if (idx < 0) return fail([`${P.name}: tohle nepatří`, `${P.name} nepotřebuje ${OPN[K.op]}, a přesto stroj „${n}“ pracoval. Postup výrobku: ${steps}.`]);
+      if (it.ops.includes(K.op)) { st.over += dt; if (st.over > 1) return fail((OVERF[K.op] || (x => ['Stroj pracuje zbytečně', `Stroj „${x}“ zůstal zapnutý i po dokončení práce. Vypni ho, jakmile svítí „${x} hotovo“.`]))(n)); continue; }
+      if (P.recipe.slice(0, idx).some(o => !it.ops.includes(o))) return fail(['Špatné pořadí strojů', `${P.name} musí projít stroji v tomhle pořadí: ${steps}. Stroj „${n}“ přišel na řadu moc brzy.`]);
+      st.prog += dt; anyWork = true;
+      if (st.prog >= K.T) { it.ops.push(K.op); st.prog = 0; }
+    } else if (c.t === 'push') {
+      if (!q) continue;
+      for (const it of h.items) {
+        if (!inCell(it, c) || Math.abs(rel(it, c).p) > 0.4) continue;
+        it.push = (it.push || 0) + dt;
+        if (it.push >= 0.2) {
+          it.gone = true; h.rej++;
+          if (!isBad(it, H)) return fail(['Vyhozen dobrý kus', `${cname(c)} vyhodil ${it.kind === 'box' ? 'krabici' : 'kus'}, který byl v pořádku. Zapínej ho jen na signál „vada“ z kamery.`]);
+        }
+      }
+    } else if (c.t === 'pack') {
+      if (!st.box && s.t >= st.readyAt) st.box = {contents:[]};
+      const it = h.items.find(x => x.infeed === ck(c) && !x.gone);
+      if (img[io.put] && it) {
+        st.putT += dt; anyWork = true;
+        if (st.putT >= 0.4) {
+          st.putT = 0; it.gone = true;
+          if (!st.box) return fail(['Kus spadl vedle krabice', `Balička vkládala, ale krabice ještě nebyla připravená. Vkládej jen když svítí „Krabice ${c.n} připr.“.`]);
+          if (st.box.contents.length >= H.boxN) return fail(['Krabice přeplněná', `Do plné krabice se už nic nevejde. Do sítě „vložit“ přidej rozpínací kontakt „Krabice ${c.n} plná“.`]);
+          st.box.contents.push(it);
+        }
+      } else st.putT = 0;
+      if (img[io.out] && st.box && st.box.contents.length) {
+        const [dx, dy] = DIRS[c.d], x = c.x + .5 + dx * .62, y = c.y + .5 + dy * .62;
+        if (!h.items.some(o => !o.gone && Math.hypot(o.x - x, o.y - y) < HGAP)) {
+          const nc = cellAt(H, c.x + dx, c.y + dy);
+          if (!nc || !(COMPS[nc.t].belt || nc.t === 'out')) return fail(['Krabice spadla', `${cname(c)} vysunula krabici, ale ve směru šipky není dopravník.`]);
+          h.items.push({id:++h.nid, kind:'box', prod:st.box.contents[0].prod, contents:st.box.contents, x, y, lastM:nc.m || 0});
+          st.box = null; st.readyAt = s.t + 1.5;
+        }
+      }
+    } else if (c.t === 'robot') {
+      const go = !!img[io.go];
+      if (go && !st.prev && !st.busy) { st.busy = true; st.t = 0; st.grabbed = false; }
+      st.prev = go;
+      if (!st.busy) continue;
+      st.t += dt; anyWork = true;
+      if (st.t >= 0.6 && !st.grabbed) {
+        st.grabbed = true;
+        const pc = pickCell(H, c), it = pc && pickItem(h, pc);
+        if (!it) return fail(['Robot sáhl do prázdna', `${cname(c)} dostal start, ale na dorazu nečekal žádný kus. Startuj ho jen když svítí „${cname(c)} kus“.`]);
+        it.gone = true; st.held = it;
+      }
+      if (st.t >= 1.8 && st.held) {
+        const pl = placeCell(H, c), ps = pl && pl.t === 'pal' ? h.c[ck(pl)] : null, it = st.held;
+        st.held = null;
+        if (!ps) return fail(['Robot položil kus na zem', `Naproti místu odběru (za robotem) musí stát paleta.`]);
+        if (!ps.present) return fail(['Paleta tam nebyla', `Robot pokládal kus, ale paleta zrovna odjížděla. Startuj robota jen když svítí „Paleta ${pl.n} připr.“.`]);
+        if (ps.items.length >= H.palN) return fail(['Paleta přeplněná', `Robot pokládal na plnou paletu. Do podmínky startu robota přidej rozpínací kontakt „Paleta ${pl.n} plná“.`]);
+        ps.items.push(it);
+      }
+      if (st.t >= 2.4) st.busy = false;
+    } else if (c.t === 'pal') {
+      if (st.gone) { st.gone.t += dt; if (st.gone.t > 1.2) st.gone = null; }
+      if (!st.present && s.t >= st.readyAt) { st.present = true; st.items = []; }
+      if (img[io.go] && st.present) {
+        if (st.items.length < H.palN) return fail(['Paleta odjela poloprázdná', `Na paletě bylo jen ${st.items.length} z ${H.palN} kusů. Odvoz spouštěj, až když svítí „Paleta ${c.n} plná“.`]);
+        if (st.items.some(x => isBad(x, H))) return fail(['Na paletě odjel vadný náklad', `Kamera nad paletou hlásila, že náklad není v pořádku. Odvoz podmiň signálem „Paleta ${c.n} OK“.`]);
+        h.units += st.items.reduce((a, x) => a + unitsOf(x), 0); h.pallets++;
+        st.gone = {items:st.items, t:0}; st.items = []; st.present = false; st.readyAt = s.t + 3;
+      }
+    }
+  }
+  h.items = h.items.filter(it => !it.gone);
+  s.good = h.units;
+  if (anyMove || anyWork || !h.items.length) h.idle = 0; else h.idle += dt;
+  h.log = LV().sandbox && h.idle > 6 ? `Linka stojí už ${Math.floor(h.idle)} s. Zkontroluj podmínky motorů pásů.` : '';
+  if (S.script && runScript(S.script)) return true;
+  if (S.check && S.check(s)) return true;
+  return false;
+}
+
+// ---------- hall rendering ----------
+function itemSvg(it, x, y, k){
+  const t = `transform="translate(${x.toFixed(1)} ${y.toFixed(1)})${k !== 1 ? ` scale(${k})` : ''}"`;
+  if (it.kind === 'box') return `<g ${t}><rect x="-15" y="-15" width="30" height="30" rx="3" class="ibox"/><path d="M-15 0h30" class="itape"/><text y="4" class="icnt">${it.contents.length}</text>${it.contents.some(x => x.defect) ? '<circle cx="10" cy="-10" r="4" class="idef"/>' : ''}</g>`;
+  const o = it.ops, has = op => o.includes(op);
+  let s = '';
+  switch (it.prod) {
+    case 'cup': s = `<circle r="12" class="ib"/>${has('fill') ? '<circle r="8.5" fill="#f3ae3d"/>' : ''}`; break;
+    case 'water': s = `<circle r="12" class="ib" style="stroke:#7cc4e8"/>${has('fill') ? '<circle r="9" fill="#3d8fc4"/>' : ''}${has('cap') ? '<circle r="5.5" fill="#e8eef2"/>' : ''}`; break;
+    case 'honey': s = `<rect x="-11" y="-11" width="22" height="22" rx="6" class="ib"/>${has('fill') ? '<rect x="-8" y="-8" width="16" height="16" rx="4" fill="#d18a1c"/>' : ''}${has('label') ? '<rect x="-11" y="-3.5" width="22" height="7" fill="#e2e8eb"/>' : ''}`; break;
+    case 'yogurt': s = `<circle r="12" fill="#e9e4dc" stroke="#b4c0c7" stroke-width="1.5"/>${has('fill') ? '<circle r="8.5" fill="#e58fb0"/>' : ''}${has('seal') ? '<circle r="10" fill="#c9d3d9" opacity=".9"/>' : ''}`; break;
+    case 'can': s = `<circle r="11.5" fill="#55626a" stroke="#b4c0c7" stroke-width="2"/>${has('fill') ? '<circle r="8" fill="#f08a3c"/>' : ''}${has('seam') ? '<circle r="9" fill="#9aa6ad" stroke="#e2e8eb" stroke-width="2.5"/>' : ''}`; break;
+    case 'cookie': s = `<rect x="-12" y="-12" width="24" height="24" rx="8" fill="${has('bake') ? '#b0773a' : '#e6d4a8'}"/>${has('bake') ? '<circle cx="-4" cy="-3" r="2" fill="#5a3818"/><circle cx="4" cy="4" r="2" fill="#5a3818"/><circle cx="5" cy="-5" r="1.6" fill="#5a3818"/>' : ''}`; break;
+    case 'gear': s = `<circle r="11" fill="none" stroke="${has('press') ? '#c3ccd1' : '#6f7b82'}" stroke-width="5" stroke-dasharray="4 4.6"/><circle r="9" fill="${has('press') ? '#c3ccd1' : '#6f7b82'}"/>${has('drill') ? '<circle r="3.5" fill="#0d1113"/>' : ''}`; break;
+  }
+  if (it.defect) s += '<path d="M-9 -9L9 9" class="idefl"/>';
+  return `<g ${t}>${s}</g>`;
+}
+function ioText(c, on, img, X, Y){
+  const ids = COMPS[c.t].io.map(([k]) => c.io[k]).filter(Boolean);
+  if (!ids.length) return '';
+  const sp = id => `<tspan class="${on && img[id] ? 'on' : ''}">${id}</tspan>`;
+  if (ids.length <= 3) return `<text x="${X + 4}" y="${Y + 77}" class="ha">${ids.map(sp).join(' ')}</text>`;
+  const a = ids.slice(0, 3), b = ids.slice(3);
+  return `<text x="${X + 4}" y="${Y + 67}" class="ha">${a.map(sp).join(' ')}</text><text x="${X + 4}" y="${Y + 77}" class="ha">${b.map(sp).join(' ')}</text>`;
+}
+function compSvg(c, st, on, img, H, h){
+  const X = c.x * CS, Y = c.y * CS, K = COMPS[c.t], io = c.io, sig = id => on && !!img[id];
+  const rot = `transform="translate(${X} ${Y}) rotate(${c.d * 90} 40 40)"`;
+  const cx = X + 40, cy = Y + 40, [dx, dy] = DIRS[c.d];
+  let s = '';
+  if (K.belt || c.t === 'pack') {
+    const run = K.belt && sig(H.groups[c.m]);
+    let ch = '';
+    if (K.belt) { const off = ((h.ph[c.m] || 0) * CS) % 22; for (let i = 0; i < 3; i++) { const x = 6 + ((i * 22 + off) % 66); ch += `<path d="M${x.toFixed(1)} 31l8 9l-8 9" class="hchev${run ? ' on' : ''}"/>`; } }
+    s += `<g ${rot}><rect x="1" y="17" width="78" height="46" rx="3" class="hbelt"/>${ch}</g>`;
+    if (K.belt) s += `<text x="${X + 76}" y="${Y + 11}" text-anchor="end" class="hg${run ? ' on' : ''}">P${c.m}</text>`;
+  }
+  switch (c.t) {
+    case 'sens': s += `<g ${rot}><rect x="35" y="8" width="10" height="8" class="hst"/><rect x="35" y="64" width="10" height="8" class="hst"/><line x1="40" y1="16" x2="40" y2="64" class="hbeam${sig(io.s) ? ' on' : ''}"/></g>`; break;
+    case 'cam': s += `<g ${rot}><rect x="30" y="2" width="20" height="12" rx="3" class="hst"/><path d="M33 14L24 62M47 14L56 62" class="hbeam${sig(io.bad) ? ' bad' : sig(io.ok) ? ' ok' : ''}"/></g>`; break;
+    case 'push': { const q = sig(io.q); s += `<g ${rot}><rect x="26" y="1" width="28" height="11" rx="2" class="hcyl${q ? ' on' : ''}"/>${q ? '<rect x="37" y="12" width="6" height="24" class="hrod"/><rect x="24" y="34" width="32" height="5" class="hrod"/>' : ''}<rect x="22" y="68" width="36" height="11" rx="2" class="hbin"/></g>`; break; }
+    case 'src': s += `<g ${rot}><path d="M10 12h50l-10 56h-30z" class="hsrc${sig(io.q) ? ' on' : ''}"/><path d="M62 40h14m-6 -6l6 6l-6 6" class="hst" style="fill:none"/></g>`; { const cf = srcCfg(c, H); s += cf.kind === 'box' ? itemSvg({kind:'box', contents:new Array(H.boxN).fill({}), prod:cf.prod}, cx - dx * 6, cy - dy * 6, .6) : itemSvg({kind:'item', prod:cf.prod, ops:cf.done || [], defect:false}, cx - dx * 6, cy - dy * 6, .8); } break;
+    case 'out': s += `<rect x="${X + 6}" y="${Y + 14}" width="68" height="52" rx="6" class="hout"/><text x="${cx}" y="${cy - 2}" text-anchor="middle" class="hn">Expedice</text><text x="${cx}" y="${cy + 14}" text-anchor="middle" class="hcnt">${on ? h.units : 0} ks</text>`; break;
+    case 'beacon': s += `<rect x="${X + 30}" y="${Y + 14}" width="20" height="52" rx="4" class="hst"/><circle cx="${cx}" cy="${Y + 28}" r="7" fill="${sig(io.g) ? 'var(--live)' : '#24312b'}"/><circle cx="${cx}" cy="${Y + 50}" r="7" fill="${sig(io.r) ? 'var(--err)' : '#3a2220'}"/>`; break;
+    case 'pack': {
+      const bx = cx + dx * 12, by = cy + dy * 12;
+      s += `<g ${rot}><path d="M6 40h20m-6 -6l6 6l-6 6" class="hst" style="fill:none"/></g>`;
+      s += st.box ? `<rect x="${bx - 15}" y="${by - 15}" width="30" height="30" rx="3" class="ibox open"/><text x="${bx}" y="${by + 4}" class="icnt">${on ? st.box.contents.length : 0}/${H.boxN}</text>` : `<rect x="${bx - 15}" y="${by - 15}" width="30" height="30" rx="3" class="hph"/>`;
+      break;
+    }
+    case 'robot': {
+      const pa = c.d * 90, home = pa - 90;
+      let ang = home, len = 28;
+      if (on && st.busy) {
+        const t = st.t;
+        if (t < 0.6) { const f = t / 0.6; ang = home + 90 * f; len = 28 + 22 * f; }
+        else if (t < 1.8) { const f = (t - 0.6) / 1.2; ang = pa - 180 * f; len = 50 + 28 * f; }
+        else { const f = Math.min(1, (t - 1.8) / 0.6); ang = pa - 180 + 90 * f; len = 78 - 50 * f; }
+      }
+      const r = ang * Math.PI / 180, tx = cx + Math.cos(r) * len, ty = cy + Math.sin(r) * len;
+      s += `<circle cx="${cx}" cy="${cy}" r="17" class="hrob${on && st.busy ? ' on' : ''}"/><line x1="${cx}" y1="${cy}" x2="${tx.toFixed(1)}" y2="${ty.toFixed(1)}" class="harm"/><circle cx="${tx.toFixed(1)}" cy="${ty.toFixed(1)}" r="5" class="hrob"/>`;
+      if (on && st.held) s += itemSvg(st.held, tx, ty, .8);
+      break;
+    }
+    case 'pal': {
+      const drawPal = (ox, oy, items, op) => {
+        let g = `<g transform="translate(${ox.toFixed(1)} ${oy.toFixed(1)})" opacity="${op}"><rect x="${X + 8}" y="${Y + 8}" width="64" height="64" rx="3" class="hpal"/><path d="M${X + 8} ${Y + 30}h64M${X + 8} ${Y + 50}h64" class="hslat"/>`;
+        items.forEach((it, i) => { g += itemSvg(it, X + 24 + (i % 2) * 32, Y + 24 + Math.floor(i / 2 % 2) * 32, .85); });
+        return g + '</g>';
+      };
+      if (!on || st.present) s += drawPal(0, 0, on ? st.items : [], 1);
+      else s += `<rect x="${X + 8}" y="${Y + 8}" width="64" height="64" rx="3" class="hph"/>`;
+      if (on && st.gone) { const f = st.gone.t / 1.2; s += drawPal(dx * f * 70, dy * f * 70, st.gone.items, (1 - f).toFixed(2)); }
+      break;
+    }
+    default:
+      if (K.op) {
+        const q = sig(io.q);
+        s += `<g ${rot}><rect x="17" y="9" width="46" height="62" rx="6" class="hmach${q ? ' on' : ''}"/></g>`;
+        if (on && st.prog > 0) s += `<rect x="${X + 14}" y="${Y + 66}" width="${(52 * Math.min(1, st.prog / K.T)).toFixed(1)}" height="3" class="hbar"/>`;
+      }
+  }
+  if (c.t !== 'out' && c.t !== 'belt') s += `<text x="${X + 4}" y="${Y + 11}" class="hn">${esc(cname(c))}</text>`;
+  return s + ioText(c, on, img, X, Y);
+}
+let hallStaticKey = '';
+function renderHall(){
+  const H = curHall(), h = sim.H || newHallState(H), online = mode !== 'stop', img = sim.img, L = LV(), S = ST(), sb = !!L.sandbox;
+  $('proc').toggleAttribute('hidden', true); $('hallWrap').hidden = false;
+  const key = level + ':' + hallVer;
+  if (key !== hallStaticKey) {
+    hallStaticKey = key;
+    const cs = Object.values(H.cells), mg = sb ? 1 : 0;
+    let x0 = 0, y0 = 0, x1 = HC - 1, y1 = HR - 1;
+    if (cs.length) {
+      x0 = Math.max(0, Math.min(...cs.map(c => c.x)) - mg); x1 = Math.min(HC - 1, Math.max(...cs.map(c => c.x)) + mg);
+      y0 = Math.max(0, Math.min(...cs.map(c => c.y)) - mg); y1 = Math.min(HR - 1, Math.max(...cs.map(c => c.y)) + mg);
+      if (sb) { while (x1 - x0 < 4) { if (x1 < HC - 1) x1++; else x0--; } while (y1 - y0 < 2) { if (y1 < HR - 1) y1++; else y0--; } }
+    }
+    $('hall').setAttribute('viewBox', `${x0 * CS} ${y0 * CS} ${(x1 - x0 + 1) * CS} ${(y1 - y0 + 1) * CS}`);
+    $('hallWrap').classList.toggle('sb', sb);
+    let g = '';
+    for (let y = 0; y < HR; y++) for (let x = 0; x < HC; x++) g += `<rect x="${x * CS + 1}" y="${y * CS + 1}" width="${CS - 2}" height="${CS - 2}" rx="4" class="hgrid"/>`;
+    $('hallGrid').innerHTML = g;
+    let hit = '';
+    if (sb) for (let y = 0; y < HR; y++) for (let x = 0; x < HC; x++) hit += `<rect x="${x * CS}" y="${y * CS}" width="${CS}" height="${CS}" class="hcell" data-x="${x}" data-y="${y}"/>`;
+    $('hallHit').innerHTML = hit;
+  }
+  $('hallHit').classList.toggle('off', online);
+  let g = '';
+  for (const c of Object.values(H.cells)) g += compSvg(c, h.c[ck(c)] || {}, online, img, H, h);
+  if (online) for (const it of h.items) g += itemSvg(it, it.x * CS, it.y * CS, 1);
+  $('hallDyn').innerHTML = g;
+  $('panel').hidden = !L.panel;
+  if (L.panel) {
+    for (const el of document.querySelectorAll('.pb')) el.classList.toggle('down', online && pressed(el.dataset.pb));
+    $('pbAck').hidden = false; $('lpBox').hidden = true; $('lpErr').hidden = false; $('pbMan').hidden = $('pbJog').hidden = true;
+    $('lpRun').classList.toggle('on', online && !!img['Q0.2']);
+    $('lpErr').classList.toggle('on', online && !!img['Q0.5']);
+    $('oplog').textContent = online ? (sim.log || h.log) : '';
+  }
+  $('stGoodL').textContent = 'Hotové kusy';
+  $('stGood').textContent = online ? h.units : 0;
+  $('stGoal').textContent = sb ? ` / ${userHall.order.n}` : '';
+  $('stErr').textContent = sim.errors;
+  $('stTime').textContent = sim.t.toFixed(1) + ' s';
+}
+
+// ---------- hall builder ----------
+function hallChanged(){ refreshTags(); hallVer++; sim = newSim(); progVersion++; save(); lastSig = ''; renderLesson(); }
+const ioSum = K => { const i = K.io.filter(x => x[1] === 'I').length, q = K.io.filter(x => x[1] === 'Q').length; return K.belt && !K.io.length ? 'motor = Pás' : [q ? q + '× výstup' : '', i ? i + '× vstup' : ''].filter(Boolean).join(', ') || 'bez signálů'; };
+function builderHtml(){
+  const H = userHall, run = mode !== 'stop', P = PRODUCTS[H.product];
+  const btn = (act, v, label, cur, dis, title) => `<button data-act="${act}" data-v="${v}" class="${cur ? 'on' : ''}" ${dis ? 'disabled' : ''} ${title ? `title="${esc(title)}"` : ''}>${label}</button>`;
+  const lock = n => ` 🔒 ${n}`;
+  const prods = Object.entries(PRODUCTS).map(([k, p]) => btn('prod', k, esc(p.name) + (unlockedP(k) ? '' : lock(p.unlock)), H.product === k, run || !unlockedP(k), unlockedP(k) ? p.recipe.map(o => OPN[o]).join(' → ') : `Odemkne se po úrovni ${p.unlock}`)).join('');
+  const counts = [4, 8, 12, 20].map(n => btn('ordn', n, n + ' ks', H.order.n === n, run)).join('');
+  const packs = [['loose', 'Volně', 1], ['box', 'V krabicích', 8], ['pallet', 'Na paletách', 9]].map(([k, l, u]) => btn('pack', k, l + (lvDone(u) ? '' : lock(u)), H.order.pack === k, run || !lvDone(u))).join('');
+  const pal = COMP_ORDER.map(t => { const K = COMPS[t], ok = unlockedC(t); return `<button data-act="tool" data-v="${t}" class="${bTool === t ? 'on' : ''}" ${ok ? '' : 'disabled'}>${esc(K.name)}<small>${ok ? ioSum(K) : 'po úrovni ' + K.unlock}</small></button>`; }).join('');
+  const tools = btn('tool', 'rot', '↻ Otočit', bTool === 'rot') + btn('tool', 'del', '✕ Smazat', bTool === 'del');
+  const dirs = ['→', '↓', '←', '↑'].map((a, i) => btn('dir', i, a, bDir === i)).join('');
+  const grps = [1, 2, 3, 4].map(m => btn('grp', m, 'Pás ' + m, bGrp === m)).join('');
+  const desc = bTool === 'rot' ? 'Klikni na komponentu v hale a otočí se o čtvrt otáčky.' : bTool === 'del' ? 'Klikni na komponentu v hale a zmizí. Její adresy se uvolní.' : COMPS[bTool].desc;
+  return `<div class="bld">
+    <div class="goal"><span>Zakázka</span>Odešli ${H.order.n} × ${esc(P.name)}${H.order.pack === 'box' ? ' v krabicích po 4' : H.order.pack === 'pallet' ? ' na paletách' : ''}. Postup: ${P.recipe.map(o => OPN[o]).join(' → ')}.</div>
+    ${run ? '<p class="note">PLC běží. Halu přestavíš po stisku ■ STOP.</p>' : ''}
+    <div class="lbl">Výrobek</div><div class="seg">${prods}</div>
+    <div class="lbl">Počet a balení</div><div class="seg">${counts}</div><div class="seg">${packs}</div>
+    <div class="seg">${btn('defects', 1, 'Občas vadné kusy: ' + (H.defects ? 'ANO' : 'NE') + (lvDone(6) ? '' : lock(6)), H.defects, run || !lvDone(6))}</div>
+    <div class="lbl">Komponenty · vyber a klikni do haly</div><div class="pal">${pal}</div>
+    <div class="seg">${tools}</div>
+    <div class="lbl">Směr nové komponenty</div><div class="seg">${dirs}</div>
+    <div class="lbl">Motor nového dopravníku</div><div class="seg">${grps}</div>
+    <p class="note">${esc(desc)}</p>
+    <div class="seg">${btn('hsample', 1, 'Vzorová linka pro výrobek', false, run)}${btn('hclear', 1, 'Vyprázdnit halu', false, run)}</div>
+  </div>`;
+}
+function builderAct(a, v){
+  if (mode !== 'stop' && !['tool', 'dir', 'grp'].includes(a)) return;
+  const H = userHall;
+  if (a === 'tool') { bTool = v; return renderLesson(); }
+  if (a === 'dir') { bDir = +v; return renderLesson(); }
+  if (a === 'grp') { bGrp = +v; return renderLesson(); }
+  if (a === 'prod') H.product = v;
+  else if (a === 'ordn') H.order.n = +v;
+  else if (a === 'pack') H.order.pack = v;
+  else if (a === 'defects') H.defects = !H.defects;
+  else if (a === 'hsample') { userHall = sampleHall(H.product, H); }
+  else if (a === 'hclear') { userHall = {...H, cells:{}, groups:{}}; }
+  msg = null; hallChanged();
+}
+function hallClick(e){
+  const t = e.target.closest('[data-x]'); if (!t || !LV().sandbox) return;
+  if (mode !== 'stop') { msg = {tone:'info', title:'Nejdřív STOP', text:'Halu můžeš přestavovat jen když PLC stojí. Stiskni ■ STOP.'}; return renderLesson(); }
+  const x = +t.dataset.x, y = +t.dataset.y, H = userHall, c = cellAt(H, x, y);
+  if (bTool === 'del') { if (!c) return; delete H.cells[ck(c)]; }
+  else if (bTool === 'rot') { if (!c) return; c.d = (c.d + 1) % 4; }
+  else if (!unlockedC(bTool)) return;
+  else if (c && c.t === bTool) { c.d = (c.d + 1) % 4; if (COMPS[c.t].belt && c.m !== bGrp) { c.m = bGrp; if (!H.groups[bGrp]) H.groups[bGrp] = allocIO(H, 'Q'); } }
+  else { if (c) delete H.cells[ck(c)]; addComp(H, x, y, bTool, bDir, bGrp); }
+  msg = null; hallChanged();
+}
+
 // ---------- physics + evaluation ----------
 function tick(dt){
+  if (isHall()) return hallTick(dt);
   const s = sim; s.t += dt;
   const under = s.bottles.find(b => Math.abs(b.x - NOZ) <= SENSE);
   const mouth0 = mouthB(s);
@@ -1276,13 +1959,16 @@ function win(){
   prog[level] = Math.max(prog[level] || 1, step + 1);
   const lastStep = step === n;
   if (lastStep && level < LEVELS.length) prog[level + 1] = Math.max(prog[level + 1] || 0, 1);
-  msg = {tone:'ok', title:S.win[0], text:S.win[1], next: !lastStep ? 'step' : level < LEVELS.length ? 'level' : null};
+  const W = S.win;
+  msg = {tone:'ok', title:W[0], text:W[1], next: !lastStep ? 'step' : level < LEVELS.length ? 'level' : null};
+  if (level === 1 && lastStep && !(prog[SANDBOX] >= 1)) { prog[SANDBOX] = 1; msg.text += ' Odemkla se ti i „Moje hala“, kde si postavíš vlastní výrobu.'; }
+  else if (level === 1 && lastStep) prog[SANDBOX] = Math.max(prog[SANDBOX], 1);
   halt(false); save();
   return true;
 }
 
 // ---------- run control ----------
-function run(){ sim = newSim(); mode = 'run'; msg = {tone:'info', title:'PLC běží', text: LV().panel ? 'Obsluha u panelu bude během testu mačkat tlačítka. Tlačítka můžeš mačkat i ty.' : 'Sleduj linku a zelené dráhy v žebříčku: ukazují, kudy právě teče „proud“.'}; renderAll(); }
+function run(){ sim = newSim(); mode = 'run'; msg = {tone:'info', title:'PLC běží', text: LV().sandbox ? 'Hala běží. START, STOP a KVITOVAT na panelu mačkáš ty.' : LV().panel ? 'Obsluha u panelu bude během testu mačkat tlačítka. Tlačítka můžeš mačkat i ty.' : 'Sleduj linku a zelené dráhy v žebříčku: ukazují, kudy právě teče „proud“.'}; renderAll(); }
 function stop(){ mode = 'stop'; msg = null; sim = newSim(); renderAll(); }
 function halt(err){ mode = 'halt'; ledErr = err; renderAll(); }
 
@@ -1305,6 +1991,8 @@ function frame(ts){
 const BPATH = 'M-18 0 L-18 -48 Q-18 -57 -6 -61 L-6 -74 L6 -74 L6 -61 Q18 -57 18 -48 L18 0 Z';
 function setVal(id, v){ const e = $(id); e.textContent = v ? '1' : '0'; e.setAttribute('class', 'tv' + (v ? ' on' : '')); }
 function renderProcess(){
+  if (isHall()) return renderHall();
+  $('proc').toggleAttribute('hidden', false); $('hallWrap').hidden = true; $('stGoodL').textContent = 'Správně naplněno';
   const img = sim.img, online = mode !== 'stop', L = LV(), S = ST();
   const motor = online && img['Q0.0'], valve = online && img['Q0.1'], sens = online && img['I0.0'];
   $('valve').setAttribute('class', 'valve' + (valve ? ' on' : ''));
@@ -1503,18 +2191,19 @@ function renderWatch(){
     rows.push(`<tr><td>${t.name}</td><td class="a">${t.ad}</td><td class="v ${v ? 'on' : ''}">${v ? 'TRUE' : 'FALSE'}</td></tr>`);
   }
   const tf = (name, ad, v) => `<tr><td>${name}</td><td class="a">${ad}</td><td class="v ${v === true ? 'on' : ''}">${v === true ? 'TRUE' : v === false ? 'FALSE' : v}</td></tr>`;
-  for (const tn of ['T1', 'T2', 'T3']) {
+  for (const tn of ['T1', 'T2', 'T3', 'T4']) {
     if (!program.some(r => isTimer(r.out.kind) && r.out.timer === tn)) continue;
     const t = sim.timers[tn];
     rows.push(tf(`${tn}.ET`, `"${tn}".ET`, `T#${fmt(online ? t.et : 0)}s`), tf(`${tn}.Q`, `"${tn}".Q`, online && t.q));
   }
-  for (const cn of ['C1', 'C2']) { if (!program.some(r => r.out.kind === 'ctu' && r.out.counter === cn)) continue; const c = sim.counters[cn]; rows.push(tf(cn + '.CV', '"' + cn + '".CV', online ? c.cv : 0), tf(cn + '.Q', '"' + cn + '".Q', online && c.q)); }
+  for (const cn of ['C1', 'C2', 'C3']) { if (!program.some(r => r.out.kind === 'ctu' && r.out.counter === cn)) continue; const c = sim.counters[cn]; rows.push(tf(cn + '.CV', '"' + cn + '".CV', online ? c.cv : 0), tf(cn + '.Q', '"' + cn + '".Q', online && c.q)); }
   $('watch').innerHTML = rows.join('');
 }
 function renderLesson(){
   const L = LV(), S = ST(), n = L.steps.length;
   const lv = LEVELS.map(x => {
     const done = (prog[x.id] || 0) > x.steps.length;
+    if (x.sandbox) return `<button class="lvl sbx ${x.id === level ? 'cur' : ''}" data-act="level" data-l="${x.id}" ${(prog[x.id] || 0) < 1 ? 'disabled title="Otevře se po úrovni 1"' : ''}><span>Volná hra${(prog[x.id] || 0) < 1 ? ' 🔒' : ''}</span>${esc(x.name)}</button>`;
     return `<button class="lvl ${x.id === level ? 'cur' : ''} ${done ? 'done' : ''}" data-act="level" data-l="${x.id}" ${(prog[x.id] || 0) < 1 ? 'disabled' : ''}><span>Úroveň ${x.id}${done ? ' ✓' : ''}</span>${esc(x.name)}</button>`;
   }).join('');
   const dots = L.steps.map((x, i) => `<button class="dot ${i + 1 === step ? 'cur' : ''} ${i + 1 < prog[level] ? 'done' : ''}" data-act="step" data-step="${i + 1}" ${i + 1 > prog[level] ? 'disabled' : ''} aria-label="Krok ${i + 1}">${i + 1}</button>`).join('<span class="bar"></span>');
@@ -1522,11 +2211,17 @@ function renderLesson(){
   if (msg) {
     const btns = [];
     if (msg.next === 'step') btns.push(`<button class="btn run small" data-act="next">Pokračovat na krok ${step + 1}</button>`);
-    if (msg.next === 'level') btns.push(`<button class="btn run small" data-act="next">Pokračovat na úroveň ${level + 1}</button>`);
+    if (msg.next === 'level') btns.push(`<button class="btn run small" data-act="next">${LEVELS[level].sandbox ? 'Otevřít Moji halu' : `Pokračovat na úroveň ${level + 1}`}</button>`);
     if (msg.retry) btns.push(`<button class="btn small" data-act="run">▶ Zkusit znovu</button>`);
     m = `<div class="msg ${msg.tone}"><b>${esc(msg.title)}</b><p>${esc(msg.text)}</p>${btns.length ? `<div class="row">${btns.join('')}</div>` : ''}</div>`;
   } else {
-    m = `<div class="msg"><b>Jak hrát</b><p>Dole v žebříčku klikni na „+“ a vlož kontakt, vpravo nastav výstup. Pak stiskni ▶ RUN a sleduj linku.</p></div>`;
+    m = L.sandbox ? '' : `<div class="msg"><b>Jak hrát</b><p>Dole v žebříčku klikni na „+“ a vlož kontakt, vpravo nastav výstup. Pak stiskni ▶ RUN a sleduj linku.</p></div>`;
+  }
+  if (L.sandbox) {
+    $('lesson').innerHTML = `<div class="levels">${lv}</div><h2>${esc(S.title)}</h2><p>${esc(S.text)}</p><button class="btn small ghost th-btn" data-act="theory">Jak stavět halu</button>${m}${builderHtml()}`;
+    $('brandSub').textContent = 'Siemens S7-1200 · LAD · Moje hala';
+    $('procTitle').textContent = 'Hala · ' + PRODUCTS[userHall.product].name;
+    return;
   }
   $('lesson').innerHTML = `<div class="levels">${lv}</div><div class="steps">${dots}</div>` +
     `<h2>${step}/${n} · ${esc(S.title)}</h2><p>${esc(S.text)}</p><button class="btn small ghost th-btn" data-act="theory">Teorie ke kroku ${step}</button><div class="goal"><span>Cíl</span>${esc(S.goal)}</div>${m}` +
@@ -1544,16 +2239,19 @@ function renderAll(){ renderHeader(); renderLesson(); lastSig = ''; }
 
 // ---------- editor sheet ----------
 let ed = null;
-const CTYPES = () => [['NO', SYM.NO + ' Spínací (NO)'], ['NC', SYM.NC + ' Rozpínací (NC)'], ...(level >= 7 ? [['P', 'Náběžná hrana -|P|-'], ['N', 'Sestupná hrana -|N|-']] : []), ...(level >= 3 ? [['CMP', 'Porovnání CMP']] : [])];
+const CTYPES = () => [['NO', SYM.NO + ' Spínací (NO)'], ['NC', SYM.NC + ' Rozpínací (NC)'], ...(level >= 7 ? [['P', 'Náběžná hrana -|P|-'], ['N', 'Sestupná hrana -|N|-']] : []), ...(level >= 3 && anaTags().length ? [['CMP', 'Porovnání CMP']] : [])];
+const defI = () => { const b = boolTags(); return b.includes('I0.0') ? 'I0.0' : (b.find(t => /^I[1-9]/.test(t)) || b[0]); };
+const defQ = () => { const w = writeTags(); return w.includes('Q0.0') ? 'Q0.0' : (w.find(t => /^Q[1-9]/.test(t)) || w[0]); };
+const defM = () => { const w = writeTags(); return w.includes('M0.0') ? 'M0.0' : (w.find(t => t[0] === 'M') || w[0]); };
 const OUTK = () => [['none','Žádný'], ['coil','Cívka ( )'], ['set','Set (S)'], ['reset','Reset (R)'], ['ton','Časovač TON'],
   ...(level >= 2 ? [['tonr','Časovač TONR'], ['rt','Reset časovače (RT)']] : []), ...(level >= 6 ? [['tp','Impulz TP']] : []), ...(level >= 3 ? [['ctu','Čítač CTU']] : [])];
 const isTimer = k => k === 'ton' || k === 'tonr' || k === 'tp';
-const TIMERS = () => [['T1','"T1"'], ['T2','"T2"'], ...(level >= 6 ? [['T3','"T3"']] : [])];
-const COUNTERS = () => [['C1','"C1"'], ...(level >= 6 ? [['C2','"C2"']] : [])];
+const TIMERS = () => [['T1','"T1"'], ['T2','"T2"'], ...(level >= 6 ? [['T3','"T3"']] : []), ...(isHall() ? [['T4','"T4"']] : [])];
+const COUNTERS = () => [['C1','"C1"'], ...(level >= 6 ? [['C2','"C2"']] : []), ...(isHall() ? [['C3','"C3"']] : [])];
 const THENK = [['none','Nic'], ['coil','Cívka ( )'], ['set','Set (S)'], ['reset','Reset (R)']];
 const OPS = ['>=', '<=', '>', '<', '==', '<>'];
 function openContact(r, k, i, isNew){
-  const c = isNew ? {type:'NO', tag:'I0.0'} : {...program[r].slots[k][i]};
+  const c = isNew ? {type:'NO', tag:defI()} : {...program[r].slots[k][i]};
   ed = {kind:'contact', r, k, i, isNew, d:c}; showSheet();
 }
 function openOut(r){
@@ -1619,22 +2317,22 @@ $('sheet').addEventListener('click', e => {
   if (ds.ctype) {
     d.type = ds.ctype;
     if (d.type === 'CMP') { if (!TAG[d.tag] || !TAG[d.tag].analog) d.tag = 'IW64'; d.op = d.op || '>='; d.val = d.val == null ? 500 : d.val; }
-    else if (TAG[d.tag] && TAG[d.tag].analog) d.tag = 'I0.0';
+    else if (!TAG[d.tag] || TAG[d.tag].analog) d.tag = defI();
   }
   else if (ds.ctag) d.tag = ds.ctag;
   else if (ds.cop) d.op = ds.cop;
   else if (ds.okind) {
     d.kind = ds.okind;
-    if (isTimer(d.kind)) { d.timer = d.timer || 'T1'; d.pt = d.pt || 3; d.then = d.then || {kind:'set', tag:'M0.0'}; }
+    if (isTimer(d.kind)) { d.timer = d.timer || 'T1'; d.pt = d.pt || 3; d.then = d.then || {kind:'set', tag:defM()}; }
     else if (d.kind === 'rt') d.timer = d.timer || 'T1';
     else if (d.kind === 'ctu') { d.counter = d.counter || 'C1'; d.pv = d.pv || CRATE; d.r = d.r || (level >= 3 ? 'I0.4' : 'I0.0'); d.then = d.then || {kind:'none'}; }
-    else if (d.kind !== 'none' && !(TAG[d.tag] && TAG[d.tag].w)) d.tag = 'Q0.0';
+    else if (d.kind !== 'none' && !(TAG[d.tag] && TAG[d.tag].w)) d.tag = defQ();
   }
   else if (ds.otag) d.tag = ds.otag;
   else if (ds.otimer) d.timer = ds.otimer;
   else if (ds.ocnt) d.counter = ds.ocnt;
   else if (ds.cr) d.r = ds.cr;
-  else if (ds.tkind) { d.then = d.then || {}; d.then.kind = ds.tkind; if (!d.then.tag) d.then.tag = 'M0.0'; }
+  else if (ds.tkind) { d.then = d.then || {}; d.then.kind = ds.tkind; if (!d.then.tag || !TAG[d.then.tag]) d.then.tag = defM(); }
   else if (ds.ttag) d.then.tag = ds.ttag;
   else if (ds.sact) return sheetAction(ds.sact);
   renderSheet();
@@ -1750,7 +2448,12 @@ document.addEventListener('keydown', e => {
 function goto(l, st){
   save();
   level = l; step = st; msg = null; mode = 'stop'; hintOpen = false;
-  if (!programs[level]) { program = initProgram(level); programs[level] = program; if (level > 1) msg = {tone:'info', title:'Program z minulé úrovně je nahraný', text:'Pokračuješ tam, kde hotová úroveň skončila. Program teď rozšíříš o nové funkce.'}; }
+  refreshTags();
+  if (!programs[level]) {
+    program = initProgram(level); programs[level] = program;
+    if (LV().hall) msg = {tone:'info', title:'Nová hala, nový program', text:'Tahle úroveň má jinou linku, a proto i vlastní program. Síť „Chod“ se START/STOP a kontrolkou už máš připravenou.'};
+    else if (level > 1 && !LV().sandbox) msg = {tone:'info', title:'Program z minulé úrovně je nahraný', text:'Pokračuješ tam, kde hotová úroveň skončila. Program teď rozšíříš o nové funkce.'};
+  }
   else program = programs[level];
   sim = newSim(); progVersion++; save(); renderAll(); maybeTheory();
 }
@@ -1782,6 +2485,7 @@ $('lesson').addEventListener('click', e => {
   else if (a === 'next') { if (msg && msg.next === 'level') goto(level + 1, 1); else goto(level, Math.min(LV().steps.length, step + 1)); }
   else if (a === 'run') run();
   else if (a === 'theory') openTheory();
+  else if (['tool', 'dir', 'grp', 'prod', 'ordn', 'pack', 'defects', 'hsample', 'hclear'].includes(a)) builderAct(a, t.dataset.v);
   else if (a === 'solution') { program = ST().sol(); changed(); msg = {tone:'info', title:'Řešení vloženo', text:'Projdi si sítě v žebříčku a stiskni ▶ RUN.'}; mode = 'stop'; sim = newSim(); renderAll(); }
 });
 const panelEl = $('panel');
@@ -1790,12 +2494,13 @@ panelEl.addEventListener('pointerdown', e => {
   const k = b.dataset.pb;
   if (k === 'estop' || k === 'man') { sim.manual[k] = !sim.manual[k]; return; }
   sim.manual[k] = true;
-  if (k === 'ack') { if (sim.crate.count >= CRATE) sim.crate.swaps++; sim.crate.count = 0; sim.log = 'Vyměnil(a) jsi bednu a stiskl(a) KVITOVAT'; }
+  if (k === 'ack' && !isHall()) { if (sim.crate.count >= CRATE) sim.crate.swaps++; sim.crate.count = 0; sim.log = 'Vyměnil(a) jsi bednu a stiskl(a) KVITOVAT'; }
   try { b.setPointerCapture(e.pointerId); } catch(err){}
 });
 const release = e => { const b = e.target.closest('.pb'); if (b && b.dataset.pb !== 'estop' && b.dataset.pb !== 'man') sim.manual[b.dataset.pb] = false; };
 panelEl.addEventListener('pointerup', release);
 panelEl.addEventListener('pointercancel', release);
+$('hall').addEventListener('click', hallClick);
 $('btnRun').addEventListener('click', run);
 $('btnStop').addEventListener('click', stop);
 $('btnSpeed').addEventListener('click', () => { speed = speed === 1 ? 2 : speed === 2 ? 4 : 1; $('btnSpeed').textContent = `Rychlost ${speed}×`; });
@@ -1827,7 +2532,7 @@ $('btnReset').addEventListener('click', () => {
   }
   clearTimeout(resetT); resetArm = false; b.classList.remove('arm'); b.textContent = '↺ Obnovit hru';
   try { localStorage.removeItem(KEY); localStorage.removeItem('plc-linka-v1'); } catch(e){}
-  programs = {}; prog = {1:1, 2:0, 3:0, 4:0, 5:0}; seen = {};
+  programs = {}; prog = {1:1, 2:0, 3:0, 4:0, 5:0}; seen = {}; userHall = sampleHall('cup');
   level = 1; step = 1; program = [emptyRung()];
   goto(1, 1);
   msg = {tone:'info', title:'Hra je obnovená', text:'Všechny programy i postup jsou smazané. Začínáš znovu od úrovně 1.'};
@@ -1848,13 +2553,14 @@ fitProcess();
 // ---------- boot ----------
 function start(data){
   load(data);
+  refreshTags();
   sim = newSim();
   renderAll();
   maybeTheory();
   last = performance.now();
   requestAnimationFrame(loop);
 }
-try { window.claude?.hot?.snapshot?.(() => ({programs:{...programs, [level]:program}, level, step, prog, seen})); } catch(e){}
+try { window.claude?.hot?.snapshot?.(() => ({programs:{...programs, [level]:program}, level, step, prog, seen, hall:userHall})); } catch(e){}
 const hot = window.claude && window.claude.hot;
 if (hot && hot.ready) hot.ready(start); else start((hot && hot.data) || {});
 })();
