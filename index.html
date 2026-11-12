@@ -24,7 +24,10 @@ button{font:inherit;color:inherit}
 .wrap{max-width:1300px;margin:0 auto;padding-block:14px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 
 header{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;justify-content:space-between;padding-block:4px 14px;border-bottom:1px solid var(--line);margin-bottom:14px}
-.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.brand{display:flex;align-items:center;gap:12px;min-width:0;flex:1}
+.reset{margin-left:auto;font-family:var(--mono);font-size:11px;letter-spacing:.06em;background:none;border:1px solid var(--line);color:var(--fg2);border-radius:6px;padding:6px 10px;cursor:pointer;white-space:nowrap}
+.reset:hover{border-color:var(--err);color:var(--err)}
+.reset.arm{border-color:var(--err);color:var(--err);background:rgba(255,80,80,.08)}
 .brand h1{font-family:var(--display);font-weight:700;font-size:22px;letter-spacing:.02em;margin:0;line-height:1.1}
 .brand small{display:block;font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase}
 .ctrl{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
@@ -273,6 +276,7 @@ table.watch td.v.on{color:var(--live)}
     <div class="brand">
       <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect x="1" y="1" width="32" height="32" rx="7" fill="none" stroke="#f3ae3d" stroke-width="2"/><path d="M7 8v18M27 8v18M7 17h6M21 17h6M13 11v12M21 11v12" stroke="#f3ae3d" stroke-width="2" fill="none"/></svg>
       <div><h1>PLC Plnicí linka</h1><small id="brandSub">Siemens S7-1200 · LAD</small></div>
+      <button class="reset" id="btnReset" title="Smaže všechny programy i postup a začne od úrovně 1">↺ Obnovit hru</button>
     </div>
     <div class="ctrl">
       <div class="cpu" aria-live="polite"><span><span class="led stop" id="ledRun"></span><b id="cpuState">STOP</b></span><span><span class="led" id="ledErr"></span>ERROR</span></div>
@@ -1812,6 +1816,22 @@ $('btnClear').addEventListener('click', e => {
   if (clearArm) { program = [emptyRung()]; clearArm = false; e.target.textContent = 'Vymazat program'; changed(); stop(); return; }
   clearArm = true; e.target.textContent = 'Opravdu vymazat?';
   clearTimeout(clearT); clearT = setTimeout(() => { clearArm = false; e.target.textContent = 'Vymazat program'; }, 3000);
+});
+let resetArm = false, resetT = 0;
+$('btnReset').addEventListener('click', () => {
+  const b = $('btnReset');
+  if (!resetArm) {
+    resetArm = true; b.classList.add('arm'); b.textContent = 'Opravdu? Smaže celý postup';
+    clearTimeout(resetT); resetT = setTimeout(() => { resetArm = false; b.classList.remove('arm'); b.textContent = '↺ Obnovit hru'; }, 4000);
+    return;
+  }
+  clearTimeout(resetT); resetArm = false; b.classList.remove('arm'); b.textContent = '↺ Obnovit hru';
+  try { localStorage.removeItem(KEY); localStorage.removeItem('plc-linka-v1'); } catch(e){}
+  programs = {}; prog = {1:1, 2:0, 3:0, 4:0, 5:0}; seen = {};
+  level = 1; step = 1; program = [emptyRung()];
+  goto(1, 1);
+  msg = {tone:'info', title:'Hra je obnovená', text:'Všechny programy i postup jsou smazané. Začínáš znovu od úrovně 1.'};
+  renderAll(); window.scrollTo({top:0, behavior:'smooth'});
 });
 $('btnUnlock').addEventListener('click', () => { for (const L of LEVELS) prog[L.id] = L.steps.length + 1; save(); renderAll(); });
 
