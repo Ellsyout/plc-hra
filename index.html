@@ -138,6 +138,14 @@ header{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;justify-cont
 details.hint{border-top:1px solid var(--line);padding-top:10px}
 details.hint summary{cursor:pointer;font-family:var(--display);font-weight:600;color:var(--amber)}
 details.hint p{margin:8px 0 10px}
+.hsteps{margin:8px 0 10px;padding-left:22px;color:var(--fg2);display:flex;flex-direction:column;gap:4px}
+.sigs{border:1px solid var(--line);border-radius:8px;padding:8px 12px;display:flex;flex-direction:column;gap:5px;background:var(--panel2)}
+.sigs .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+.sig{display:grid;grid-template-columns:62px minmax(0,auto) minmax(0,1fr);gap:4px 10px;align-items:baseline;font-size:13.5px}
+.sig code{font-family:var(--mono);color:var(--amber);font-size:12px}
+.sig b{font-weight:600;color:var(--fg)}
+.sig span{color:var(--fg2)}
+@media (max-width:640px){.sig{grid-template-columns:62px minmax(0,1fr)}.sig span{grid-column:2}}
 .th-btn{align-self:flex-start}
 
 /* ladder */
@@ -710,14 +718,16 @@ const HALL9 = mkHall([
   HP(1, 2, 'pal', 2, {io:{full:'I2.4', rdy:'I2.5', ok:'I2.6', go:'Q2.4'}}),
 ], {1:'Q2.0'});
 const H8base = () => [latch(true), lamp()];
-const H8S1 = () => [...H8base(), R([C('NO','M0.2')], coil('Q2.2')), R([C('NO','M0.2')], coil('Q2.0')),
-  R([C('NO','I2.0'), C('NO','I2.2'), C('NC','I2.1')], coil('Q2.3')), R([C('NO','I2.1')], coil('Q2.4')), R([C('NO','M0.2')], coil('Q2.1'))];
-const H8S2 = () => [...H8S1(), R([C('NO','I2.4')], {kind:'tp', timer:'T1', pt:1, then:coil('Q2.5')})];
+const H8S1 = () => [...H8base(), R([C('NO','M0.2')], coil('Q2.2')), R([C('NO','M0.2')], coil('Q2.0'))];
+const H8S2 = () => [...H8S1(), R([C('NO','I2.0'), C('NO','I2.2'), C('NC','I2.1')], coil('Q2.3'))];
+const H8S3 = () => [...H8S2(), R([C('NO','I2.1')], coil('Q2.4')), R([C('NO','M0.2')], coil('Q2.1'))];
+const H8S4 = () => [...H8S3(), R([C('NO','I2.4')], {kind:'tp', timer:'T1', pt:1, then:coil('Q2.5')})];
 const H9base = () => [latch(true), lamp(), R([C('NO','M0.2')], coil('Q2.1')), R([C('NO','M0.2')], coil('Q2.0')),
   R([C('NO','I2.1')], {kind:'tp', timer:'T1', pt:1, then:coil('Q2.2')})];
-const H9S1 = () => [...H9base(), R([C('NO','I2.2'), C('NO','I2.3'), C('NO','I2.5'), C('NC','I2.4'), C('NO','M0.2')], coil('Q2.3'))];
-const H9S2 = () => [...H9S1(), R([C('NO','I2.4'), C('NO','I2.6')], coil('Q2.4')),
-  R([C('NO','Q2.4')], {kind:'ctu', counter:'C1', pv:2, r:'I0.4', then:{kind:'reset', tag:'M0.2'}})];
+const H9S1 = () => [...H9base(), R([C('NO','I2.2'), C('NO','I2.3'), C('NO','M0.2')], coil('Q2.3'))];
+const H9S2 = () => [...H9base(), R([C('NO','I2.2'), C('NO','I2.3'), C('NO','I2.5'), C('NC','I2.4'), C('NO','M0.2')], coil('Q2.3'))];
+const H9S3 = () => [...H9S2(), R([C('NO','I2.4'), C('NO','I2.6')], coil('Q2.4'))];
+const H9S4 = () => [...H9S3(), R([C('NO','Q2.4')], {kind:'ctu', counter:'C1', pv:2, r:'I0.4', then:{kind:'reset', tag:'M0.2'}})];
 Object.assign(DEMO, {
   pack: () => dspec({k:V('Balička 1 kus','%I2.0'), r:V('Krabice 1 připr.','%I2.2'), f:V('Krabice 1 plná','%I2.1'), v:V('Vložit','%Q2.3'), o:V('Vydat','%Q2.4')},
          [{tag:'k'},{tag:'r'},{tag:'f'}], ['v','o'], [[[C('NO','k'), C('NO','r'), C('NC','f')], coil('v')], [[C('NO','f')], coil('o')]]),
@@ -1166,32 +1176,72 @@ const LEVELS = [
   ]},
  {id:8, name:'Balení do krabic', hall:HALL8, panel:true, base:H8base,
   steps:[
-  {title:'Balička do krabic',
-   text:'Nová hala! Podavač sype upečené sušenky na pás 1 a ten je veze do baličky. Balička vloží čekající kus do krabice, když dostane výstup „Balička 1 vložit“. Plnou krabici (4 kusy) zavře a pošle na pás 2 výstup „Balička 1 vydat“. Nová prázdná krabice je připravená asi za 1,5 s.',
-   goal:'Pošli na expedici 3 plné krabice.',
-   hint:'Chod a kontrolku už máš. Přidej sítě: spínací „Chod“ → cívka „Podavač 1“, „Chod“ → „Pás 1“, „Chod“ → „Pás 2“. Vkládání: spínací „Balička 1 kus“ + spínací „Krabice 1 připr.“ + rozpínací „Krabice 1 plná“ → cívka „Balička 1 vložit“. Vydání: spínací „Krabice 1 plná“ → cívka „Balička 1 vydat“.',
+  {title:'Podavač a pás',
+   text:'Vítej v nové hale! Tady se nic neplní, tady se balí. Vlevo nahoře je podavač s upečenými sušenkami. Pás 1 je veze doprava a pak dolů do baličky. Před baličkou je doraz, takže se sušenky zastaví a počkají, i když pás jede dál. Zatím jen rozjeď podavač a pás.',
+   goal:'Po stisku START dovez sušenky k baličce.',
+   sig:[['M0.2', 'chod linky, ten už máš hotový ze START/STOP'], ['Q2.2', 'dokud je 1, podavač sype sušenky na pás'], ['Q2.0', 'motor pásu 1'], ['I2.0', 'sušenka čeká u baličky']],
+   hint:['Síť „Chod“ a kontrolku už máš.', 'Přidej síť: spínací „Chod“ → cívka „Podavač 1“.', 'Přidej síť: spínací „Chod“ → cívka „Pás 1“.', 'Spusť RUN. Obsluha zmáčkne START.'],
    sol:H8S1,
    script:[
     {at:0.5, press:['start'], log:'Obsluha stiskla START'},
-    {when:s => s.H.boxesOut >= 3, timeout:60, timeoutFail:['Krabice nedorazily', 'Za 60 s nedorazily na expedici 3 plné krabice. Běží podavač, oba pásy a vkládá balička kusy do krabice?']},
+    {when:s => s.img['I2.0'] && s.H.items.length >= 3, timeout:25, timeoutFail:['Sušenky nedojely', 'Za 25 s nedojely k baličce aspoň 3 sušenky. Zapíná „Chod“ podavač i pás 1?']},
+    {after:2, check:s => !s.img['M0.2'] ? ['Linka nejede', 'Chod se vypnul. Nech síť „Chod“ tak, jak byla.'] : null},
     {win:true}],
-   win:['Krabice jedou', 'Balička plní krabice po 4 kusech a plné posílá dál. PLC a stroj si „podávají ruce“: stroj hlásí stav na vstupy a PLC mu odpovídá výstupy.'],
+   win:['Sušenky čekají u baličky', 'Podavač sype, pás veze a u dorazu se sušenky řadí za sebou. Vidíš, že „Balička 1 kus“ svítí? Tím balička hlásí, že má co balit.'],
    theory:{title:'Nová hala: balení',
-    intro:'Plnicí linku máš hotovou. Teď se přesuneme do haly, kde se hotové výrobky balí. Stroje tu mají vlastní řízení a s PLC se domlouvají signály: hlásí, v jakém jsou stavu, a čekají na povel.',
+    intro:'Plnicí linku máš hotovou. Teď se přesuneme do haly, kde se hotové výrobky balí. Na halu se díváš shora, jako na plánek.',
     items:[
-     {t:'Hala shora', wide:true, p:'Halu teď vidíš z ptačí perspektivy. Každé políčko je jedna komponenta. Šipky na dopravníku ukazují, kam pás veze, a zeleně se rozsvítí, když jeho motor běží. Pod každou komponentou jsou její adresy.'},
-     {t:'Podavač', ad:'%Q2.2', p:'Zásobník upečených sušenek. Dokud je jeho výstup v 1, vydá na pás nový kus, jakmile je na začátku pásu volno. Když pás stojí, kusy se nahromadí a podavač počká.'},
-     {t:'Dva pásy, dva motory', ad:'%Q2.0 · %Q2.1', p:'Pás 1 veze sušenky do baličky, pás 2 odváží krabice. Každý má svůj motor. Před baličkou je doraz, takže se kusy zastaví a čekají, i když pás 1 jede dál.'},
-     {t:'Balička', wide:true, p:'Balička má pět signálů:',
-      ul:['Balička 1 kus (%I2.0): kus čeká na vstupu baličky.', 'Krabice 1 připr. (%I2.2): v baličce stojí krabice.', 'Krabice 1 plná (%I2.1): v krabici jsou 4 kusy.', 'Balička 1 vložit (%Q2.3): vloží čekající kus do krabice. Trvá to 0,4 s.', 'Balička 1 vydat (%Q2.4): zavře krabici a vysune ji na pás 2.'],
-      p2:'Vkládej jen když kus čeká, krabice je připravená a ještě není plná. Vyzkoušej si to:', demo:'pack'},
-     {t:'Handshake', p:'Takhle spolu mluví PLC a každý chytrý stroj. Stroj hlásí „jsem připravený“, PLC odpoví „udělej to“ a stroj pak potvrdí „hotovo“. Povel nikdy nedávej naslepo, bez potvrzení, že ho stroj zvládne.'},
+     {t:'Jak číst halu', wide:true, p:'Každé políčko je jedna komponenta:',
+      ul:['Dopravník: šipky ukazují, kam pás veze. Když motor běží, zezelenají. „P1“ v rohu znamená, že patří k motoru Pás 1.', 'Stroj: má nahoře jméno a dole své adresy. Adresa, která je právě v 1, svítí zeleně.', 'Kulaté a hranaté tvary na pásu jsou výrobky, hnědé čtverce krabice.']},
+     {t:'Podavač', ad:'%Q2.2', p:'Zásobník upečených sušenek. Dokud je jeho výstup v 1, vydá na pás novou sušenku pokaždé, když je na začátku pásu volno. Když pás stojí, podavač počká.'},
+     {t:'Doraz', p:'Mechanická zarážka před baličkou. Sušenka se o ni zastaví, i když pás jede dál. Další sušenky se řadí za ní. Na pásu to nevadí, jen to trochu klouže.'},
+     {t:'Proč „Chod“', p:'Podavač i pás zapínáš přes paměťový bit „Chod“, ne přímo tlačítkem. Díky tomu všechno zastaví STOP i E-STOP najednou, stejně jako u plnicí linky.'},
+    ]}},
+  {title:'Vkládání do krabice',
+   text:'V baličce stojí prázdná krabice. Když dostane povel „Balička 1 vložit“, vezme čekající sušenku a vloží ji do krabice. Trvá to 0,4 s. Do krabice se vejdou 4 kusy. Do plné krabice už nic nevkládej.',
+   goal:'Naplň krabici 4 sušenkami a dál nic nevkládej.',
+   sig:[['I2.0', 'sušenka čeká u baličky'], ['I2.2', 'v baličce stojí krabice'], ['I2.1', 'v krabici jsou 4 kusy'], ['Q2.3', 'povel: vlož čekající sušenku do krabice']],
+   hint:['Přidej síť se třemi kontakty za sebou.', 'Spínací „Balička 1 kus“: je co vložit.', 'Spínací „Krabice 1 připr.“: je kam vložit.', 'Rozpínací „Krabice 1 plná“: krabice ještě není plná.', 'Na konec cívka „Balička 1 vložit“.'],
+   sol:H8S2,
+   script:[
+    {at:0.5, press:['start'], log:'Obsluha stiskla START'},
+    {when:s => { const b = s.H.c['4,1'].box; return b && b.contents.length >= 4; }, timeout:30, timeoutFail:['Krabice se neplní', 'Za 30 s se krabice nenaplnila. Vkládá balička, když u ní čeká sušenka a krabice je připravená?']},
+    {after:3, log:'Krabice je plná, obsluha sleduje baličku'},
+    {win:true}],
+   win:['Krabice je plná', 'Balička vložila 4 sušenky a pak přestala, i když u ní další čekají. Hlídá to rozpínací kontakt „Krabice 1 plná“.'],
+   theory:{title:'Handshake: domluva se strojem',
+    intro:'Balička je chytrý stroj s vlastním řízením. PLC jí neříká, jak má hýbat rukou. Jen jí dá povel „vlož“ ve chvíli, kdy to dává smysl.',
+    items:[
+     {t:'Handshake', wide:true, p:'Takhle spolu mluví PLC a stroj. Stroj hlásí svůj stav na vstupy PLC, PLC mu dává povely svými výstupy:',
+      ol:['Balička hlásí: „mám sušenku“ (Balička 1 kus) a „mám krabici“ (Krabice 1 připr.).', 'PLC rozhodne a dá povel „vlož“ (Balička 1 vložit).', 'Balička sušenku vloží a ohlásí, kolik jich v krabici je. Při 4 kusech svítí „Krabice 1 plná“.']},
+     {t:'Tři podmínky v sérii', wide:true, p:'Povel „vložit“ smí přijít, jen když platí všechno najednou: sušenka čeká, krabice je připravená a krabice ještě není plná. Vyzkoušej si to (výstup „Vydat“ přijde na řadu v dalším kroku):', demo:'pack'},
+     {t:'Co se stane bez kontroly', p:'Kdyby balička vkládala i do plné krabice, sušenka by se do ní nevešla a spadla by. Kdyby vkládala bez krabice, spadla by na zem. Simulace ti v obou případech řekne, co se stalo.'},
+    ]}},
+  {title:'Vydání krabice',
+   text:'Plnou krabici musí balička zavřít a vysunout na pás 2, který ji odveze k expedici. Pak trvá asi 1,5 s, než přijede nová prázdná krabice. Mezitím „Krabice 1 připr.“ nesvítí a balička musí počkat.',
+   goal:'Pošli na expedici 3 plné krabice.',
+   sig:[['I2.1', 'v krabici jsou 4 kusy'], ['Q2.4', 'povel: zavři krabici a vysuň ji na pás 2'], ['Q2.1', 'motor pásu 2 k expedici'], ['I2.2', 'nová krabice je na místě']],
+   hint:['Přidej síť: spínací „Krabice 1 plná“ → cívka „Balička 1 vydat“.', 'Přidej síť: spínací „Chod“ → cívka „Pás 2“.', 'Síť „vložit“ nech, jak je. Díky kontaktu „Krabice 1 připr.“ počká na novou krabici sama.'],
+   sol:H8S3,
+   script:[
+    {at:0.5, press:['start'], log:'Obsluha stiskla START'},
+    {when:s => s.H.boxesOut >= 3, timeout:60, timeoutFail:['Krabice nedorazily', 'Za 60 s nedorazily na expedici 3 plné krabice. Vydává balička plnou krabici a jede pás 2?']},
+    {win:true}],
+   win:['Krabice jedou', 'Balička plní, vydává a čeká na novou krabici. Celý cyklus běží sám, protože každý povel má správné podmínky.'],
+   theory:{title:'Celý cyklus baličky',
+    intro:'Teď poskládáš celý pracovní cyklus: vkládat, vydat, počkat na novou krabici, a znovu.',
+    items:[
+     {t:'Cyklus krok za krokem', wide:true, p:'Balička pořád opakuje:',
+      ol:['Krabice je připravená, sušenky se vkládají jedna po druhé.', 'Při 4 kusech svítí „Krabice 1 plná“. Vkládání se zastaví a PLC dá povel „vydat“.', 'Krabice odjede na pás 2. „Krabice 1 připr.“ zhasne.', 'Asi za 1,5 s přijede nová krabice a vše začíná znovu.']},
+     {t:'Vydat', ad:'%Q2.4', p:'Povel „vydat“ stačí zapnout cívkou na signál „Krabice 1 plná“. Jakmile krabice odjede, signál „plná“ zhasne a cívka se sama vypne.'},
+     {t:'Pás 2', ad:'%Q2.1', p:'Krabice vyjede z baličky dolů a pás 2 ji veze doleva k expedici. Kdyby pás 2 stál, krabice by nemohla z baličky vyjet.'},
     ]}},
   {title:'Kamera kontroluje krabice',
    text:'Občas se sušenka zlomí. Krabice s rozlámaným kusem nesmí odejít k zákazníkovi. Kamera nad pásem 2 se podívá do každé krabice a hlásí „Kamera 1 OK“ nebo „Kamera 1 vada“. Vadnou krabici musí shodit vyhazovač, který stojí o políčko dál.',
    goal:'Vyřaď 2 vadné krabice a pošli 3 dobré.',
-   hint:'Nová síť: spínací „Kamera 1 vada“ → impulzní časovač TP "T1", PT = 1 s → cívka „Vyhazovač 1“. Vyhazovač stojí až za kamerou, a proto potřebuje delší impulz.',
-   sol:H8S2, defects:[6, 15],
+   sig:[['I2.4', 'kamera vidí vadnou krabici (jen chvilku)'], ['I2.3', 'kamera vidí dobrou krabici'], ['Q2.5', 'vyhazovač, shodí krabici do koše']],
+   hint:['Přidej síť: spínací „Kamera 1 vada“ → impulzní časovač TP.', 'Instance "T1", PT = 1 s.', 'Za výstup Q časovače dej cívku „Vyhazovač 1“.', 'TP prodlouží krátký signál kamery, aby vyhazovač stihl krabici, až k němu dojede.'],
+   sol:H8S4, defects:[6, 15],
    script:[
     {at:0.5, press:['start'], log:'Obsluha stiskla START'},
     {when:s => s.H.rej >= 2 && s.H.boxesOut >= 3, timeout:80, timeoutFail:['Kontrola nedoběhla', 'Za 80 s se nepodařilo vyřadit 2 vadné krabice a poslat 3 dobré.']},
@@ -1200,51 +1250,87 @@ const LEVELS = [
    theory:{title:'Kamerová kontrola balení',
     intro:'Kameru a vyhazovač znáš z úrovně 6. Teď ale kontroluješ celou krabici: jestli je plná a jestli jsou všechny kusy v pořádku.',
     items:[
-     {t:'Kamera nad pásem', ad:'%I2.3 · %I2.4', p:'Kamera se podívá do každé krabice, která pod ní projede. „Kamera 1 OK“ svítí u dobré krabice, „Kamera 1 vada“ u krabice s rozlámaným kusem nebo s méně než 4 kusy. Signál trvá asi třetinu sekundy.'},
-     {t:'Vyhazovač za kamerou', ad:'%Q2.5', p:'Vyhazovač stojí o políčko dál. Než k němu krabice dojede, signál kamery už zmizí. Prodlouží ho impulzní časovač TP: s PT = 1 s je vyhazovač vysunutý právě ve chvíli, kdy krabice projíždí kolem.', demo:'tp'},
+     {t:'Kamera nad pásem', ad:'%I2.3 · %I2.4', p:'Kamera se podívá do každé krabice, která pod ní projede. „Kamera 1 OK“ svítí u dobré krabice, „Kamera 1 vada“ u krabice s rozlámaným kusem nebo s méně než 4 kusy. Vadnou krabici poznáš i v hale: má v rohu červenou tečku. Signál kamery trvá asi třetinu sekundy.'},
+     {t:'Vyhazovač za kamerou', ad:'%Q2.5', p:'Vyhazovač stojí o políčko dál. Než k němu krabice dojede, signál kamery už zmizí. Prodlouží ho impulzní časovač TP: s PT = 1 s je vyhazovač vysunutý právě ve chvíli, kdy krabice projíždí kolem. Vyzkoušej si TP:', demo:'tp'},
      {t:'Kontrola v praxi', p:'Ve skutečných provozech kamera kontroluje i datum spotřeby, zavření krabice nebo čárový kód. Výsledky ukládá a obsluha na HMI vidí, kolik kusů se vyřadilo a proč.'},
     ]}},
   ]},
  {id:9, name:'Robot a paletizace', hall:HALL9, panel:true, base:H9base,
   steps:[
-  {title:'Robot skládá na paletu',
-   text:'Krabice s jogurty přijíždějí z balení. Kamera s vyhazovačem už fungují, máš je v programu. Na konci pásu je doraz a za ním robot. Na náběžnou hranu výstupu „Robot 1 start“ robot vezme krabici z dorazu a položí ji na paletu. Dokud se hýbe, nehlásí „v klidu“.',
-   goal:'Naplň paletu 4 krabicemi.',
-   hint:'Nová síť: spínací „Robot 1 kus“ + „Robot 1 v klidu“ + „Paleta 1 připr.“ + rozpínací „Paleta 1 plná“ + spínací „Chod“ → cívka „Robot 1 start“.',
+  {title:'Robot vezme krabici',
+   text:'Další hala: krabice s jogurty přijíždějí z balení. Kamera s vyhazovačem už fungují, máš je v programu. Pás vede až k robotu a končí dorazem. Robot umí vzít krabici z dorazu a položit ji na paletu za sebou. Cyklus spustí náběžná hrana výstupu „Robot 1 start“.',
+   goal:'Ať robot přenese 2 krabice na paletu.',
+   sig:[['I2.2', 'na dorazu čeká krabice'], ['I2.3', 'robot stojí v základní poloze a čeká'], ['Q2.3', 'start cyklu robota (na náběžnou hranu)']],
+   hint:['Přidej síť se třemi spínacími kontakty za sebou: „Robot 1 kus“, „Robot 1 v klidu“, „Chod“.', 'Na konec cívka „Robot 1 start“.', 'Bez kontaktu „v klidu“ by výstup zůstal zapnutý a robot by nedostal novou náběžnou hranu.'],
    sol:H9S1,
+   script:[
+    {at:0.5, press:['start'], log:'Obsluha stiskla START'},
+    {when:s => s.H.c['1,2'].items.length >= 2, timeout:35, timeoutFail:['Robot nepracuje', 'Za 35 s robot nepřenesl 2 krabice. Robot startuje jen na náběžnou hranu: výstup „Robot 1 start“ se musí po každém cyklu vypnout. Proto do podmínky patří i „Robot 1 v klidu“.']},
+    {win:true}],
+   win:['Robot pracuje', 'Robot se rozjede, když krabice čeká a on je v klidu. Během pohybu „v klidu“ zhasne, výstup start se vypne a robot je připravený na další náběžnou hranu.'],
+   theory:{title:'Průmyslový robot',
+    intro:'Na konci linky pracuje robot. Má vlastní řídicí systém s naprogramovanou dráhou pohybu. PLC mu jen říká, kdy má začít, a hlídá, aby začal jen ve správnou chvíli.',
+    items:[
+     {t:'Jak robot pracuje', wide:true, p:'Jeden cyklus robota trvá asi 2,4 s:',
+      ol:['Robot čeká v základní poloze. Svítí „Robot 1 v klidu“.', 'Výstup „Robot 1 start“ přejde z 0 na 1 (náběžná hrana). Robot vyrazí a „v klidu“ zhasne.', 'Chytí krabici z dorazu, otočí se a položí ji na paletu.', 'Vrátí se do základní polohy a „v klidu“ se znovu rozsvítí.']},
+     {t:'Proč náběžná hrana', p:'Kdyby robot reagoval na trvalou 1, po návratu by hned vyrazil znovu, i kdyby nic nečekalo. Proto se robot spouští hranou a PLC musí výstup mezi cykly vypnout. Hranu znáš z úrovně 7.'},
+     {t:'Doraz a „Robot 1 kus“', ad:'%I2.2', p:'Krabice se zastaví o doraz a čeká, i když pás jede dál. Senzor u dorazu pak hlásí „Robot 1 kus“. Robot tak krabici najde vždycky na stejném místě.'},
+     {t:'Bezpečnost', p:'Kolem skutečného robota je plot se zamčenými dveřmi a světelné závory. Když někdo vstoupí do buňky, robot se okamžitě zastaví. To ale řeší bezpečnostní PLC, ne náš program.'},
+    ]}},
+  {title:'Hlídej paletu',
+   text:'Na paletu se vejdou 4 krabice. Robot na plnou paletu nesmí nic položit. A když paleta zrovna není na místě, nesmí vůbec vyrazit.',
+   goal:'Naplň paletu 4 krabicemi a pak už robota nestartuj.',
+   sig:[['I2.5', 'paleta stojí na svém místě'], ['I2.4', 'na paletě jsou 4 krabice']],
+   hint:['Do sítě „Robot 1 start“ přidej další dva kontakty.', 'Spínací „Paleta 1 připr.“: je kam pokládat.', 'Rozpínací „Paleta 1 plná“: na paletě je ještě místo.', 'Síť pak má 5 kontaktů v řadě: kus, v klidu, připr., NE plná, Chod.'],
+   sol:H9S2,
    script:[
     {at:0.5, press:['start'], log:'Obsluha stiskla START'},
     {when:s => s.H.c['1,2'].items.length >= 4, timeout:45, timeoutFail:['Paleta se neplní', 'Za 45 s se paleta nenaplnila. Startuje robot, když na dorazu čeká krabice?']},
     {after:3, log:'Paleta je plná, obsluha sleduje robota'},
     {win:true}],
-   win:['Paleta je plná', 'Robot bere krabice jen když na něj čekají a když má kam je položit. Na plnou paletu už nic nedal.'],
-   theory:{title:'Průmyslový robot',
-    intro:'Na konci linky pracuje robot. Bere krabice a skládá je na paletu. Robot má vlastní řídicí systém s naprogramovanou dráhou pohybu. PLC mu jen říká, kdy má začít, a hlídá, aby začal jen ve správnou chvíli.',
+   win:['Paleta je plná', 'Robot bere krabice, jen když má kam je položit. Na plnou paletu už nic nedal a další krabice čekají na pásu.'],
+   theory:{title:'Paleta',
+    intro:'Robot přenáší krabice na paletu. Paleta ale není nekonečná a občas tam vůbec není.',
     items:[
-     {t:'Doraz na konci pásu', p:'Pás vede až k robotu. Krabice se zastaví o mechanický doraz a čeká, i když pás jede dál. Robot ji tak najde vždycky na stejném místě.'},
-     {t:'Signály robota', ad:'%Q2.3 · %I2.2 · %I2.3', p:'Robot hlásí svůj stav a čeká na povel:',
-      ul:['Robot 1 start (%Q2.3): cyklus spustí náběžná hrana tohoto výstupu.', 'Robot 1 kus (%I2.2): na dorazu stojí krabice.', 'Robot 1 v klidu (%I2.3): robot je v základní poloze a čeká.']},
-     {t:'Paleta', ad:'%I2.4 · %I2.5', p:'„Paleta 1 připr.“ znamená, že paleta stojí na svém místě. „Paleta 1 plná“ svítí při 4 krabicích. Na plnou paletu ani do prázdného místa robot nesmí nic položit.'},
+     {t:'Signály palety', ad:'%I2.4 · %I2.5', ul:['Paleta 1 připr. (%I2.5): paleta stojí na svém místě.', 'Paleta 1 plná (%I2.4): na paletě jsou 4 krabice.'], p:'Místo pro paletu hlásí dva stavy:'},
      {t:'Podmínky startu', wide:true, p:'Robot smí vyrazit, jen když platí všechno najednou: krabice čeká, robot je v klidu, paleta je připravená a není plná. Vyzkoušej si to:', demo:'robot'},
-     {t:'Bezpečnost', p:'Kolem skutečného robota je plot se zamčenými dveřmi a světelné závory. Když někdo vstoupí do buňky, bezpečnostní obvod robota okamžitě zastaví. To ale řeší bezpečnostní PLC, ne náš program.'},
     ]}},
-  {title:'Odvoz palet a konec zakázky',
-   text:'Plnou paletu odveze vozík k nakládce na kamion a za 3 s přiveze prázdnou. Kamera nad paletou ještě zkontroluje náklad: „Paleta 1 OK“ svítí, jen když je paleta plná a všechny krabice jsou v pořádku. Zakázka jsou 2 palety. Pak se musí linka sama zastavit.',
-   goal:'Odvez 2 palety a pak zastav linku.',
-   hint:'Odvoz: spínací „Paleta 1 plná“ + spínací „Paleta 1 OK“ → cívka „Paleta 1 odvézt“. Počítání: spínací „Paleta 1 odvézt“ → CTU "C1", PV = 2, R = „Kvitovat“, za ním Reset „Chod“.',
-   sol:H9S2, defects:[3],
+  {title:'Odvoz plné palety',
+   text:'Plnou paletu odveze vozík k nakládce na kamion a asi za 3 s přiveze prázdnou. Než paleta odjede, zkontroluje ji kamera shora: „Paleta 1 OK“ svítí, jen když je plná a všechny krabice jsou v pořádku. Mezitím robot čeká, protože „Paleta 1 připr.“ nesvítí.',
+   goal:'Odvez 2 plné palety.',
+   sig:[['I2.6', 'kamera: paleta je plná a v pořádku'], ['Q2.4', 'povel: odvezte paletu'], ['I2.5', 'nová paleta je na místě']],
+   hint:['Přidej síť: spínací „Paleta 1 plná“ + spínací „Paleta 1 OK“.', 'Na konec cívka „Paleta 1 odvézt“.', 'Síť robota nech, jak je. Na novou paletu počká sama díky kontaktu „Paleta 1 připr.“.'],
+   sol:H9S3, defects:[3],
    script:[
     {at:0.5, press:['start'], log:'Obsluha stiskla START'},
     {when:s => s.H.pallets >= 2, timeout:90, timeoutFail:['Palety neodjely', 'Za 90 s neodjely 2 plné palety. Odvoz spusť výstupem „Paleta 1 odvézt“, když je paleta plná a v pořádku.']},
-    {after:2.5, check:s => (s.img['Q2.1'] || s.img['Q2.0'] || s.img['M0.2']) ? ['Linka jede dál', 'Zakázka 2 palet je hotová, ale linka pořád vyrábí. Spočítej odvezené palety čítačem CTU "C1" s PV = 2 a jeho výstupem resetuj „Chod“.'] : null},
     {win:true}],
-   win:['Hra dokončena!', 'Máš za sebou celou výrobu: plnění, balení, kontrolu kvality, robota i expedici. V „Moje hala“ máš teď odemčené všechny komponenty a můžeš si postavit vlastní továrnu.'],
-   theory:{title:'Nakládka a konec zakázky',
-    intro:'Plná paleta musí odjet a místo ní přijet prázdná. A když je zakázka hotová, linka se má sama zastavit.',
+   win:['Palety jedou na kamion', 'Plná a zkontrolovaná paleta odjede, robot počká na prázdnou a pokračuje. Vadnou krabici cestou shodil vyhazovač, takže kamera nad paletou neměla co hlásit.'],
+   theory:{title:'Nakládka',
+    intro:'Plná paleta musí odjet a místo ní přijet prázdná. Celé to musí proběhnout bez toho, aby robot cokoli upustil.',
     items:[
      {t:'Odvoz palety', ad:'%Q2.4', p:'Výstup „Paleta 1 odvézt“ zavolá vozík. Ten odveze plnou paletu k nakládce na kamion a asi za 3 s přiveze prázdnou. Do té doby je „Paleta 1 připr.“ v nule a robot musí čekat.'},
      {t:'Kamera nad paletou', ad:'%I2.6', p:'Než paleta odjede, zkontroluje ji kamera shora. „Paleta 1 OK“ svítí, jen když je plná a všechny krabice jsou v pořádku. Odvoz proto podmiň tímto signálem. Kdyby se na paletu dostala vadná krabice, paleta zůstane stát a obsluha ji opraví.'},
-     {t:'Počítání palet', wide:true, p:'Zakázka jsou 2 palety. Spočítej povely k odvozu čítačem CTU a jeho výstupem resetuj „Chod“. Linka se zastaví a čeká. Kvitování čítač vynuluje pro další zakázku.', demo:'ctu'},
+     {t:'Dvojí kontrola', p:'Vadné krabice vyřadí už kamera s vyhazovačem na pásu. Kamera nad paletou je druhá pojistka. Ve výrobě se kontroluje víckrát, protože vrácená zásilka od zákazníka je mnohem dražší než jedna vyhozená krabice.'},
+    ]}},
+  {title:'Konec zakázky',
+   text:'Zakázka jsou 2 palety. Až odjede druhá, musí se linka sama zastavit, aby se zbytečně nevyrábělo. Další zakázku spustí obsluha: stiskne KVITOVAT a START.',
+   goal:'Po 2 odvezených paletách zastav linku.',
+   sig:[['Q2.4', 'povel k odvozu, každé sepnutí = 1 paleta'], ['M0.2', 'chod linky'], ['I0.4', 'kvitování vynuluje čítač']],
+   hint:['Přidej síť: spínací „Paleta 1 odvézt“ → čítač CTU.', 'Instance "C1", PV = 2, R = „Kvitovat“.', 'Za výstup Q čítače dej Reset (R) „Chod“.', 'Když CV dosáhne 2, Reset vypne chod a s ním podavač, pás i robota.'],
+   sol:H9S4, defects:[3],
+   script:[
+    {at:0.5, press:['start'], log:'Obsluha stiskla START'},
+    {when:s => s.H.pallets >= 2, timeout:90, timeoutFail:['Palety neodjely', 'Za 90 s neodjely 2 plné palety. Funguje odvoz z minulého kroku?']},
+    {after:2.5, check:s => (s.img['Q2.1'] || s.img['Q2.0'] || s.img['M0.2']) ? ['Linka jede dál', 'Zakázka 2 palet je hotová, ale linka pořád vyrábí. Spočítej odvezené palety čítačem CTU "C1" s PV = 2 a jeho výstupem resetuj „Chod“.'] : null},
+    {win:true}],
+   win:['Hra dokončena!', 'Máš za sebou celou výrobu: plnění, balení, kontrolu kvality, robota i expedici. V „Moje hala“ máš teď odemčené všechny komponenty a můžeš si postavit vlastní továrnu.'],
+   theory:{title:'Konec zakázky',
+    intro:'Výroba se plánuje po zakázkách. Když je zakázka hotová, linka má sama přestat, jinak by vyráběla zboží, které nikdo neobjednal.',
+    items:[
+     {t:'Počítání palet', wide:true, p:'Každý povel k odvozu je jedna paleta. Spočítej ho čítačem CTU a jeho výstupem resetuj „Chod“. Vyzkoušej si čítač:', demo:'ctu'},
+     {t:'Proč Reset, a ne rozpínací kontakt', p:'Reset „Chod“ vypne samodržení. Linka pak zůstane stát, dokud obsluha znovu nestiskne START. Kvitování vynuluje čítač, takže nová zakázka začne zase od nuly.'},
+     {t:'V praxi', p:'Velikost zakázky obvykle zadává obsluha na HMI nebo ji pošle nadřazený systém (MES). PLC pak jen porovnává, kolik už je hotovo.'},
     ]}},
   ]},
  {id:SANDBOX, name:'Moje hala', sandbox:true, panel:true, base:() => [emptyRung()],
@@ -2199,6 +2285,10 @@ function renderWatch(){
   for (const cn of ['C1', 'C2', 'C3']) { if (!program.some(r => r.out.kind === 'ctu' && r.out.counter === cn)) continue; const c = sim.counters[cn]; rows.push(tf(cn + '.CV', '"' + cn + '".CV', online ? c.cv : 0), tf(cn + '.Q', '"' + cn + '".Q', online && c.q)); }
   $('watch').innerHTML = rows.join('');
 }
+function sigHtml(S){
+  if (!S.sig) return '';
+  return `<div class="sigs"><div class="lbl">Signály v tomto kroku</div>${S.sig.map(([id, t]) => { const g = TAG[id] || {name:id, ad:id}; return `<div class="sig"><code>${esc(g.ad)}</code><b>${esc(g.name)}</b><span>${esc(t)}</span></div>`; }).join('')}</div>`;
+}
 function renderLesson(){
   const L = LV(), S = ST(), n = L.steps.length;
   const lv = LEVELS.map(x => {
@@ -2224,8 +2314,8 @@ function renderLesson(){
     return;
   }
   $('lesson').innerHTML = `<div class="levels">${lv}</div><div class="steps">${dots}</div>` +
-    `<h2>${step}/${n} · ${esc(S.title)}</h2><p>${esc(S.text)}</p><button class="btn small ghost th-btn" data-act="theory">Teorie ke kroku ${step}</button><div class="goal"><span>Cíl</span>${esc(S.goal)}</div>${m}` +
-    `<details class="hint" id="hint" ${hintOpen ? 'open' : ''}><summary>Nápověda</summary><p>${esc(S.hint)}</p><button class="btn small" data-act="solution">Vložit řešení kroku ${step}</button></details>`;
+    `<h2>${step}/${n} · ${esc(S.title)}</h2><p>${esc(S.text)}</p>${sigHtml(S)}<button class="btn small ghost th-btn" data-act="theory">Teorie ke kroku ${step}</button><div class="goal"><span>Cíl</span>${esc(S.goal)}</div>${m}` +
+    `<details class="hint" id="hint" ${hintOpen ? 'open' : ''}><summary>Nápověda</summary>${Array.isArray(S.hint) ? `<ol class="hsteps">${S.hint.map(x => `<li>${esc(x)}</li>`).join('')}</ol>` : `<p>${esc(S.hint)}</p>`}<button class="btn small" data-act="solution">Vložit řešení kroku ${step}</button></details>`;
   $('hint').addEventListener('toggle', e => { hintOpen = e.target.open; });
   $('brandSub').textContent = `Siemens S7-1200 · LAD · Úroveň ${level}`;
   $('procTitle').textContent = `Proces · ${L.name}`;
