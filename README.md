@@ -11,6 +11,8 @@ Hráč skládá program pro plnicí linku lahví a simulace hned ukáže, jestli
 3. **Váha a počítání** – analogový vstup, porovnávací kontakt CMP, čítač CTU, kvitování
 4. **Víčkovačka** – pneumatický válec, koncové spínače, dvě stanice na jednom pásu, pomocné bity
 5. **Poruchy a alarmy** – hlídací časovač, taktovací paměť (blikání), kvitování poruchy
+6. **Kontrola kvality** – kamera, vyhazovač s impulzním časovačem TP, druhý čítač zmetků
+7. **Ruční a automat** – přepínač režimů, ruční posuv, kontakty hrany -|P|- a -|N|-
 
 ## Spuštění
 
