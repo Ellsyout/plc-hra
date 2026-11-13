@@ -1,6 +1,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>PLC Plnicí linka</title>
+<meta name="author" content="Eliška Sosnová">
+<!-- © 2026 Eliška Sosnová. Všechna práva vyhrazena. Šíření bez písemného souhlasu autorky je zakázáno. Viz LICENSE. -->
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
@@ -206,6 +208,11 @@ table.watch td.v.on{color:var(--live)}
 .gloss p{margin:6px 0 0;color:var(--fg2);font-size:14px}
 .gloss code{font-family:var(--mono);color:var(--amber);font-size:12.5px}
 .foot{display:flex;justify-content:center;padding-top:22px}
+.lic{margin-top:18px;padding-top:14px;border-top:1px solid var(--line);text-align:center;font-size:12.5px;color:var(--dim)}
+.lic p{margin:0 0 6px}
+.lic summary{cursor:pointer;font-family:var(--mono);font-size:11px;text-decoration:underline;display:inline-block}
+.lic ol{text-align:left;max-width:70ch;margin:10px auto 0;padding-left:20px;display:flex;flex-direction:column;gap:5px;color:var(--fg2)}
+.lic a{color:var(--amber)}
 .linkbtn{background:none;border:0;color:var(--dim);font-family:var(--mono);font-size:11px;text-decoration:underline;cursor:pointer}
 
 /* sheet */
@@ -495,6 +502,19 @@ table.watch td.v.on{color:var(--live)}
     </aside>
   </div>
   <div class="foot"><button class="linkbtn" id="btnUnlock">Odemknout všechny úrovně (pro učitele)</button></div>
+  <footer class="lic">
+    <p>© 2026 Eliška Sosnová. Všechna práva vyhrazena.</p>
+    <details>
+      <summary>Licenční podmínky</summary>
+      <ol>
+        <li>Tato hra, včetně zdrojového kódu, textů, úloh, teorie, grafiky a celé podoby aplikace, je autorským dílem Elišky Sosnové.</li>
+        <li>Hru je dovoleno hrát a používat k osobnímu studiu a ve výuce prostřednictvím oficiální adresy <a href="https://ellsyout.github.io/plc-hra/">ellsyout.github.io/plc-hra</a>.</li>
+        <li>Bez předchozího písemného souhlasu autorky je zakázáno hru nebo jakoukoli její část dále šířit, kopírovat nebo zveřejňovat na jiných místech, upravovat ji nebo z ní vytvářet odvozená díla, prodávat ji nebo jinak komerčně využívat a vydávat ji za vlastní či odstraňovat údaje o autorce.</li>
+        <li>Žádost o souhlas zašlete autorce přes GitHub: <a href="https://github.com/Ellsyout">github.com/Ellsyout</a>.</li>
+        <li>Hra je poskytována tak, jak je, bez jakékoli záruky.</li>
+      </ol>
+    </details>
+  </footer>
 </div>
 
 <div class="backdrop" id="backdrop" hidden></div>

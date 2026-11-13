@@ -26,3 +26,11 @@ Nové komponenty (pec, víčkovačka, kamera, balička, robot, paleta…) se ode
 ## Spuštění
 
 Celá hra je jeden soubor `index.html`. Stačí ho otevřít v prohlížeči, nic se neinstaluje.
+
+## Licence
+
+Copyright © 2026 Eliška Sosnová. Všechna práva vyhrazena.
+
+Hru můžeš hrát a používat ke studiu i ve výuce na adrese https://ellsyout.github.io/plc-hra/.
+Bez předchozího písemného souhlasu autorky ji nelze dále šířit, kopírovat, upravovat ani komerčně využívat.
+Celé znění je v souboru [LICENSE](LICENSE).
