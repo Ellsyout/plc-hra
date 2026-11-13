@@ -13,10 +13,11 @@ Hráč skládá program pro výrobní linku a simulace hned ukáže, jestli link
 5. **Poruchy a alarmy** – hlídací časovač, taktovací paměť (blikání), kvitování poruchy
 6. **Kontrola kvality** – kamera, vyhazovač s impulzním časovačem TP, druhý čítač zmetků
 7. **Ruční a automat** – přepínač režimů, ruční posuv, kontakty hrany -|P|- a -|N|-
-8. **Balení do krabic** – nová hala shora, balička a handshake se strojem, kamerová kontrola krabic
+8. **Balení do krabic** – nová hala shora, balička a handshake se strojem, kamerová kontrola krabic i jednotlivých sušenek před balením
 9. **Robot a paletizace** – robot s dorazem a startem na hranu, paleta, kamera nad paletou, konec zakázky čítačem
 10. **Třídění výhybkou** – výhybka a sklad zmetků, sledování kusu paměťovým bitem, hlídání plného skladu
 11. **Zarážka a odstup** – pneumatická zarážka, fronta kusů, pouštění v taktu (taktovací bit + TP)
+12. **Závěrečná zkouška** – celá linka od prázdného programu: chod a E-STOP, zarážka s pamětí kusu na cestě, stanice s handshake, třídění a hlídání zaseknuté plničky
 
 ## Moje hala
 

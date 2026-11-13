@@ -785,7 +785,7 @@ const DEMO = {
 };
 
 // ---------- hall: products, components, preset layouts ----------
-const CS = 80, HC = 16, HR = 9, HSPEED = 1.25, HGAP = 0.62, SANDBOX = 12;
+const CS = 80, HC = 16, HR = 9, HSPEED = 1.25, HGAP = 0.62, SANDBOX = 13;
 const DIRS = [[1, 0], [0, 1], [-1, 0], [0, -1]];
 const OPN = {fill:'plnění', bake:'pečení', label:'etiketa', cap:'víčko', press:'lisování', drill:'vrtání', seal:'zatavení fólie', seam:'zavíčkování', cool:'chlazení', wrap:'obal'};
 const PRODUCTS = {
@@ -842,7 +842,7 @@ const HP = (x, y, t, d, o = {}) => ({x, y, t, d, n:1, m:1, io:{}, ...o});
 const mkHall = (comps, groups) => ({cells:Object.fromEntries(comps.map(c => [c.x + ',' + c.y, c])), groups, boxN:4, palN:4});
 const HALL8 = mkHall([
   HP(0, 0, 'src', 0, {io:{q:'Q2.2'}, cfg:{prod:'cookie', done:['bake'], every:1.3}}),
-  HP(1, 0, 'belt', 0), HP(2, 0, 'belt', 0), HP(3, 0, 'belt', 0), HP(4, 0, 'belt', 1),
+  HP(1, 0, 'cam', 0, {n:2, io:{ok:'I2.5', bad:'I2.6'}}), HP(2, 0, 'push', 0, {n:2, io:{q:'Q2.6'}}), HP(3, 0, 'belt', 0), HP(4, 0, 'belt', 1),
   HP(4, 1, 'pack', 1, {io:{in:'I2.0', full:'I2.1', rdy:'I2.2', put:'Q2.3', out:'Q2.4'}}),
   HP(4, 2, 'belt', 2, {m:2}), HP(3, 2, 'cam', 2, {m:2, io:{ok:'I2.3', bad:'I2.4'}}), HP(2, 2, 'push', 2, {m:2, io:{q:'Q2.5'}}),
   HP(1, 2, 'belt', 2, {m:2}), HP(0, 2, 'out', 2),
@@ -873,11 +873,28 @@ const H10S3 = () => [...H10S2(), R([C('NO','I2.2')], {kind:'ctu', counter:'C1', 
 const H11base = () => H10S2();
 const H11S1 = () => [...H11base(), R([C('NO','M0.2')], coil('Q2.3'))];
 const H11S2 = () => [...H11base(), R([C('NO','M100.7')], {kind:'tp', timer:'T1', pt:0.4, then:{kind:'none'}}), R([C('NO','M0.2'), C('NC','T1.Q')], coil('Q2.3'))];
+const HALL12 = mkHall([
+  HP(0, 0, 'src', 0, {io:{q:'Q2.2'}, cfg:{prod:'cup', done:[], every:0.8}}),
+  HP(1, 0, 'belt', 0), HP(2, 0, 'stop', 0, {io:{q:'Q2.3', s:'I2.0'}}),
+  HP(3, 0, 'belt', 0, {m:2}), HP(4, 0, 'fill', 0, {m:2, io:{q:'Q2.4', in:'I2.1', d:'I2.2'}}), HP(5, 0, 'belt', 0, {m:2}),
+  HP(6, 0, 'cam', 0, {m:2, io:{ok:'I2.3', bad:'I2.4'}}), HP(7, 0, 'div', 0, {m:2, io:{q:'Q2.5'}}), HP(8, 0, 'belt', 0, {m:2}), HP(9, 0, 'out', 0),
+  HP(7, 1, 'sens', 1, {m:2, io:{s:'I2.5'}}), HP(7, 2, 'rework', 1),
+], {1:'Q2.0', 2:'Q2.1'});
+const H12S1 = () => [latch(true), lamp(), R([C('NO','M0.2')], coil('Q2.2')), R([C('NO','M0.2')], coil('Q2.0')), R([C('NO','M0.2')], coil('Q2.3'))];
+const H12S2 = () => [latch(true), lamp(), R([C('NO','M0.2')], coil('Q2.2')), R([C('NO','M0.2')], coil('Q2.0')),
+  R([C('NO','I2.0'), C('NC','I2.1'), C('NC','M10.1')], {kind:'tp', timer:'T1', pt:0.4, then:{kind:'set', tag:'M10.1'}}),
+  R([C('NO','M0.2'), C('NC','T1.Q')], coil('Q2.3')),
+  R([C('NO','I2.1')], {kind:'reset', tag:'M10.1'}),
+  R([C('NO','M0.2'), [C('NC','I2.1'), C('NO','I2.2')]], coil('Q2.1')),
+  R([C('NO','I2.1'), C('NC','I2.2'), C('NO','M0.2')], coil('Q2.4'))];
+const H12S3 = () => [...H12S2(), R([C('NO','I2.4')], {kind:'set', tag:'M10.0'}), R([C('NO','M10.0')], coil('Q2.5')), R([C('NO','I2.5')], {kind:'reset', tag:'M10.0'})];
+const H12S4 = () => { const p = H12S3(); p[0] = latch(true, true); return [...p, R([C('NO','Q2.4')], {kind:'ton', timer:'T2', pt:4, then:{kind:'set', tag:'M1.0'}}), R([C('NO','M1.0'), C('NO','M100.5')], coil('Q0.5')), R([C('NO','I0.4')], {kind:'reset', tag:'M1.0'})]; };
 const H8base = () => [latch(true), lamp()];
 const H8S1 = () => [...H8base(), R([C('NO','M0.2')], coil('Q2.2')), R([C('NO','M0.2')], coil('Q2.0'))];
 const H8S2 = () => [...H8S1(), R([C('NO','I2.0'), C('NO','I2.2'), C('NC','I2.1')], coil('Q2.3'))];
 const H8S3 = () => [...H8S2(), R([C('NO','I2.1')], coil('Q2.4')), R([C('NO','M0.2')], coil('Q2.1'))];
 const H8S4 = () => [...H8S3(), R([C('NO','I2.4')], {kind:'tp', timer:'T1', pt:1, then:coil('Q2.5')})];
+const H8S5 = () => [...H8S4(), R([C('NO','I2.6')], {kind:'tp', timer:'T2', pt:1, then:coil('Q2.6')})];
 const H9base = () => [latch(true), lamp(), R([C('NO','M0.2')], coil('Q2.1')), R([C('NO','M0.2')], coil('Q2.0')),
   R([C('NO','I2.1')], {kind:'tp', timer:'T1', pt:1, then:coil('Q2.2')})];
 const H9S1 = () => [...H9base(), R([C('NO','I2.2'), C('NO','I2.3'), C('NO','M0.2')], coil('Q2.3'))];
@@ -1466,7 +1483,7 @@ const LEVELS = [
      {t:'Pás 2', ad:'%Q2.1', p:'Krabice vyjede z baličky dolů a pás 2 ji veze doleva k expedici. Kdyby pás 2 stál, krabice by nemohla z baličky vyjet.'},
     ]}},
   {title:'Kamera kontroluje krabice',
-   text:'Občas se sušenka zlomí. Krabice s rozlámaným kusem nesmí odejít k zákazníkovi. Kamera nad pásem 2 se podívá do každé krabice a hlásí „Kamera 1 OK“ nebo „Kamera 1 vada“. Vadnou krabici musí shodit vyhazovač, který stojí o políčko dál.',
+   text:'Občas se sušenka v peci připálí. Krabice se spálenou (tmavou) sušenkou nesmí odejít k zákazníkovi. Kamera nad pásem 2 se podívá do každé krabice a hlásí „Kamera 1 OK“ nebo „Kamera 1 vada“. Vadnou krabici musí shodit vyhazovač, který stojí o políčko dál.',
    goal:'Vyřaď 2 vadné krabice a pošli 3 dobré.',
    sig:[['I2.4', 'kamera vidí vadnou krabici (jen chvilku)'], ['I2.3', 'kamera vidí dobrou krabici'], ['Q2.5', 'vyhazovač, shodí krabici do koše']],
    hint:['Přidej síť: spínací „Kamera 1 vada“ → impulzní časovač TP.', 'Instance "T1", PT = 1 s.', 'Za výstup Q časovače dej cívku „Vyhazovač 1“.', 'TP prodlouží krátký signál kamery, aby vyhazovač stihl krabici, až k němu dojede.'],
@@ -1475,13 +1492,32 @@ const LEVELS = [
     {at:0.5, press:['start'], log:'Obsluha stiskla START'},
     {when:s => s.H.rej >= 2 && s.H.boxesOut >= 3, timeout:80, timeoutFail:['Kontrola nedoběhla', 'Za 80 s se nepodařilo vyřadit 2 vadné krabice a poslat 3 dobré.']},
     {win:true}],
-   win:['Úroveň 8 hotová!', 'Na expedici jdou jen plné a celé krabice. Další úroveň: robot je naskládá na paletu.'],
+   win:['Vadné krabice vyřazeny', 'Na expedici jdou jen plné a celé krabice. Jenže s každou spálenou sušenkou letí do koše celá krabice. To jde udělat lépe.'],
    theory:{title:'Kamerová kontrola balení',
     intro:'Kameru a vyhazovač znáš z úrovně 6. Teď ale kontroluješ celou krabici: jestli je plná a jestli jsou všechny kusy v pořádku.',
     items:[
-     {t:'Kamera nad pásem', ad:'%I2.3 · %I2.4', p:'Kamera se podívá do každé krabice, která pod ní projede. „Kamera 1 OK“ svítí u dobré krabice, „Kamera 1 vada“ u krabice s rozlámaným kusem nebo s méně než 4 kusy. Vadnou krabici poznáš i v hale: má v rohu červenou tečku. Signál kamery trvá asi třetinu sekundy.'},
+     {t:'Kamera nad pásem', ad:'%I2.3 · %I2.4', p:'Kamera se podívá do každé krabice, která pod ní projede. „Kamera 1 OK“ svítí u dobré krabice, „Kamera 1 vada“ u krabice se spálenou sušenkou nebo s méně než 4 kusy. Vadnou krabici poznáš i v hale: má v rohu červenou tečku. Signál kamery trvá asi třetinu sekundy.'},
      {t:'Vyhazovač za kamerou', ad:'%Q2.5', p:'Vyhazovač stojí o políčko dál. Než k němu krabice dojede, signál kamery už zmizí. Prodlouží ho impulzní časovač TP: s PT = 1 s je vyhazovač vysunutý právě ve chvíli, kdy krabice projíždí kolem. Vyzkoušej si TP:', demo:'tp'},
      {t:'Kontrola v praxi', p:'Ve skutečných provozech kamera kontroluje i datum spotřeby, zavření krabice nebo čárový kód. Výsledky ukládá a obsluha na HMI vidí, kolik kusů se vyřadilo a proč.'},
+    ]}},
+  {title:'Kontrola před balením',
+   text:'Vyhazovat celou krabici kvůli jedné spálené sušence je škoda. Na začátku pásu 1 je proto druhá kamera (Kamera 2) a hned za ní Vyhazovač 2. Spálenou sušenku vyhodí dřív, než se dostane do krabice. Kamera 1 u expedice pak zůstane jako druhá pojistka.',
+   goal:'Vyhoď 3 spálené sušenky před balením a pošli 3 krabice. Žádná krabice nesmí do koše.',
+   sig:[['I2.6', 'Kamera 2 vidí spálenou sušenku'], ['Q2.6', 'Vyhazovač 2 na pásu 1'], ['I2.4', 'Kamera 1 u expedice (druhá pojistka)']],
+   hint:['Přidej síť: spínací „Kamera 2 vada“ → impulzní časovač TP "T2", PT = 1 s.', 'Za výstup Q časovače dej cívku „Vyhazovač 2“.', 'Je to stejné zapojení jako u Kamery 1, jen s vlastním časovačem T2. Časovač T1 už patří Kameře 1.'],
+   sol:H8S5, defects:[3, 7, 10],
+   script:[
+    {at:0.5, press:['start'], log:'Obsluha stiskla START'},
+    {when:s => s.H.rejItems >= 3 && s.H.boxesOut >= 3, timeout:80, timeoutFail:['Kontrola nedoběhla', 'Za 80 s se nepodařilo vyhodit 3 spálené sušenky a poslat 3 krabice.']},
+    {win:true}],
+   check(s){ if (s.H.rejBoxes > 0) return fail(['Do krabice se dostala spálená sušenka', 'Kamera 1 u expedice musela vyřadit celou krabici. Spálenou sušenku má vyhodit už Vyhazovač 2 na pásu 1: zapoj „Kamera 2 vada“ přes TP "T2" (1 s) na cívku „Vyhazovač 2“.']); },
+   win:['Úroveň 8 hotová!', 'Spálené sušenky letí pryč hned na začátku a krabice jsou vždy celé. Kamera u expedice hlídá jako druhá pojistka. Další úroveň: robot naskládá krabice na paletu.'],
+   theory:{title:'Kontrola co nejdřív',
+    intro:'Čím dřív se vada najde, tím méně se vyhodí. Proto bývá na lince kontrol víc: jedna hned po výrobě, další před expedicí.',
+    items:[
+     {t:'Kamera 2 na pásu 1', ad:'%I2.5 · %I2.6', p:'Kamera kontroluje každou sušenku zvlášť, ještě před baličkou. Spálená sušenka je tmavá a kamera ji pozná podle barvy.'},
+     {t:'Vlastní časovač', ad:'"T2"', p:'Každý časovač má svou instanci. T1 už prodlužuje signál Kamery 1, proto Kamera 2 potřebuje vlastní časovač T2. Se stejným časovačem pro oba vyhazovače by se navzájem rušily.'},
+     {t:'Dvě kontroly', p:'Kamera 2 vyhazuje jednotlivé sušenky, Kamera 1 kontroluje hotové krabice. Když první kontrola funguje, druhá nemá co vyřadit. Je ale dobré ji mít: kdyby Kamera 2 selhala, vadná krabice k zákazníkovi stejně neodejde.'},
     ]}},
   ]},
  {id:9, name:'Robot a paletizace', hall:HALL9, panel:true, base:H9base,
@@ -1653,13 +1689,112 @@ const LEVELS = [
     {at:0.5, press:['start'], log:'Obsluha stiskla START'},
     {when:s => s.H.reworked >= 1 && s.H.units >= 4, timeout:60, timeoutFail:['Kelímky neprojíždějí', 'Za 60 s se nepodařilo poslat 4 dobré kelímky na expedici a 1 vadný do zmetků. Otevírá se zarážka pravidelně na krátkou chvíli?']},
     {win:true}],
-   win:['Hra dokončena!', 'Máš za sebou celou výrobu: plnění, balení, kontrolu kvality, robota, třídění i odstupy kusů. V „Moje hala“ máš teď odemčené všechny komponenty a můžeš si postavit vlastní továrnu.'],
+   win:['Úroveň 11 hotová!', 'Zarážka dělá pravidelné rozestupy a kamera vidí vždy jen jeden kelímek. Zbývá závěrečná zkouška: celá linka od prázdného programu.'],
    theory:{title:'Takt a odstupy',
     intro:'Kamera, výhybka i stroje potřebují, aby kusy nejely natěsno. Zarážka z nepravidelné fronty udělá pravidelný proud kusů.',
     items:[
      {t:'Taktovací bit 0,5 Hz', ad:'%M100.7', p:'Bit 7 taktovací paměti bliká s frekvencí 0,5 Hz: jednu sekundu je v 1 a jednu v 0. Jeho náběžná hrana tedy přijde každé 2 sekundy.'},
      {t:'Krátké otevření', wide:true, p:'Impulzní časovač TP spustí náběžná hrana taktu a na 0,4 s sepne. Zarážka je zapojená přes rozpínací kontakt "T1".Q, takže se na tu chvíli otevře. Za 0,4 s projede právě jeden kelímek. Další dojede ke kolíku až po jeho zavření. Vyzkoušej si TP:', demo:'tp'},
      {t:'Proč na odstupu záleží', p:'Kamera musí v zorném poli vidět jen jeden kus, jinak neví, který je vadný. A výhybka se smí přehodit, jen když v ní žádný jiný kus není. Pravidelné rozestupy obojí zajistí.'},
+    ]}},
+  ]},
+ {id:12, name:'Závěrečná zkouška', hall:HALL12, panel:true, base:() => [emptyRung()],
+  steps:[
+  {title:'Chod a bezpečnost',
+   text:'Závěrečná zkouška: celou linku naprogramuješ od začátku, program je prázdný. Linka: podavač sype prázdné kelímky, zarážka je drží ve frontě, za ní je plnička na vlastním pásu, kamera, výhybka a sklad zmetků. Začni tím nejdůležitějším: chodem se START, STOP a E-STOP, kontrolkou chodu. Chod rozjede podavač a pás 1 a vysune zarážku, aby kelímky čekaly ve frontě.',
+   goal:'Vytvoř frontu u zarážky. STOP i E-STOP linku zastaví a sama se nerozjede.',
+   sig:[['I0.1', 'START'], ['I0.2', 'STOP, rozpínací: nestisknutý = 1'], ['I0.3', 'E-STOP, rozpínací: nestisknutý = 1'], ['M0.2', 'chod linky'], ['Q0.2', 'kontrolka chodu'], ['Q2.2', 'podavač'], ['Q2.0', 'pás 1 (před zarážkou)'], ['Q2.3', 'zarážka: 1 = drží kelímky']],
+   hint:['Síť „Chod“: paralelně spínací „Start“ a „Chod“, za nimi v sérii spínací „Stop“ a spínací „E-STOP“ → cívka „Chod“.', 'Spínací „Chod“ → cívka „Kontrolka chodu“.', 'Spínací „Chod“ → „Podavač 1“, „Pás 1“ a „Zarážka 1“ (tři sítě).'],
+   sol:H12S1,
+   check(s){ if (s.H.items.some(i => i.x >= 3)) return fail(['Kelímek projel zarážkou', 'V tomto kroku musí zarážka držet všechny kelímky ve frontě. Zapni výstup „Zarážka 1“ cívkou ze sítě „Chod“.']); },
+   script:[
+    {at:0.5, press:['start'], log:'Obsluha stiskla START'},
+    {when:s => s.img['I2.0'] && s.H.items.length >= 2, timeout:15, timeoutFail:['Fronta se netvoří', 'Za 15 s se u zarážky neseřadily kelímky. Rozjede chod podavač, pás 1 a zarážku?']},
+    {after:0.5, check:s => !s.img['Q0.2'] ? ['Kontrolka chodu nesvítí', 'Když linka jede, musí svítit kontrolka chodu (%Q0.2).'] : null},
+    {press:['stop'], dur:0.4, log:'Obsluha stiskla STOP'},
+    {after:0.6, check:s => (s.img['M0.2'] || s.img['Q2.0'] || s.img['Q2.2']) ? ['STOP nezastavil linku', 'Po stisku STOP se musí vypnout chod a s ním podavač i pás. STOP je rozpínací, v síti „Chod“ proto patří spínací kontakt „Stop“ v sérii.'] : null},
+    {press:['start'], log:'Obsluha stiskla START'},
+    {after:0.8, check:s => !s.img['M0.2'] ? ['Linka se znovu nerozjela', 'Po novém stisku START musí chod znovu naskočit. Má síť „Chod“ samodržení?'] : null},
+    {hold:'estop', log:'Obsluha stiskla E-STOP'},
+    {after:0.6, check:s => s.img['M0.2'] ? ['E-STOP nevypnul chod', 'Nouzové zastavení musí shodit chod. Přidej do sítě „Chod“ v sérii spínací kontakt „E-STOP“ (je zapojený jako rozpínací).'] : null},
+    {release:'estop', log:'Obsluha odjistila E-STOP'},
+    {after:1, check:s => s.img['M0.2'] ? ['Linka se rozjela sama', 'Po odjištění E-STOP se linka nesmí rozjet bez nového stisku START.'] : null},
+    {press:['start'], log:'Obsluha stiskla START'},
+    {after:0.8, check:s => !s.img['M0.2'] ? ['Linka se nerozjela', 'Po odjištění E-STOP a stisku START se má linka zase rozjet.'] : null},
+    {win:true}],
+   win:['Základ stojí', 'Chod, STOP, E-STOP i fronta u zarážky fungují. Na tom teď postavíš zbytek linky.'],
+   theory:{title:'Závěrečná zkouška',
+    intro:'Tahle úroveň je opakování všeho podstatného. Program začíná prázdný a každý krok přidá jednu část linky. Nápověda je k dispozici, ale zkus to nejdřív bez ní.',
+    items:[
+     {t:'Linka shora', wide:true, p:'Zleva doprava:', ul:['Podavač 1 (%Q2.2) sype prázdné kelímky na pás 1 (%Q2.0).', 'Zarážka 1 (%Q2.3, kus %I2.0) je drží ve frontě.', 'Pás 2 (%Q2.1) veze kelímky přes plničku (%Q2.4, kus %I2.1, hotovo %I2.2), kameru (OK %I2.3, vada %I2.4) a výhybku (%Q2.5).', 'Vadné kelímky jedou přes Senzor 1 (%I2.5) do skladu zmetků, dobré na expedici.']},
+     {t:'Rozpínací tlačítka', p:'STOP i E-STOP jsou zapojené jako rozpínací: nestisknuté dávají 1. V síti „Chod“ proto patří spínací kontakty v sérii. Když se tlačítko stiskne nebo přeruší drát, chod spadne. Vyzkoušej si to:', demo:'estop'},
+     {t:'E-STOP v hale', p:'Nouzové zastavení v hale odpojí napájení všech pohonů, stejně jako skutečný bezpečnostní obvod. Program ale musí chod shodit sám, aby se linka po odjištění nerozjela bez povelu.'},
+    ]}},
+  {title:'Po jednom do plničky',
+   text:'Plnička plní jeden kelímek za druhým. Zarážka ho smí pustit jen tehdy, když je plnička volná a žádný kelímek už k ní nejede. Kelímek na cestě si pamatuj bitem „Pomocný 2“ (%M10.1): nastav ho při uvolnění, smaž ho, až kelímek dojede do plničky. Plnička pracuje na pásu 2, který se při plnění zastaví.',
+   goal:'Naplň a pošli na expedici 4 kelímky. V úseku za zarážkou smí být vždy jen jeden.',
+   sig:[['I2.0', 'u zarážky čeká kelímek'], ['M10.1', 'paměť: kelímek jede k plničce'], ['I2.1', 'kelímek stojí v plničce'], ['I2.2', 'kelímek je naplněný'], ['Q2.1', 'pás 2 (plnička, kamera, výhybka)'], ['Q2.4', 'plnička']],
+   hint:['Uvolnění: spínací „Zarážka 1 kus“ + rozpínací „Plnička 1 kus“ + rozpínací „Pomocný 2“ → TP "T1", PT = 0,4 s, za Q Set „Pomocný 2“.', 'Síť zarážky uprav: spínací „Chod“ + rozpínací "T1".Q → cívka „Zarážka 1“.', 'Spínací „Plnička 1 kus“ → Reset „Pomocný 2“.', 'Pás 2: spínací „Chod“ a za ním paralelně rozpínací „Plnička 1 kus“ / spínací „Plnička 1 hotovo“ → cívka „Pás 2“.', 'Plnička: spínací „Plnička 1 kus“ + rozpínací „Plnička 1 hotovo“ + spínací „Chod“ → cívka „Plnička 1“.'],
+   sol:H12S2,
+   check(s){ if (s.H.items.filter(i => Math.floor(i.x) === 3 && Math.floor(i.y) === 0).length > 1) return fail(['K plničce jedou dva kelímky', 'Zarážka pustila další kelímek dřív, než ten předchozí dojel do plničky. Pamatuj si kelímek na cestě bitem „Pomocný 2“: Set při uvolnění, Reset když svítí „Plnička 1 kus“, a uvolňuj jen když je „Pomocný 2“ v nule.']); },
+   script:[
+    {at:0.5, press:['start'], log:'Obsluha stiskla START'},
+    {when:s => s.H.units >= 4, timeout:70, timeoutFail:['Kelímky nedorazily', 'Za 70 s nedorazily na expedici 4 plné kelímky. Pouští zarážka kelímky, jede pás 2 a plní plnička?']},
+    {win:true}],
+   win:['Plnička jede v taktu', 'Zarážka pouští kelímky po jednom, plnička plní a pás 2 je odváží. Paměťový bit hlídá, aby k plničce nikdy nejely dva najednou.'],
+   theory:{title:'Kus na cestě',
+    intro:'Mezi zarážkou a plničkou je kus pásu, kde kelímek žádný senzor nevidí. Program si ho musí pamatovat.',
+    items:[
+     {t:'Paměť místo senzoru', p:'Když zarážka kelímek pustí, Set nastaví bit „kelímek na cestě“. Dokud je v 1, zarážka nikoho dalšího nepustí. Jakmile kelímek dojede do plničky („Plnička 1 kus“), Reset bit smaže.'},
+     {t:'TP se Set za výstupem', p:'Impulzní časovač otevře zarážku na 0,4 s a zároveň výstupem Q nastaví paměťový bit. Jedna síť tak udělá obojí.'},
+     {t:'Stanice s vlastním pásem', wide:true, p:'Pás 2 se při plnění zastaví, pás 1 před zarážkou jede dál. Fronta se proto nehne a plnička pracuje v klidu. Vyzkoušej si program jedné stanice:', demo:'station'},
+    ]}},
+  {title:'Třídění vadných kelímků',
+   text:'Některé kelímky jsou prasklé. Kamera je pozná, ale výhybka je až o políčko dál. Zapamatuj si vadu bitem „Pomocný 1“ (%M10.0), tím bitem přehoď výhybku a smaž ho, až vadný kelímek projede Senzorem 1 na vedlejší větvi.',
+   goal:'Pošli 2 vadné kelímky do zmetků a 4 dobré na expedici.',
+   sig:[['I2.4', 'kamera vidí vadný kelímek'], ['M10.0', 'paměť: jede vadný kelímek'], ['Q2.5', 'výhybka: 1 = do zmetků'], ['I2.5', 'senzor na větvi ke zmetkům']],
+   hint:['Spínací „Kamera 1 vada“ → Set „Pomocný 1“.', 'Spínací „Pomocný 1“ → cívka „Výhybka 1“.', 'Spínací „Senzor 1“ → Reset „Pomocný 1“.'],
+   sol:H12S3, defects:[3, 6], camSingle:true,
+   check(s){ if (s.H.items.filter(i => Math.floor(i.x) === 3 && Math.floor(i.y) === 0).length > 1) return fail(['K plničce jedou dva kelímky', 'Zarážka musí dál pouštět kelímky po jednom.']); },
+   script:[
+    {at:0.5, press:['start'], log:'Obsluha stiskla START'},
+    {when:s => s.H.reworked >= 2 && s.H.units >= 4, timeout:90, timeoutFail:['Třídění nedoběhlo', 'Za 90 s se nepodařilo poslat 2 vadné kelímky do zmetků a 4 dobré na expedici.']},
+    {win:true}],
+   win:['Linka třídí', 'Plněné kelímky jedou po jednom, kamera najde vadné a výhybka je pošle do zmetků. Zbývá poslední věc: co když se plnička porouchá?'],
+   theory:{title:'Sledování kusu (opakování)',
+    intro:'Tohle už znáš z úrovně 10. Tady se ale pás 2 občas zastaví kvůli plničce, a vadný kelímek tak může mezi kamerou a výhybkou chvíli stát.',
+    items:[
+     {t:'Paměť vydrží zastavení', p:'Bit „Pomocný 1“ zůstane nastavený, i když pás stojí. Proto je paměť lepší než časovač: nezáleží na tom, jak dlouho kelímek k výhybce jede.'},
+     {t:'Kdo bit smaže', p:'Senzor 1 na vedlejší větvi potvrdí, že vadný kelímek opravdu odbočil. Teprve pak se výhybka vrátí rovně.'},
+    ]}},
+  {title:'Zaseknutá plnička',
+   text:'Plnička se může zaseknout: pracuje, ale kelímek se nikdy nenaplní. Hlídej to časovačem. Normální plnění trvá 2 s. Když je plnička zapnutá déle než 4 s, nastav „Porucha“ (%M1.0). Porucha shodí chod, kontrolka poruchy bliká a KVITOVAT poruchu smaže. Linku pak znovu spustí START.',
+   goal:'Rozpoznej zaseknutou plničku, zastav linku a po kvitování a startu pošli další 2 kelímky.',
+   sig:[['Q2.4', 'plnička pracuje'], ['M1.0', 'porucha'], ['Q0.5', 'kontrolka poruchy'], ['M100.5', 'takt 1 Hz pro blikání'], ['I0.4', 'kvitování']],
+   hint:['Spínací „Plnička 1“ → TON "T2", PT = 4 s, za Q Set „Porucha“.', 'Do sítě „Chod“ přidej v sérii rozpínací „Porucha“.', 'Spínací „Porucha“ + spínací „Takt 1 Hz“ → cívka „Kontrolka poruchy“.', 'Spínací „Kvitovat“ → Reset „Porucha“.'],
+   sol:H12S4, defects:[5], camSingle:true,
+   check(s){ if (!s.jamEver && s.img['M1.0']) return fail(['Falešný poplach', 'Porucha se nahlásila, i když plnička pracuje normálně. Hlídací čas musí být delší než normální plnění (2 s), třeba 4 s.']); },
+   script:[
+    {at:0.5, press:['start'], log:'Obsluha stiskla START'},
+    {when:s => s.H.units >= 2, timeout:45, timeoutFail:['Linka nejede', 'Za 45 s nedorazily na expedici 2 kelímky. Funguje program z minulých kroků?']},
+    {when:s => s.img['Q2.4'], timeout:10, timeoutFail:['Plnička nepracuje', 'Plnička se nezapnula.']},
+    {act:s => { s.H.jam = true; s.jamEver = true; }, log:'Pozor: plnička se zasekla!'},
+    {when:s => s.img['M1.0'], timeout:7, timeoutFail:['Porucha nebyla rozpoznána', 'Plnička je zapnutá a kelímek se neplní, ale bit „Porucha“ se nenastavil. Hlídej plničku časovačem TON "T2" s PT = 4 s a jeho výstupem nastav „Porucha“.']},
+    {after:0.5, check:s => (s.img['M0.2'] || s.img['Q2.4']) ? ['Chod pořád běží', 'Porucha musí shodit chod linky: přidej rozpínací kontakt „Porucha“ do sítě „Chod“.'] : null},
+    {act:s => { s.blinkSeen = 0; s.lastQ5 = !!s.img['Q0.5']; }},
+    {after:2.2, check:s => s.blinkSeen < 2 ? ['Kontrolka nebliká', 'Při poruše musí kontrolka poruchy blikat: spínací „Porucha“ + spínací „Takt 1 Hz“ → cívka „Kontrolka poruchy“.'] : null},
+    {act:s => { s.H.jam = false; }, press:['ack'], dur:0.4, log:'Údržba plničku opravila, obsluha stiskla KVITOVAT'},
+    {after:0.6, check:s => s.img['M1.0'] ? ['Kvitování nefunguje', 'Po stisku KVITOVAT musí bit „Porucha“ zmizet: spínací „Kvitovat“ → Reset „Porucha“.'] : null},
+    {after:0.8, check:s => s.img['M0.2'] ? ['Linka se rozjela sama', 'Po kvitování se linka nesmí rozjet bez stisku START.'] : null},
+    {press:['start'], log:'Obsluha stiskla START', act:s => { s.goodBase = s.H.units; }},
+    {when:s => s.H.units - s.goodBase >= 2, timeout:40, timeoutFail:['Linka se po poruše nerozjela', 'Po kvitování a startu se do 40 s nedostaly na expedici 2 kelímky.']},
+    {win:true}],
+   win:['Hra dokončena!', 'Máš za sebou celou linku od prázdného programu: bezpečnost, takt se zarážkou, stanici s handshake, sledování kusu i hlídání poruch. V „Moje hala“ máš odemčené všechny komponenty a můžeš si postavit vlastní továrnu.'],
+   theory:{title:'Hlídání stroje',
+    intro:'Watchdog znáš z úrovně 5. Tady hlídá plničku: když pracuje moc dlouho a nehlásí hotovo, něco je špatně.',
+    items:[
+     {t:'Hlídací časovač', wide:true, p:'TON počítá, dokud je plnička zapnutá. Když se kelímek naplní, plnička se vypne a časovač se vynuluje. Když se zasekne, časovač doběhne a nastaví poruchu. Vyzkoušej si princip:', demo:'watch'},
+     {t:'Po poruše', p:'Porucha shodí chod a s ním všechny pohony. Obsluha poruchu odstraní, stiskne KVITOVAT a pak START. Linka se nikdy nerozjede sama.'},
     ]}},
   ]},
  {id:SANDBOX, name:'Moje hala', sandbox:true, panel:true, base:() => [emptyRung()],
@@ -1692,7 +1827,7 @@ const ST = () => LV().steps[step - 1];
 let sim = newSim();
 
 const KEY = 'plc-linka-v2';
-function save(){ programs[level] = program; try { localStorage.setItem(KEY, JSON.stringify({v:3, programs, level, step, prog, seen, hall:userHall})); } catch(e){} }
+function save(){ programs[level] = program; try { localStorage.setItem(KEY, JSON.stringify({v:4, programs, level, step, prog, seen, hall:userHall})); } catch(e){} }
 const sanitize = p => Array.isArray(p) && p.length ? p.map(r => ({slots: pad(r.slots), out: r.out || {kind:'none'}})) : null;
 function load(d){
   try {
@@ -1702,6 +1837,13 @@ function load(d){
       if (P[10]) { P[12] = P[10]; delete P[10]; }
       if (G[10] != null) { G[12] = G[10]; delete G[10]; }
       if (s.level === 10) s.level = 12;
+    }
+    if (s && (s.v || 0) < 4) {
+      const P = s.programs || {}, G = s.prog || {};
+      if (P[12]) { P[13] = P[12]; delete P[12]; }
+      if (G[12] != null) { G[13] = G[12]; delete G[12]; }
+      if (s.level === 12) s.level = 13;
+      if ((G[8] || 0) > 4) G[8] = 6;
     }
     if (!s) { const o = JSON.parse(localStorage.getItem('plc-linka-v1') || 'null'); if (o) s = {programs:{1:o.program}, level:1, step:o.step || 1, prog:{1:o.unlocked || 1, 2:(o.unlocked || 1) > 3 ? 1 : 0, 3:0}, seen:{}}; }
     if (s) {
@@ -1856,7 +1998,7 @@ const pickCell = (H, c) => { const p = cellAt(H, c.x + DIRS[c.d][0], c.y + DIRS[
 const placeCell = (H, c) => cellAt(H, c.x - DIRS[c.d][0], c.y - DIRS[c.d][1]);
 const pickItem = (h, pc) => h.items.find(it => inCell(it, pc) && rel(it, pc).a >= 0.25);
 function newHallState(H){
-  const st = {items:[], serial:0, nid:0, units:0, rej:0, reworked:0, boxesOut:0, pallets:0, ph:{}, c:{}, idle:0, log:''};
+  const st = {items:[], serial:0, nid:0, units:0, rej:0, reworked:0, rejItems:0, rejBoxes:0, jam:false, boxesOut:0, pallets:0, ph:{}, c:{}, idle:0, log:''};
   for (const [k, c] of Object.entries(H.cells)) {
     if (c.t === 'src') st.c[k] = {last:-99};
     else if (c.t === 'pack') st.c[k] = {box:{contents:[]}, readyAt:0, putT:0};
@@ -1880,7 +2022,7 @@ function shipOut(it, H, h){
   if (isBad(it, H)) {
     if (it.kind === 'box') return fail(it.contents.length < H.boxN
       ? ['Neúplná krabice odešla', `V krabici byly jen ${it.contents.length} z ${H.boxN} kusů. Krabici vydávej, až když svítí „Krabice plná“.`]
-      : ['Vadná krabice odešla k zákazníkovi', it.seen ? 'Kamera vadu nahlásila, ale vyhazovač krabici nevyřadil. Signál kamery trvá jen zlomek sekundy a krabice dojede k vyhazovači až později. Prodluž ho impulzním časovačem TP (třeba 1 s).' : 'V krabici byl rozlámaný kus. Před expedicí ji musí zkontrolovat kamera a vyřadit vyhazovač.']);
+      : ['Vadná krabice odešla k zákazníkovi', it.seen ? 'Kamera vadu nahlásila, ale vyhazovač krabici nevyřadil. Signál kamery trvá jen zlomek sekundy a krabice dojede k vyhazovači až později. Prodluž ho impulzním časovačem TP (třeba 1 s).' : 'V krabici byl vadný kus. Před expedicí ji musí zkontrolovat kamera a vyřadit vyhazovač.']);
     const P = PRODUCTS[it.prod], miss = P.recipe.filter(o => !it.ops.includes(o));
     const hasDiv = Object.values(H.cells).some(c => c.t === 'div');
     if (it.defect && !miss.length) return fail(['Vadný výrobek odešel k zákazníkovi', !it.seen ? 'Kus měl vadu. Před expedici patří kamera a vyhazovač (odemkne je úroveň 6).' : hasDiv ? 'Kamera vadu nahlásila, ale výhybka kus neposlala do zmetků. Signál kamery je krátký: zapamatuj si vadu paměťovým bitem (Set) a tím bitem přehoď výhybku.' : 'Kamera vadu nahlásila, ale vyhazovač kus nevyřadil. Prodluž signál kamery impulzem TP.']);
@@ -1901,6 +2043,7 @@ function hallTick(dt){
   s.t += dt;
   img['I0.1'] = pressed('start'); img['I0.2'] = !pressed('stop'); img['I0.3'] = !pressed('estop'); img['I0.4'] = pressed('ack');
   img['M100.5'] = Math.floor(s.t * 2) % 2 === 0; img['M100.7'] = Math.floor(s.t) % 2 === 0;
+  if (!!img['Q0.5'] !== !!s.lastQ5) { s.blinkSeen = (s.blinkSeen || 0) + 1; s.lastQ5 = !!img['Q0.5']; }
   const cells = Object.values(H.cells);
   for (const c of cells) {
     const st = h.c[ck(c)], io = c.io, K = COMPS[c.t];
@@ -1913,6 +2056,7 @@ function hallTick(dt){
     else if (c.t === 'pal') { img[io.rdy] = st.present; img[io.full] = st.present && st.items.length >= H.palN; img[io.ok] = img[io.full] && !st.items.some(x => isBad(x, H)); }
   }
   vis = scanRungs(program, MX, dt);
+  if (pressed('estop')) { for (const g of Object.values(H.groups)) img[g] = false; for (const c of cells) for (const [k, kind] of COMPS[c.t].io) if (kind === 'Q' && c.io[k]) img[c.io[k]] = false; }
   const on = m => !!img[H.groups[m]];
   for (const m of Object.keys(H.groups)) if (on(m)) h.ph[m] = (h.ph[m] || 0) + HSPEED * dt;
   // sources
@@ -1980,6 +2124,7 @@ function hallTick(dt){
       if (idx < 0) return fail([`${P.name}: tohle nepatří`, `${P.name} nepotřebuje ${OPN[K.op]}, a přesto stroj „${n}“ pracoval. Postup výrobku: ${steps}.`]);
       if (it.ops.includes(K.op)) { st.over += dt; if (st.over > 1) return fail((OVERF[K.op] || (x => ['Stroj pracuje zbytečně', `Stroj „${x}“ zůstal zapnutý i po dokončení práce. Vypni ho, jakmile svítí „${x} hotovo“.`]))(n)); continue; }
       if (P.recipe.slice(0, idx).some(o => !it.ops.includes(o))) return fail(['Špatné pořadí strojů', `${P.name} musí projít stroji v tomhle pořadí: ${steps}. Stroj „${n}“ přišel na řadu moc brzy.`]);
+      if (h.jam) continue;
       st.prog += dt; anyWork = true;
       if (st.prog >= K.T) { it.ops.push(K.op); st.prog = 0; }
     } else if (c.t === 'push') {
@@ -1988,7 +2133,7 @@ function hallTick(dt){
         if (!inCell(it, c) || Math.abs(rel(it, c).p) > 0.4) continue;
         it.push = (it.push || 0) + dt;
         if (it.push >= 0.2) {
-          it.gone = true; h.rej++;
+          it.gone = true; h.rej++; if (it.kind === 'box') h.rejBoxes++; else h.rejItems++;
           if (!isBad(it, H)) return fail(['Vyhozen dobrý kus', `${cname(c)} vyhodil ${it.kind === 'box' ? 'krabici' : 'kus'}, který byl v pořádku. Zapínej ho jen na signál „vada“ z kamery.`]);
         }
       }
@@ -2066,11 +2211,12 @@ function itemSvg(it, x, y, k){
     case 'honey': s = `<rect x="-11" y="-11" width="22" height="22" rx="6" class="ib"/>${has('fill') ? '<rect x="-8" y="-8" width="16" height="16" rx="4" fill="#d18a1c"/>' : ''}${has('label') ? '<rect x="-11" y="-3.5" width="22" height="7" fill="#e2e8eb"/>' : ''}`; break;
     case 'yogurt': s = `<circle r="12" fill="#e9e4dc" stroke="#b4c0c7" stroke-width="1.5"/>${has('fill') ? '<circle r="8.5" fill="#e58fb0"/>' : ''}${has('seal') ? '<circle r="10" fill="#c9d3d9" opacity=".9"/>' : ''}`; break;
     case 'can': s = `<circle r="11.5" fill="#55626a" stroke="#b4c0c7" stroke-width="2"/>${has('fill') ? '<circle r="8" fill="#f08a3c"/>' : ''}${has('seam') ? '<circle r="9" fill="#9aa6ad" stroke="#e2e8eb" stroke-width="2.5"/>' : ''}`; break;
-    case 'cookie': s = `<rect x="-12" y="-12" width="24" height="24" rx="8" fill="${has('bake') ? '#b0773a' : '#e6d4a8'}"/>${has('bake') ? '<circle cx="-4" cy="-3" r="2" fill="#5a3818"/><circle cx="4" cy="4" r="2" fill="#5a3818"/><circle cx="5" cy="-5" r="1.6" fill="#5a3818"/>' : ''}`; break;
+    case 'cookie': { const burnt = it.defect && has('bake'), dot = burnt ? '#120804' : '#5a3818';
+      s = `<rect x="-12" y="-12" width="24" height="24" rx="8" fill="${burnt ? '#3a2010' : has('bake') ? '#b0773a' : '#e6d4a8'}"${burnt ? ' stroke="#1a0c05" stroke-width="2"' : ''}/>${has('bake') ? `<circle cx="-4" cy="-3" r="2" fill="${dot}"/><circle cx="4" cy="4" r="2" fill="${dot}"/><circle cx="5" cy="-5" r="1.6" fill="${dot}"/>` : ''}${burnt ? '<path d="M-7 6q3 -3 6 0t6 0" stroke="#120804" stroke-width="1.5" fill="none"/>' : ''}`; break; }
     case 'choco': s = `<rect x="-14" y="-8" width="28" height="16" rx="3" class="ib"/>${has('fill') ? `<rect x="-12" y="-6" width="24" height="12" rx="2" fill="${has('cool') ? '#4a2a14' : '#7a4a26'}"/>` : ''}${has('cool') ? '<path d="M-9 -3h12" stroke="#a87a54" stroke-width="1.5"/>' : ''}${has('wrap') ? '<rect x="-15" y="-9" width="30" height="18" rx="3" fill="#c0473a"/><rect x="-4" y="-9" width="8" height="18" fill="#f3ae3d"/>' : ''}`; break;
     case 'gear': s = `<circle r="11" fill="none" stroke="${has('press') ? '#c3ccd1' : '#6f7b82'}" stroke-width="5" stroke-dasharray="4 4.6"/><circle r="9" fill="${has('press') ? '#c3ccd1' : '#6f7b82'}"/>${has('drill') ? '<circle r="3.5" fill="#0d1113"/>' : ''}`; break;
   }
-  if (it.defect) s += '<path d="M-9 -9L9 9" class="idefl"/>';
+  if (it.defect && it.prod !== 'cookie') s += '<path d="M-9 -9L9 9" class="idefl"/>';
   return `<g ${t}><ellipse cx="2" cy="3" rx="13" ry="12" fill="rgba(0,0,0,.35)"/>${s}</g>`;
 }
 function ioText(c, on, img, X, Y){
