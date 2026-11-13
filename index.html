@@ -2158,20 +2158,20 @@ function renderHall(){
   const key = level + ':' + hallVer;
   if (key !== hallStaticKey) {
     hallStaticKey = key;
-    const cs = Object.values(H.cells), mg = sb ? 1 : 0;
+    const cs = Object.values(H.cells);
     let x0 = 0, y0 = 0, x1 = HC - 1, y1 = HR - 1;
     if (cs.length && !sb) {
-      x0 = Math.max(0, Math.min(...cs.map(c => c.x)) - mg); x1 = Math.min(HC - 1, Math.max(...cs.map(c => c.x)) + mg);
-      y0 = Math.max(0, Math.min(...cs.map(c => c.y)) - mg); y1 = Math.min(HR - 1, Math.max(...cs.map(c => c.y)) + mg);
-      if (sb) { while (x1 - x0 < 4) { if (x1 < HC - 1) x1++; else x0--; } while (y1 - y0 < 2) { if (y1 < HR - 1) y1++; else y0--; } }
+      // level halls: the line sits in the middle of a larger floor, so the blocks are smaller and easier to read
+      const bx0 = Math.min(...cs.map(c => c.x)), bx1 = Math.max(...cs.map(c => c.x)), by0 = Math.min(...cs.map(c => c.y)), by1 = Math.max(...cs.map(c => c.y));
+      const bw = bx1 - bx0 + 1, bh = by1 - by0 + 1, W = Math.max(10, bw + 2), Hh = Math.max(5, bh + 2);
+      x0 = bx0 - Math.floor((W - bw) / 2); y0 = by0 - Math.floor((Hh - bh) / 2); x1 = x0 + W - 1; y1 = y0 + Hh - 1;
     }
-    const pad = sb ? 10 : 0;
+    const pad = 10;
     $('hall').setAttribute('viewBox', `${x0 * CS - pad} ${y0 * CS - pad} ${(x1 - x0 + 1) * CS + 2 * pad} ${(y1 - y0 + 1) * CS + 2 * pad}`);
     $('hallWrap').classList.toggle('sb', sb);
-    let g = '';
-    if (sb) g += `<rect x="-8" y="-8" width="${HC * CS + 16}" height="${HR * CS + 16}" rx="6" class="hwall"/>`;
-    for (let y = 0; y < HR; y++) for (let x = 0; x < HC; x++) g += `<rect x="${x * CS + 1}" y="${y * CS + 1}" width="${CS - 2}" height="${CS - 2}" rx="4" class="hgrid${(x + y) % 2 ? ' alt' : ''}"/>`;
-    if (sb) for (let x = 0; x <= HC; x += 4) for (const y of [-8, HR * CS - 2]) g += `<rect x="${Math.min(x * CS, HC * CS) - 6}" y="${y}" width="12" height="10" rx="2" class="hpil"/>`;
+    let g = `<rect x="${x0 * CS - 8}" y="${y0 * CS - 8}" width="${(x1 - x0 + 1) * CS + 16}" height="${(y1 - y0 + 1) * CS + 16}" rx="6" class="hwall"/>`;
+    for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) g += `<rect x="${x * CS + 1}" y="${y * CS + 1}" width="${CS - 2}" height="${CS - 2}" rx="4" class="hgrid${((x + y) % 2 + 2) % 2 ? ' alt' : ''}"/>`;
+    for (let x = x0; x <= x1 + 1; x += 4) for (const y of [y0 * CS - 8, (y1 + 1) * CS - 2]) g += `<rect x="${Math.min(x, x1 + 1) * CS - 6}" y="${y}" width="12" height="10" rx="2" class="hpil"/>`;
     if (cs.length) g += `<rect x="${Math.max(0, Math.min(...cs.map(c => c.x))) * CS + 3}" y="${Math.min(...cs.map(c => c.y)) * CS + 3}" width="${(Math.max(...cs.map(c => c.x)) - Math.min(...cs.map(c => c.x)) + 1) * CS - 6}" height="${(Math.max(...cs.map(c => c.y)) - Math.min(...cs.map(c => c.y)) + 1) * CS - 6}" rx="6" class="hsafe"/>`;
     $('hallGrid').innerHTML = g;
     let hit = '';
