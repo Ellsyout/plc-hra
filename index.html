@@ -288,7 +288,17 @@ table.watch td.v.on{color:var(--live)}
 .hallwrap{overflow-x:auto}
 .hallwrap svg{display:block;width:100%;height:auto;min-width:400px}
 .hallwrap.sb svg{min-width:0}
-#hall .hgrid{fill:#131a1d;stroke:#1d262a;stroke-width:1}
+#hall .hgrid{fill:#141b1e;stroke:#1b2428;stroke-width:1}
+#hall .hgrid.alt{fill:#161e22}
+#hall .hwall{fill:#0b0f11;stroke:#38464e;stroke-width:4}
+#hall .hpil{fill:#3a474f;stroke:#55646c;stroke-width:1}
+#hall .hpin{fill:var(--amber)}
+#hall .hdiv{fill:none;stroke:#7f8e98;stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round}
+#hall .hdiv.on{stroke:var(--amber)}
+#hall .hrw{fill:#2a1513;stroke:#7a3027;stroke-width:1.5}
+#hall .hcnt.bad{fill:var(--err)}
+#hall .hmach,#hall .hsrc,#hall .hout,#hall .hrw,#hall .hpal,#hall .hrob,#hall .ibox{filter:url(#fSh)}
+#hall.nolab .hn,#hall.nolab .ha,#hall.nolab .hg{display:none}
 #hall .hsafe{fill:none;stroke:#c9a24a;stroke-width:2;stroke-dasharray:10 7;opacity:.5}
 #hall .hroll{stroke:#28343b;stroke-width:2}
 #hall .hrail{stroke:#5a6870;stroke-width:3}
@@ -306,7 +316,7 @@ table.watch td.v.on{color:var(--live)}
 #hall .gdel{stroke:var(--err);stroke-width:5;stroke-linecap:round}
 .hallwrap.sb.edit svg{touch-action:none}
 .grid.sbx > section:first-child{grid-column:1/-1}
-.grid.sbx .hallwrap svg{max-height:62vh}
+.grid.sbx .hallwrap svg{max-height:88vh}
 .htools{display:flex;flex-direction:column;gap:6px;padding:8px 10px;border-bottom:1px solid var(--line)}
 .hrow{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
 .htools button{border:1px solid var(--line);background:var(--panel2);border-radius:6px;padding:4px 7px;font-size:12px;cursor:pointer;display:inline-flex;align-items:center;gap:4px;color:var(--fg2);line-height:1.2}
@@ -321,7 +331,7 @@ table.watch td.v.on{color:var(--live)}
 #hall .hcell:hover{fill:rgba(243,174,61,.1);stroke:var(--amber);stroke-dasharray:4 3}
 #hall .off .hcell{cursor:default}
 #hall .off .hcell:hover{fill:transparent;stroke:none}
-#hall .hbelt{fill:#1b2429;stroke:none}
+#hall .hbelt{fill:url(#gBelt);stroke:none}
 #hall .hchev{fill:none;stroke:#3a474f;stroke-width:2.5}
 #hall .hchev.on{stroke:var(--live)}
 #hall .hg{font:600 9px var(--mono);fill:var(--dim);paint-order:stroke;stroke:#0f1416;stroke-width:3px}
@@ -335,8 +345,8 @@ table.watch td.v.on{color:var(--live)}
 #hall .hbeam.on{stroke:var(--amber);stroke-width:2}
 #hall .hbeam.ok{stroke:var(--live);stroke-width:2}
 #hall .hbeam.bad{stroke:var(--err);stroke-width:2.5}
-#hall .hmach{fill:rgba(180,192,199,.05);stroke:var(--fg2);stroke-width:2}
-#hall .hmach.on{stroke:var(--amber);fill:rgba(243,174,61,.13)}
+#hall .hmach{fill:url(#gMetal);stroke:#8a989f;stroke-width:1.5}
+#hall .hmach.on{stroke:var(--amber);stroke-width:2.5}
 #hall .hcyl{fill:var(--panel2);stroke:var(--fg2);stroke-width:1.5}
 #hall .hcyl.on{stroke:var(--live)}
 #hall .hrod{fill:var(--fg2)}
@@ -501,7 +511,7 @@ table.watch td.v.on{color:var(--live)}
       </svg>
       <div class="htools" id="hallTools" hidden></div>
       <div class="hallwrap" id="hallWrap" hidden>
-        <svg id="hall" viewBox="0 0 800 480" role="img" aria-label="Výrobní hala shora"><g id="hallGrid"></g><g id="hallDyn"></g><g id="hallGhost"></g><g id="hallHit"></g></svg>
+        <svg id="hall" viewBox="0 0 800 480" role="img" aria-label="Výrobní hala shora"><defs><linearGradient id="gMetal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a4950"/><stop offset="1" stop-color="#1b242a"/></linearGradient><linearGradient id="gBelt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#232e34"/><stop offset=".5" stop-color="#1a2328"/><stop offset="1" stop-color="#232e34"/></linearGradient><filter id="fSh" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="2" dy="3" stdDeviation="2.2" flood-color="#000" flood-opacity=".55"/></filter></defs><g id="hallGrid"></g><g id="hallDyn"></g><g id="hallGhost"></g><g id="hallHit"></g></svg>
       </div>
       <div class="panel" id="panel" hidden>
         <button class="pb start" data-pb="start">START<small>%I0.1</small></button>
@@ -771,12 +781,13 @@ const DEMO = {
 };
 
 // ---------- hall: products, components, preset layouts ----------
-const CS = 80, HC = 10, HR = 6, HSPEED = 1.25, HGAP = 0.62, SANDBOX = 10;
+const CS = 80, HC = 16, HR = 9, HSPEED = 1.25, HGAP = 0.62, SANDBOX = 12;
 const DIRS = [[1, 0], [0, 1], [-1, 0], [0, -1]];
-const OPN = {fill:'plnění', bake:'pečení', label:'etiketa', cap:'víčko', press:'lisování', drill:'vrtání', seal:'zatavení fólie', seam:'zavíčkování'};
+const OPN = {fill:'plnění', bake:'pečení', label:'etiketa', cap:'víčko', press:'lisování', drill:'vrtání', seal:'zatavení fólie', seam:'zavíčkování', cool:'chlazení', wrap:'obal'};
 const PRODUCTS = {
   cup:   {name:'Džus v kelímku', recipe:['fill'], unlock:1},
   cookie:{name:'Sušenky', recipe:['bake'], unlock:2},
+  choco: {name:'Čokoládová tyčinka', recipe:['fill', 'cool', 'wrap'], unlock:11},
   honey: {name:'Med ve sklenici', recipe:['fill', 'label'], unlock:3},
   water: {name:'Lahev vody', recipe:['fill', 'cap'], unlock:4},
   gear:  {name:'Ozubené kolo', recipe:['press', 'drill'], unlock:4},
@@ -801,6 +812,11 @@ const COMPS = {
   beacon:{name:'Majáček', unlock:5, io:[['g', 'Q', 'Majáček {n} zel.'], ['r', 'Q', 'Majáček {n} červ.']], desc:'Signální sloup nad halou. Zelené a červené světlo, každé má svůj výstup.'},
   cam:   {name:'Kamera', unlock:6, belt:true, io:[['ok', 'I', 'Kamera {n} OK'], ['bad', 'I', 'Kamera {n} vada']], desc:'Zkontroluje kus nebo krabici uprostřed políčka. „OK“ svítí u dobrého kusu, „vada“ u vadného nebo nehotového. Signál trvá jen chvilku.'},
   push:  {name:'Vyhazovač', unlock:6, belt:true, io:[['q', 'Q', 'Vyhazovač {n}']], desc:'Pneumatický válec u pásu. Když je zapnutý aspoň 0,2 s, shodí kus z políčka do koše.'},
+  div:   {name:'Výhybka', unlock:10, belt:true, io:[['q', 'Q', 'Výhybka {n}']], desc:'Dopravník s klapkou. Při výstupu v 0 pošle kus rovně ve směru šipky, při 1 odbočí doprava (o čtvrt otáčky po směru hodinových ručiček).'},
+  rework:{name:'Sklad zmetků', unlock:10, io:[], desc:'Konec vedlejší větve pro vadné a nehotové kusy. Dobrý kus sem nesmí.'},
+  stop:  {name:'Zarážka', unlock:11, belt:true, io:[['q', 'Q', 'Zarážka {n}'], ['s', 'I', 'Zarážka {n} kus']], desc:'Pneumatický kolík v pásu. Při výstupu v 1 zadrží kus uprostřed políčka, i když pás jede. Vstup „kus“ hlásí, že tam kus čeká.'},
+  cool:  {name:'Chladicí tunel', unlock:11, belt:true, op:'cool', T:2.5, io:MIO('Chlazení'), desc:MDESC('Zchladí a ztuhne čokoládu.', 2.5)},
+  wrap:  {name:'Obalovačka', unlock:11, belt:true, op:'wrap', T:1, io:MIO('Obal'), desc:MDESC('Zabalí tyčinku do obalu.', 1)},
   pack:  {name:'Balička', unlock:8, io:[['in', 'I', 'Balička {n} kus'], ['full', 'I', 'Krabice {n} plná'], ['rdy', 'I', 'Krabice {n} připr.'], ['put', 'Q', 'Balička {n} vložit'], ['out', 'Q', 'Balička {n} vydat']],
           desc:'Kusy přijíždějí z pásu ze zadní strany a čekají na vstupu. „Vložit“ dá kus do krabice (4 kusy), „vydat“ pošle krabici ve směru šipky na další pás.'},
   robot: {name:'Robot', unlock:9, io:[['go', 'Q', 'Robot {n} start'], ['part', 'I', 'Robot {n} kus'], ['home', 'I', 'Robot {n} v klidu']],
@@ -808,14 +824,14 @@ const COMPS = {
   pal:   {name:'Paleta', unlock:9, io:[['full', 'I', 'Paleta {n} plná'], ['rdy', 'I', 'Paleta {n} připr.'], ['ok', 'I', 'Paleta {n} OK'], ['go', 'Q', 'Paleta {n} odvézt']],
           desc:'Místo pro paletu (4 krabice nebo kusy). „Odvézt“ pošle plnou paletu k nakládce, prázdná přijede za 3 s. Kamera nad paletou hlásí „OK“.'},
 };
-const ICON = {belt:'⇉', src:'📥', sens:'🔦', fill:'💧', out:'🚚', bake:'🔥', label:'🏷️', cap:'🧢', press:'🔨', drill:'🔩', seal:'🔒', seam:'🥫', beacon:'🚨', cam:'📷', push:'💨', pack:'📦', robot:'🦾', pal:'🟫'};
-const COMP_ORDER = ['belt', 'src', 'sens', 'fill', 'out', 'bake', 'label', 'cap', 'press', 'drill', 'seal', 'seam', 'beacon', 'cam', 'push', 'pack', 'robot', 'pal'];
+const ICON = {belt:'⇉', src:'📥', sens:'🔦', fill:'💧', out:'🚚', bake:'🔥', label:'🏷️', cap:'🧢', press:'🔨', drill:'🔩', seal:'🔒', seam:'🥫', beacon:'🚨', cam:'📷', push:'💨', pack:'📦', robot:'🦾', pal:'🟫', div:'↱', rework:'🗑️', stop:'✋', cool:'❄️', wrap:'🎁'};
+const COMP_ORDER = ['belt', 'src', 'sens', 'fill', 'out', 'bake', 'label', 'cap', 'press', 'drill', 'seal', 'seam', 'cool', 'wrap', 'beacon', 'cam', 'push', 'div', 'rework', 'stop', 'pack', 'robot', 'pal'];
 const HALL_BASE = [
   {id:'I0.1', name:'Start', ad:'%I0.1'}, {id:'I0.2', name:'Stop', ad:'%I0.2'}, {id:'I0.3', name:'E-STOP', ad:'%I0.3'}, {id:'I0.4', name:'Kvitovat', ad:'%I0.4'},
   {id:'Q0.2', name:'Kontrolka chodu', ad:'%Q0.2', w:true}, {id:'Q0.5', name:'Kontrolka poruchy', ad:'%Q0.5', w:true},
   {id:'M0.2', name:'Chod', ad:'%M0.2', w:true}, {id:'M1.0', name:'Porucha', ad:'%M1.0', w:true},
   ...[0, 1, 2, 3, 4, 5].map(i => ({id:`M10.${i}`, name:`Pomocný ${i + 1}`, ad:`%M10.${i}`, w:true})),
-  {id:'M100.5', name:'Takt 1 Hz', ad:'%M100.5'},
+  {id:'M100.5', name:'Takt 1 Hz', ad:'%M100.5'}, {id:'M100.7', name:'Takt 0,5 Hz', ad:'%M100.7'},
   ...['T1', 'T2', 'T3', 'T4', 'C1', 'C2', 'C3'].map(n => ({id:n + '.Q', name:n + '.Q', ad:`"${n}".Q`, fb:true})),
 ].map(t => ({...t, lvl:0}));
 const HP = (x, y, t, d, o = {}) => ({x, y, t, d, n:1, m:1, io:{}, ...o});
@@ -834,6 +850,25 @@ const HALL9 = mkHall([
   HP(2, 2, 'robot', 0, {io:{go:'Q2.3', part:'I2.2', home:'I2.3'}}),
   HP(1, 2, 'pal', 2, {io:{full:'I2.4', rdy:'I2.5', ok:'I2.6', go:'Q2.4'}}),
 ], {1:'Q2.0'});
+const HALL10 = mkHall([
+  HP(0, 0, 'src', 0, {io:{q:'Q2.1'}, cfg:{prod:'cup', done:['fill'], every:1.6}}),
+  HP(1, 0, 'belt', 0), HP(2, 0, 'belt', 0), HP(3, 0, 'cam', 0, {io:{ok:'I2.0', bad:'I2.1'}}),
+  HP(4, 0, 'div', 0, {io:{q:'Q2.2'}}), HP(5, 0, 'belt', 0), HP(6, 0, 'out', 0),
+  HP(4, 1, 'sens', 1, {io:{s:'I2.2'}}), HP(4, 2, 'rework', 1),
+], {1:'Q2.0'});
+const HALL11 = mkHall([
+  HP(0, 0, 'src', 0, {io:{q:'Q2.1'}, cfg:{prod:'cup', done:['fill'], every:0.7}}),
+  HP(1, 0, 'belt', 0), HP(2, 0, 'belt', 0), HP(3, 0, 'stop', 0, {io:{q:'Q2.3', s:'I2.3'}}), HP(4, 0, 'belt', 0),
+  HP(5, 0, 'cam', 0, {io:{ok:'I2.0', bad:'I2.1'}}), HP(6, 0, 'div', 0, {io:{q:'Q2.2'}}), HP(7, 0, 'belt', 0), HP(8, 0, 'out', 0),
+  HP(6, 1, 'sens', 1, {io:{s:'I2.2'}}), HP(6, 2, 'rework', 1),
+], {1:'Q2.0'});
+const H10base = () => [latch(true), lamp()];
+const H10S1 = () => [...H10base(), R([C('NO','M0.2')], coil('Q2.1')), R([C('NO','M0.2')], coil('Q2.0'))];
+const H10S2 = () => [...H10S1(), R([C('NO','I2.1')], {kind:'set', tag:'M10.0'}), R([C('NO','M10.0')], coil('Q2.2')), R([C('NO','I2.2')], {kind:'reset', tag:'M10.0'})];
+const H10S3 = () => [...H10S2(), R([C('NO','I2.2')], {kind:'ctu', counter:'C1', pv:3, r:'I0.4', then:{kind:'reset', tag:'M0.2'}})];
+const H11base = () => H10S2();
+const H11S1 = () => [...H11base(), R([C('NO','M0.2')], coil('Q2.3'))];
+const H11S2 = () => [...H11base(), R([C('NO','M100.7')], {kind:'tp', timer:'T1', pt:0.4, then:{kind:'none'}}), R([C('NO','M0.2'), C('NC','T1.Q')], coil('Q2.3'))];
 const H8base = () => [latch(true), lamp()];
 const H8S1 = () => [...H8base(), R([C('NO','M0.2')], coil('Q2.2')), R([C('NO','M0.2')], coil('Q2.0'))];
 const H8S2 = () => [...H8S1(), R([C('NO','I2.0'), C('NO','I2.2'), C('NC','I2.1')], coil('Q2.3'))];
@@ -1514,13 +1549,113 @@ const LEVELS = [
     {when:s => s.H.pallets >= 2, timeout:90, timeoutFail:['Palety neodjely', 'Za 90 s neodjely 2 plné palety. Funguje odvoz z minulého kroku?']},
     {after:2.5, check:s => (s.img['Q2.1'] || s.img['Q2.0'] || s.img['M0.2']) ? ['Linka jede dál', 'Zakázka 2 palet je hotová, ale linka pořád vyrábí. Spočítej odvezené palety čítačem CTU "C1" s PV = 2 a jeho výstupem resetuj „Chod“.'] : null},
     {win:true}],
-   win:['Hra dokončena!', 'Máš za sebou celou výrobu: plnění, balení, kontrolu kvality, robota i expedici. V „Moje hala“ máš teď odemčené všechny komponenty a můžeš si postavit vlastní továrnu.'],
+   win:['Úroveň 9 hotová!', 'Krabice jedou na paletách až na kamion a po zakázce se linka sama zastaví. Další úroveň: třídění zmetků výhybkou.'],
    theory:{title:'Konec zakázky',
     intro:'Výroba se plánuje po zakázkách. Když je zakázka hotová, linka má sama přestat, jinak by vyráběla zboží, které nikdo neobjednal.',
     items:[
      {t:'Počítání palet', wide:true, p:'Každý povel k odvozu je jedna paleta. Spočítej ho čítačem CTU a jeho výstupem resetuj „Chod“. Vyzkoušej si čítač:', demo:'ctu'},
      {t:'Proč Reset, a ne rozpínací kontakt', p:'Reset „Chod“ vypne samodržení. Linka pak zůstane stát, dokud obsluha znovu nestiskne START. Kvitování vynuluje čítač, takže nová zakázka začne zase od nuly.'},
      {t:'V praxi', p:'Velikost zakázky obvykle zadává obsluha na HMI nebo ji pošle nadřazený systém (MES). PLC pak jen porovnává, kolik už je hotovo.'},
+    ]}},
+  ]},
+ {id:10, name:'Třídění výhybkou', hall:HALL10, panel:true, base:H10base,
+  steps:[
+  {title:'Nová linka',
+   text:'Další hala: tady se plní džus do kelímků a třídí se. Podavač sype kelímky na pás, kamera je kontroluje a za ní je výhybka. Rovně vede pás k expedici, doprava dolů ke skladu zmetků. Zatím jsou všechny kelímky v pořádku, takže stačí linku rozjet.',
+   goal:'Pošli na expedici 4 kelímky.',
+   sig:[['M0.2', 'chod linky (START/STOP už máš)'], ['Q2.1', 'podavač kelímků'], ['Q2.0', 'motor celého pásu']],
+   hint:['Přidej síť: spínací „Chod“ → cívka „Podavač 1“.', 'Přidej síť: spínací „Chod“ → cívka „Pás 1“.', 'Výhybku zatím nech vypnutou, kelímky pojedou rovně.'],
+   sol:H10S1,
+   script:[
+    {at:0.5, press:['start'], log:'Obsluha stiskla START'},
+    {when:s => s.H.units >= 4, timeout:40, timeoutFail:['Kelímky nedorazily', 'Za 40 s nedorazily na expedici 4 kelímky. Zapíná „Chod“ podavač i pás?']},
+    {win:true}],
+   win:['Linka jede', 'Kelímky jedou rovně přes výhybku až k expedici. Teď začne kamera hlásit vadné kusy.'],
+   theory:{title:'Výhybka',
+    intro:'Vyhazovač z minulých úrovní vadný kus shodí do koše. Někdy se ale vadné kusy nevyhazují, protože se dají opravit nebo recyklovat. Pak je výhybka pošle na vedlejší pás.',
+    items:[
+     {t:'Výhybka', ad:'%Q2.2', p:'Kus dopravníku s pohyblivou klapkou. Když je výstup v 0, kusy jedou rovně. Když je v 1, klapka se natočí a kus odbočí doprava. V hale uvidíš na výhybce šipku, kam právě posílá kusy.'},
+     {t:'Sklad zmetků', p:'Na konci vedlejší větve je sklad zmetků. Sem smí jen vadné kusy. Kdyby tam skončil dobrý kelímek, hra to ohlásí jako chybu.'},
+     {t:'Jeden motor pro celou linku', ad:'%Q2.0', p:'Všechny dopravníky v této hale patří k motoru Pás 1. Zapneš ho jednou cívkou a jede celá linka včetně vedlejší větve.'},
+    ]}},
+  {title:'Výhybka na zmetky',
+   text:'Teď kamera občas uvidí vadný kelímek. Signál „Kamera 1 vada“ ale trvá jen chvilku a kelímek dojede k výhybce až potom. Program si proto musí zapamatovat, že jede vadný kus: kamera nastaví paměťový bit, ten přehodí výhybku a senzor na vedlejší větvi bit zase vynuluje.',
+   goal:'Pošli 2 vadné kelímky do skladu zmetků a 4 dobré na expedici.',
+   sig:[['I2.1', 'kamera vidí vadný kelímek (chvilku)'], ['M10.0', 'paměť: jede vadný kus (použij „Pomocný 1“)'], ['Q2.2', 'výhybka: 1 = doprava do zmetků'], ['I2.2', 'senzor na větvi ke zmetkům']],
+   hint:['Přidej síť: spínací „Kamera 1 vada“ → Set „Pomocný 1“.', 'Přidej síť: spínací „Pomocný 1“ → cívka „Výhybka 1“.', 'Přidej síť: spínací „Senzor 1“ → Reset „Pomocný 1“. Jakmile vadný kus odbočí, výhybka se vrátí.'],
+   sol:H10S2, defects:[3, 6],
+   script:[
+    {at:0.5, press:['start'], log:'Obsluha stiskla START'},
+    {when:s => s.H.reworked >= 2 && s.H.units >= 4, timeout:60, timeoutFail:['Třídění nedoběhlo', 'Za 60 s se nepodařilo poslat 2 vadné kelímky do zmetků a 4 dobré na expedici.']},
+    {win:true}],
+   win:['Třídění funguje', 'Kamera vadný kus označila, paměťový bit přehodil výhybku a senzor ji po průjezdu zase vrátil. Tomuhle se říká sledování kusu.'],
+   theory:{title:'Sledování kusu',
+    intro:'Kamera a výhybka nejsou na stejném místě. Mezi nimi kus chvíli jede a signál z kamery mezitím zmizí. Program si musí pamatovat, co kamera viděla.',
+    items:[
+     {t:'Paměť místo impulzu', p:'V úrovni 8 jsi krátký signál kamery prodloužil časovačem TP. Tady je lepší paměťový bit: Set ho nastaví, když kamera vidí vadu, a Reset ho smaže, až kus opravdu odbočí. Nezáleží pak na tom, jak rychle pás jede.'},
+     {t:'Kdo bit smaže', p:'Senzor na vedlejší větvi hlásí, že vadný kus odbočil. V tu chvíli už může výhybka zpátky, aby další dobrý kelímek jel rovně.'},
+     {t:'Sledování kusu v praxi', wide:true, p:'Ve velkých linkách se sleduje i víc kusů najednou: PLC si pro každý kus na pásu pamatuje, jestli je dobrý, a posouvá tu informaci s ním (posuvný registr). Princip je ale stejný jako tady s jedním bitem.'},
+    ]}},
+  {title:'Plný sklad zmetků',
+   text:'Do skladu zmetků se vejdou 3 kelímky. Pak ho musí obsluha vyprázdnit. Spočítej vadné kusy čítačem. Po třetím se musí linka zastavit. Obsluha sklad vyprázdní, stiskne KVITOVAT a START a linka jede dál.',
+   goal:'Po 3 zmetcích zastav linku, po kvitování a startu pošli 2 dobré kelímky.',
+   sig:[['I2.2', 'senzor: projel vadný kus'], ['M0.2', 'chod linky'], ['I0.4', 'obsluha vyprázdnila sklad']],
+   hint:['Přidej síť: spínací „Senzor 1“ → čítač CTU.', 'Instance "C1", PV = 3, R = „Kvitovat“.', 'Za výstup Q čítače dej Reset „Chod“.'],
+   sol:H10S3, defects:[2, 4, 6],
+   script:[
+    {at:0.5, press:['start'], log:'Obsluha stiskla START'},
+    {when:s => s.H.reworked + s.H.items.filter(i => i.y >= 1).length >= 3, timeout:40, timeoutFail:['Zmetky nedorazily', 'Za 40 s nedorazily do skladu 3 vadné kelímky. Funguje výhybka z minulého kroku?']},
+    {after:1.2, check:s => (s.img['M0.2'] || s.img['Q2.0']) ? ['Linka jede dál', 'Sklad zmetků je plný, ale linka pořád jede. Spočítej průjezdy senzoru 1 čítačem CTU "C1" s PV = 3 a jeho výstupem resetuj „Chod“.'] : null},
+    {press:['ack'], dur:0.4, log:'Obsluha vyprázdnila sklad zmetků a stiskla KVITOVAT'},
+    {after:0.5, press:['start'], log:'Obsluha stiskla START', act:s => { s.goodBase = s.H.units; }},
+    {when:s => s.H.units - s.goodBase >= 2, timeout:30, timeoutFail:['Linka se nerozjela', 'Po kvitování a startu se do 30 s nedostaly na expedici 2 kelímky. Nuluje „Kvitovat“ čítač?']},
+    {win:true}],
+   win:['Úroveň 10 hotová!', 'Linka třídí zmetky a hlídá, aby sklad nepřetekl. Další úroveň: zarážka, která drží odstupy mezi kusy.'],
+   theory:{title:'Hlídání skladu',
+    intro:'Každý zásobník má omezenou kapacitu. PLC musí vědět, kolik toho v něm je, a včas zavolat obsluhu.',
+    items:[
+     {t:'Čítač zmetků', wide:true, p:'Každý průjezd senzoru na vedlejší větvi je jeden zmetek. CTU je spočítá a při PV = 3 sepne výstup Q. Reset „Chod“ pak zastaví celou linku. Vyzkoušej si čítač:', demo:'ctu'},
+     {t:'Kvitování', ad:'%I0.4', p:'Obsluha sklad vyprázdní a stiskne KVITOVAT. To vynuluje čítač. Linka se ale sama nerozjede, rozjet ji smí až START.'},
+    ]}},
+  ]},
+ {id:11, name:'Zarážka a odstup', hall:HALL11, panel:true, base:H11base,
+  steps:[
+  {title:'Zarážka zadrží frontu',
+   text:'Podavač tu sype kelímky hodně rychle za sebou. Kamera ale musí vidět vždycky jen jeden kus, jinak je nerozliší. Před kamerou je proto zarážka: pneumatický kolík, který vyjede do pásu a zadrží kelímky, i když pás jede. Třídění výhybkou už v programu máš. Teď jen zarážku zapni, ať se kelímky seřadí do fronty.',
+   goal:'Zadrž kelímky na zarážce, žádný nesmí projet.',
+   sig:[['Q2.3', 'zarážka: 1 = kolík vysunutý, drží kusy'], ['I2.3', 'u zarážky čeká kelímek']],
+   hint:['Přidej síť: spínací „Chod“ → cívka „Zarážka 1“.', 'Pás pod zarážkou jede dál, kelímky jen kloužou na místě.'],
+   sol:H11S1,
+   script:[
+    {at:0.5, press:['start'], log:'Obsluha stiskla START'},
+    {when:s => s.img['I2.3'] && s.H.items.filter(i => i.x < 4).length >= 3, timeout:20, timeoutFail:['Fronta se netvoří', 'Za 20 s se u zarážky neseřadily 3 kelímky. Je zarážka zapnutá, když linka jede?']},
+    {after:3, check:s => s.H.items.some(i => i.x >= 4) || s.H.units > 0 ? ['Kelímky projíždějí', 'Za zarážku nesmí projet žádný kelímek. Zapni výstup „Zarážka 1“ cívkou ze sítě „Chod“.'] : null},
+    {win:true}],
+   win:['Fronta stojí', 'Zarážka drží kelímky a pás pod nimi klouže. Teď je potřeba pouštět je po jednom.'],
+   theory:{title:'Zarážka',
+    intro:'Zarážka (stopper) je jeden z nejběžnějších prvků na dopravnících. Zastaví kus přesně na místě, aniž by se musel zastavit celý pás.',
+    items:[
+     {t:'Pneumatická zarážka', ad:'%Q2.3', p:'Malý pneumatický válec pod pásem nebo vedle něj. Když dostane signál, vysune kolík do dráhy kusů. Kus se o něj opře a čeká, pás pod ním klouže dál. Když kolík zajede, kus pokračuje.'},
+     {t:'Hlídání fronty', ad:'%I2.3', p:'U zarážky je senzor, který hlásí, že tam kus čeká. V hale ho uvidíš jako vstup „Zarážka 1 kus“.'},
+     {t:'Proč ne zastavit pás', p:'Zastavit celý pás by šlo taky, ale zastavily by se všechny kusy na něm. Zarážka zadrží jen ty před sebou. Kusy za ní jedou dál k dalším stanicím.'},
+    ]}},
+  {title:'Pouštěj po jednom',
+   text:'Zarážku stačí na krátkou chvíli otevřít. Projede jeden kelímek a další se zase zastaví o kolík. Když to budeš dělat pravidelně, dostaneš mezi kelímky stejné rozestupy. Použij taktovací bit „Takt 0,5 Hz“ (%M100.7): jeho náběžná hrana přijde každé 2 s a spustí impulz TP, který zarážku na 0,4 s otevře.',
+   goal:'Pouštěj kelímky v rozestupech: 4 dobré na expedici, 1 vadný do zmetků.',
+   sig:[['M100.7', 'takt 0,5 Hz: 1 s zapnuto, 1 s vypnuto'], ['T1.Q', 'impulz TP: zarážka otevřená'], ['Q2.3', 'zarážka']],
+   hint:['Přidej síť: spínací „Takt 0,5 Hz“ → impulzní časovač TP "T1", PT = 0,4 s. Za Q nic nedávej.', 'Síť zarážky uprav: spínací „Chod“ + rozpínací "T1".Q → cívka „Zarážka 1“.', 'Zarážka je tak vysunutá pořád, kromě 0,4 s každé 2 s.'],
+   sol:H11S2, defects:[4], camSingle:true,
+   script:[
+    {at:0.5, press:['start'], log:'Obsluha stiskla START'},
+    {when:s => s.H.reworked >= 1 && s.H.units >= 4, timeout:60, timeoutFail:['Kelímky neprojíždějí', 'Za 60 s se nepodařilo poslat 4 dobré kelímky na expedici a 1 vadný do zmetků. Otevírá se zarážka pravidelně na krátkou chvíli?']},
+    {win:true}],
+   win:['Hra dokončena!', 'Máš za sebou celou výrobu: plnění, balení, kontrolu kvality, robota, třídění i odstupy kusů. V „Moje hala“ máš teď odemčené všechny komponenty a můžeš si postavit vlastní továrnu.'],
+   theory:{title:'Takt a odstupy',
+    intro:'Kamera, výhybka i stroje potřebují, aby kusy nejely natěsno. Zarážka z nepravidelné fronty udělá pravidelný proud kusů.',
+    items:[
+     {t:'Taktovací bit 0,5 Hz', ad:'%M100.7', p:'Bit 7 taktovací paměti bliká s frekvencí 0,5 Hz: jednu sekundu je v 1 a jednu v 0. Jeho náběžná hrana tedy přijde každé 2 sekundy.'},
+     {t:'Krátké otevření', wide:true, p:'Impulzní časovač TP spustí náběžná hrana taktu a na 0,4 s sepne. Zarážka je zapojená přes rozpínací kontakt "T1".Q, takže se na tu chvíli otevře. Za 0,4 s projede právě jeden kelímek. Další dojede ke kolíku až po jeho zavření. Vyzkoušej si TP:', demo:'tp'},
+     {t:'Proč na odstupu záleží', p:'Kamera musí v zorném poli vidět jen jeden kus, jinak neví, který je vadný. A výhybka se smí přehodit, jen když v ní žádný jiný kus není. Pravidelné rozestupy obojí zajistí.'},
     ]}},
   ]},
  {id:SANDBOX, name:'Moje hala', sandbox:true, panel:true, base:() => [emptyRung()],
@@ -1537,7 +1672,7 @@ const LEVELS = [
      {t:'Adresy se přidělí samy', p:'Každá komponenta dostane své vstupy %I a výstupy %Q. Najdeš je pod komponentou v hale, ve sledovací tabulce i v editoru kontaktů. Dopravníky se stejným číslem pásu mají společný motor.'},
      {t:'Výrobky a jejich postup', wide:true, p:'Každý výrobek musí projít stroji ve správném pořadí:', ul:Object.values(PRODUCTS).map(p => `${p.name}: ${p.recipe.map(o => OPN[o]).join(' → ')} (od úrovně ${p.unlock})`)},
      {t:'Program jedné stanice', wide:true, p:'Typický stroj: pás jede, když ve stroji není kus, nebo když už je hotový. Stroj pracuje, když kus čeká a ještě není hotový. Vyzkoušej si to:', demo:'station'},
-     {t:'Odemykání komponent', p:'Nové komponenty získáš splněním úrovní:', ul:['Úroveň 1: podavač, dopravník, senzor, plnička, expedice', 'Úroveň 2: pec', 'Úroveň 3: etiketovačka', 'Úroveň 4: víčkovačka, lis, vrtačka', 'Úroveň 5: zatavovačka, zavíčkovačka, majáček', 'Úroveň 6: kamera a vyhazovač', 'Úroveň 8: balička do krabic', 'Úroveň 9: robot a paleta']},
+     {t:'Odemykání komponent', p:'Nové komponenty získáš splněním úrovní:', ul:['Úroveň 1: podavač, dopravník, senzor, plnička, expedice', 'Úroveň 2: pec', 'Úroveň 3: etiketovačka', 'Úroveň 4: víčkovačka, lis, vrtačka', 'Úroveň 5: zatavovačka, zavíčkovačka, majáček', 'Úroveň 6: kamera a vyhazovač', 'Úroveň 8: balička do krabic', 'Úroveň 9: robot a paleta', 'Úroveň 10: výhybka a sklad zmetků', 'Úroveň 11: zarážka, chladicí tunel, obalovačka a čokoládové tyčinky']},
     ]}},
   ]},
 ];
@@ -1553,11 +1688,17 @@ const ST = () => LV().steps[step - 1];
 let sim = newSim();
 
 const KEY = 'plc-linka-v2';
-function save(){ programs[level] = program; try { localStorage.setItem(KEY, JSON.stringify({v:2, programs, level, step, prog, seen, hall:userHall})); } catch(e){} }
+function save(){ programs[level] = program; try { localStorage.setItem(KEY, JSON.stringify({v:3, programs, level, step, prog, seen, hall:userHall})); } catch(e){} }
 const sanitize = p => Array.isArray(p) && p.length ? p.map(r => ({slots: pad(r.slots), out: r.out || {kind:'none'}})) : null;
 function load(d){
   try {
     let s = d && d.programs ? d : JSON.parse(localStorage.getItem(KEY) || 'null');
+    if (s && (s.v || 0) < 3) {
+      const P = s.programs || {}, G = s.prog || {};
+      if (P[10]) { P[12] = P[10]; delete P[10]; }
+      if (G[10] != null) { G[12] = G[10]; delete G[10]; }
+      if (s.level === 10) s.level = 12;
+    }
     if (!s) { const o = JSON.parse(localStorage.getItem('plc-linka-v1') || 'null'); if (o) s = {programs:{1:o.program}, level:1, step:o.step || 1, prog:{1:o.unlocked || 1, 2:(o.unlocked || 1) > 3 ? 1 : 0, 3:0}, seen:{}}; }
     if (s) {
       for (const k of LEVELS.map(x => x.id)) { const p = sanitize(s.programs && s.programs[k]); if (p) programs[k] = p; }
@@ -1695,7 +1836,7 @@ function addComp(H, x, y, t, d, m){
 function sampleHall(prod, keep){
   const H = {cells:{}, groups:{}, boxN:4, palN:4, product:prod, order:keep ? keep.order : {n:8, pack:'loose'}, defects:keep ? keep.defects : false};
   const seq = ['src', 'belt', ...PRODUCTS[prod].recipe.flatMap(o => [o, 'belt']), 'out'];
-  seq.forEach((t, i) => addComp(H, i + 1, 2, t, 0, 1));
+  seq.forEach((t, i) => addComp(H, i + 2, 4, t, 0, 1));
   return H;
 }
 function isBad(it, H){
@@ -1711,7 +1852,7 @@ const pickCell = (H, c) => { const p = cellAt(H, c.x + DIRS[c.d][0], c.y + DIRS[
 const placeCell = (H, c) => cellAt(H, c.x - DIRS[c.d][0], c.y - DIRS[c.d][1]);
 const pickItem = (h, pc) => h.items.find(it => inCell(it, pc) && rel(it, pc).a >= 0.25);
 function newHallState(H){
-  const st = {items:[], serial:0, nid:0, units:0, rej:0, boxesOut:0, pallets:0, ph:{}, c:{}, idle:0, log:''};
+  const st = {items:[], serial:0, nid:0, units:0, rej:0, reworked:0, boxesOut:0, pallets:0, ph:{}, c:{}, idle:0, log:''};
   for (const [k, c] of Object.entries(H.cells)) {
     if (c.t === 'src') st.c[k] = {last:-99};
     else if (c.t === 'pack') st.c[k] = {box:{contents:[]}, readyAt:0, putT:0};
@@ -1737,7 +1878,8 @@ function shipOut(it, H, h){
       ? ['Neúplná krabice odešla', `V krabici byly jen ${it.contents.length} z ${H.boxN} kusů. Krabici vydávej, až když svítí „Krabice plná“.`]
       : ['Vadná krabice odešla k zákazníkovi', it.seen ? 'Kamera vadu nahlásila, ale vyhazovač krabici nevyřadil. Signál kamery trvá jen zlomek sekundy a krabice dojede k vyhazovači až později. Prodluž ho impulzním časovačem TP (třeba 1 s).' : 'V krabici byl rozlámaný kus. Před expedicí ji musí zkontrolovat kamera a vyřadit vyhazovač.']);
     const P = PRODUCTS[it.prod], miss = P.recipe.filter(o => !it.ops.includes(o));
-    if (it.defect && !miss.length) return fail(['Vadný výrobek odešel k zákazníkovi', it.seen ? 'Kamera vadu nahlásila, ale vyhazovač kus nevyřadil. Prodluž signál kamery impulzem TP.' : 'Kus měl vadu. Před expedici patří kamera a vyhazovač (odemkne je úroveň 6).']);
+    const hasDiv = Object.values(H.cells).some(c => c.t === 'div');
+    if (it.defect && !miss.length) return fail(['Vadný výrobek odešel k zákazníkovi', !it.seen ? 'Kus měl vadu. Před expedici patří kamera a vyhazovač (odemkne je úroveň 6).' : hasDiv ? 'Kamera vadu nahlásila, ale výhybka kus neposlala do zmetků. Signál kamery je krátký: zapamatuj si vadu paměťovým bitem (Set) a tím bitem přehoď výhybku.' : 'Kamera vadu nahlásila, ale vyhazovač kus nevyřadil. Prodluž signál kamery impulzem TP.']);
     return fail(['Nehotový výrobek odešel', `${P.name} ještě potřeboval: ${miss.map(o => OPN[o]).join(', ')}. Postup: ${P.recipe.map(o => OPN[o]).join(' → ')}.`]);
   }
   if (LV().sandbox) {
@@ -1754,13 +1896,14 @@ function hallTick(dt){
   const s = sim, h = s.H, H = curHall(), img = s.img, S = ST();
   s.t += dt;
   img['I0.1'] = pressed('start'); img['I0.2'] = !pressed('stop'); img['I0.3'] = !pressed('estop'); img['I0.4'] = pressed('ack');
-  img['M100.5'] = Math.floor(s.t * 2) % 2 === 0;
+  img['M100.5'] = Math.floor(s.t * 2) % 2 === 0; img['M100.7'] = Math.floor(s.t) % 2 === 0;
   const cells = Object.values(H.cells);
   for (const c of cells) {
     const st = h.c[ck(c)], io = c.io, K = COMPS[c.t];
     if (c.t === 'sens') img[io.s] = !!atCenter(h, c, 0.14);
     else if (K.op) { const it = atCenter(h, c, 0.15); img[io.in] = !!it; img[io.d] = !!(it && it.kind === 'item' && it.ops.includes(K.op)); }
-    else if (c.t === 'cam') { const it = atCenter(h, c, 0.2); const bad = !!it && isBad(it, H); img[io.ok] = !!it && !bad; img[io.bad] = bad; if (it) it.seen = true; }
+    else if (c.t === 'stop') img[io.s] = !!atCenter(h, c, 0.14);
+    else if (c.t === 'cam') { if (S.camSingle && h.items.filter(x => inCell(x, c)).length > 1) return fail(['Kusy jedou moc natěsno', 'Pod kamerou byly dva kelímky najednou a kamera je nerozliší. Odděl je zarážkou: pouštěj kusy po jednom v pravidelném taktu.']); const it = atCenter(h, c, 0.2); const bad = !!it && isBad(it, H); img[io.ok] = !!it && !bad; img[io.bad] = bad; if (it) it.seen = true; }
     else if (c.t === 'pack') { img[io.in] = h.items.some(it => it.infeed === ck(c)); img[io.rdy] = !!st.box; img[io.full] = !!st.box && st.box.contents.length >= H.boxN; }
     else if (c.t === 'robot') { const pc = pickCell(H, c), it = pc && pickItem(h, pc); img[io.part] = !!it && !it.moved; img[io.home] = !st.busy; }
     else if (c.t === 'pal') { img[io.rdy] = st.present; img[io.full] = st.present && st.items.length >= H.palN; img[io.ok] = img[io.full] && !st.items.some(x => isBad(x, H)); }
@@ -1776,7 +1919,7 @@ function hallTick(dt){
     const [dx, dy] = DIRS[c.d], x = c.x + .5 + dx * .62, y = c.y + .5 + dy * .62;
     if (h.items.some(o => !o.gone && Math.hypot(o.x - x, o.y - y) < HGAP)) continue;
     const nc = cellAt(H, c.x + dx, c.y + dy);
-    if (!nc || !(beltish(nc) || nc.t === 'out')) return fail(['Podavač sype mimo pás', `${cname(c)} vydal kus, ale před ním není dopravník. Otoč podavač šipkou k pásu, nebo pás přistav.`]);
+    if (!nc || !(beltish(nc) || nc.t === 'out' || nc.t === 'rework')) return fail(['Podavač sype mimo pás', `${cname(c)} vydal kus, ale před ním není dopravník. Otoč podavač šipkou k pásu, nebo pás přistav.`]);
     st.last = s.t; h.serial++;
     const bad = cf.defects === 'auto' ? h.serial % 6 === 4 : cf.defects.includes(h.serial);
     let it;
@@ -1794,17 +1937,20 @@ function hallTick(dt){
     const cx = Math.floor(it.x), cy = Math.floor(it.y), c = cellAt(H, cx, cy);
     if (!c) return fail(['Výrobek spadl z pásu', `Kus dojel na konec dopravníku, kde nic nenavazuje (políčko ${cx + 1}, ${cy + 1}), a spadl na zem. Prodluž pás až k dalšímu stroji nebo k expedici.`]);
     if (c.t === 'out') { it.gone = true; if (shipOut(it, H, h)) return true; continue; }
+    if (c.t === 'rework') { it.gone = true; if (!isBad(it, H)) return fail(['Dobrý kus skončil ve zmetcích', 'Do skladu zmetků dojel kus, který byl v pořádku. Výhybka smí odbočit jen pro vadné kusy a hned potom se musí vrátit (Reset paměti senzorem na vedlejší větvi).']); h.rej++; h.reworked++; continue; }
     if (!beltish(c)) return fail(['Výrobek narazil', `Kus vjel do políčka se strojem „${COMPS[c.t].name}“, který kusy z pásu nepřijímá.`]);
     if (COMPS[c.t].belt) it.lastM = c.m;
-    const isPack = c.t === 'pack', m = isPack ? it.lastM : c.m, r = rel(it, c);
+    const de = c.t === 'div' && img[c.io.q] ? (c.d + 1) % 4 : c.d;
+    const isPack = c.t === 'pack', m = isPack ? it.lastM : c.m, r = rel(it, {...c, d:de});
     if (isPack && it.kind === 'item' && r.a >= -0.31) it.infeed = ck(c);
     if (!on(m)) continue;
-    const [dx, dy] = DIRS[c.d], v = HSPEED * dt;
+    const [dx, dy] = DIRS[de], v = HSPEED * dt;
     let na = r.a + v;
     const np = Math.abs(r.p) <= v ? 0 : r.p - Math.sign(r.p) * v;
     let lim = null;
     if (isPack && it.kind === 'item') lim = -0.3;
-    else { const nx = cellAt(H, cx + dx, cy + dy); if (nx && !beltish(nx) && nx.t !== 'out') lim = 0.38; }
+    else { const nx = cellAt(H, cx + dx, cy + dy); if (nx && !beltish(nx) && nx.t !== 'out' && nx.t !== 'rework') lim = 0.38; }
+    if (c.t === 'stop' && img[c.io.q] && r.a <= 0.001) lim = lim === null ? 0 : Math.min(lim, 0);
     if (lim !== null && na > lim) na = Math.max(r.a, lim);
     const x = c.x + .5 + na * dx - np * dy, y = c.y + .5 + na * dy + np * dx;
     const mx = x - it.x, my = y - it.y;
@@ -1858,7 +2004,7 @@ function hallTick(dt){
         const [dx, dy] = DIRS[c.d], x = c.x + .5 + dx * .62, y = c.y + .5 + dy * .62;
         if (!h.items.some(o => !o.gone && Math.hypot(o.x - x, o.y - y) < HGAP)) {
           const nc = cellAt(H, c.x + dx, c.y + dy);
-          if (!nc || !(COMPS[nc.t].belt || nc.t === 'out')) return fail(['Krabice spadla', `${cname(c)} vysunula krabici, ale ve směru šipky není dopravník.`]);
+          if (!nc || !(COMPS[nc.t].belt || nc.t === 'out' || nc.t === 'rework')) return fail(['Krabice spadla', `${cname(c)} vysunula krabici, ale ve směru šipky není dopravník.`]);
           h.items.push({id:++h.nid, kind:'box', prod:st.box.contents[0].prod, contents:st.box.contents, x, y, lastM:nc.m || 0});
           st.box = null; st.readyAt = s.t + 1.5;
         }
@@ -1917,6 +2063,7 @@ function itemSvg(it, x, y, k){
     case 'yogurt': s = `<circle r="12" fill="#e9e4dc" stroke="#b4c0c7" stroke-width="1.5"/>${has('fill') ? '<circle r="8.5" fill="#e58fb0"/>' : ''}${has('seal') ? '<circle r="10" fill="#c9d3d9" opacity=".9"/>' : ''}`; break;
     case 'can': s = `<circle r="11.5" fill="#55626a" stroke="#b4c0c7" stroke-width="2"/>${has('fill') ? '<circle r="8" fill="#f08a3c"/>' : ''}${has('seam') ? '<circle r="9" fill="#9aa6ad" stroke="#e2e8eb" stroke-width="2.5"/>' : ''}`; break;
     case 'cookie': s = `<rect x="-12" y="-12" width="24" height="24" rx="8" fill="${has('bake') ? '#b0773a' : '#e6d4a8'}"/>${has('bake') ? '<circle cx="-4" cy="-3" r="2" fill="#5a3818"/><circle cx="4" cy="4" r="2" fill="#5a3818"/><circle cx="5" cy="-5" r="1.6" fill="#5a3818"/>' : ''}`; break;
+    case 'choco': s = `<rect x="-14" y="-8" width="28" height="16" rx="3" class="ib"/>${has('fill') ? `<rect x="-12" y="-6" width="24" height="12" rx="2" fill="${has('cool') ? '#4a2a14' : '#7a4a26'}"/>` : ''}${has('cool') ? '<path d="M-9 -3h12" stroke="#a87a54" stroke-width="1.5"/>' : ''}${has('wrap') ? '<rect x="-15" y="-9" width="30" height="18" rx="3" fill="#c0473a"/><rect x="-4" y="-9" width="8" height="18" fill="#f3ae3d"/>' : ''}`; break;
     case 'gear': s = `<circle r="11" fill="none" stroke="${has('press') ? '#c3ccd1' : '#6f7b82'}" stroke-width="5" stroke-dasharray="4 4.6"/><circle r="9" fill="${has('press') ? '#c3ccd1' : '#6f7b82'}"/>${has('drill') ? '<circle r="3.5" fill="#0d1113"/>' : ''}`; break;
   }
   if (it.defect) s += '<path d="M-9 -9L9 9" class="idefl"/>';
@@ -1952,6 +2099,9 @@ function compSvg(c, st, on, img, H, h){
     case 'push': { const q = sig(io.q); s += `<g ${rot}><rect x="26" y="1" width="28" height="11" rx="2" class="hcyl${q ? ' on' : ''}"/>${q ? '<rect x="37" y="12" width="6" height="24" class="hrod"/><rect x="24" y="34" width="32" height="5" class="hrod"/>' : ''}<rect x="22" y="68" width="36" height="11" rx="2" class="hbin"/></g>`; break; }
     case 'src': s += `<g ${rot}><path d="M10 12h50l-10 56h-30z" class="hsrc${sig(io.q) ? ' on' : ''}"/><path d="M62 40h14m-6 -6l6 6l-6 6" class="hst" style="fill:none"/></g>`; { const cf = srcCfg(c, H); s += cf.kind === 'box' ? itemSvg({kind:'box', contents:new Array(H.boxN).fill({}), prod:cf.prod}, cx - dx * 6, cy - dy * 6, .6) : itemSvg({kind:'item', prod:cf.prod, ops:cf.done || [], defect:false}, cx - dx * 6, cy - dy * 6, .8); } break;
     case 'out': s += `<rect x="${X + 6}" y="${Y + 12}" width="68" height="58" rx="6" class="hout"/><path d="M${X + 10} ${Y + 14}h60" class="hdock"/><text x="${cx}" y="${Y + 38}" text-anchor="middle" class="hico" style="font-size:18px">🚚</text><text x="${cx}" y="${Y + 51}" text-anchor="middle" class="hn">Expedice</text><text x="${cx}" y="${Y + 65}" text-anchor="middle" class="hcnt">${on ? h.units : 0} ks</text>`; break;
+    case 'stop': { const q = sig(io.q); s += `<g ${rot}><rect x="52" y="2" width="10" height="14" rx="2" class="hcyl${q ? ' on' : ''}"/>${q ? '<rect x="54" y="16" width="6" height="30" rx="2" class="hpin"/>' : ''}</g>`; break; }
+    case 'div': { const q = sig(io.q); s += `<g ${rot}><path d="${q ? 'M22 40h12q6 0 6 6v12m-6 -6l6 7l6 -7' : 'M20 40h34m-7 -6l7 6l-7 6'}" class="hdiv${q ? ' on' : ''}"/></g>`; break; }
+    case 'rework': s += `<rect x="${X + 8}" y="${Y + 12}" width="64" height="58" rx="6" class="hrw"/><text x="${cx}" y="${Y + 38}" text-anchor="middle" class="hico" style="font-size:18px">🗑️</text><text x="${cx}" y="${Y + 52}" text-anchor="middle" class="hn">Zmetky</text><text x="${cx}" y="${Y + 65}" text-anchor="middle" class="hcnt bad">${on ? h.reworked : 0} ks</text>`; break;
     case 'beacon': s += `<rect x="${X + 30}" y="${Y + 14}" width="20" height="52" rx="4" class="hst"/><circle cx="${cx}" cy="${Y + 28}" r="7" fill="${sig(io.g) ? 'var(--live)' : '#24312b'}"/><circle cx="${cx}" cy="${Y + 50}" r="7" fill="${sig(io.r) ? 'var(--err)' : '#3a2220'}"/>`; break;
     case 'pack': {
       const bx = cx + dx * 12, by = cy + dy * 12;
@@ -1994,7 +2144,7 @@ function compSvg(c, st, on, img, H, h){
         if (on && st.prog > 0) s += `<rect x="${X + 14}" y="${Y + 66}" width="${(52 * Math.min(1, st.prog / K.T)).toFixed(1)}" height="3" class="hbar"/>`;
       }
   }
-  if (c.t !== 'out' && c.t !== 'belt') s += `<text x="${X + 4}" y="${Y + 11}" class="hn">${esc(cname(c))}</text>`;
+  if (c.t !== 'out' && c.t !== 'belt' && c.t !== 'rework') s += `<text x="${X + 4}" y="${Y + 11}" class="hn">${esc(cname(c))}</text>`;
   return s + ioText(c, on, img, X, Y);
 }
 let hallStaticKey = '';
@@ -2006,15 +2156,18 @@ function renderHall(){
     hallStaticKey = key;
     const cs = Object.values(H.cells), mg = sb ? 1 : 0;
     let x0 = 0, y0 = 0, x1 = HC - 1, y1 = HR - 1;
-    if (cs.length) {
+    if (cs.length && !sb) {
       x0 = Math.max(0, Math.min(...cs.map(c => c.x)) - mg); x1 = Math.min(HC - 1, Math.max(...cs.map(c => c.x)) + mg);
       y0 = Math.max(0, Math.min(...cs.map(c => c.y)) - mg); y1 = Math.min(HR - 1, Math.max(...cs.map(c => c.y)) + mg);
       if (sb) { while (x1 - x0 < 4) { if (x1 < HC - 1) x1++; else x0--; } while (y1 - y0 < 2) { if (y1 < HR - 1) y1++; else y0--; } }
     }
-    if (!(sb && drag)) $('hall').setAttribute('viewBox', `${x0 * CS} ${y0 * CS} ${(x1 - x0 + 1) * CS} ${(y1 - y0 + 1) * CS}`);
+    const pad = sb ? 10 : 0;
+    $('hall').setAttribute('viewBox', `${x0 * CS - pad} ${y0 * CS - pad} ${(x1 - x0 + 1) * CS + 2 * pad} ${(y1 - y0 + 1) * CS + 2 * pad}`);
     $('hallWrap').classList.toggle('sb', sb);
     let g = '';
-    for (let y = 0; y < HR; y++) for (let x = 0; x < HC; x++) g += `<rect x="${x * CS + 1}" y="${y * CS + 1}" width="${CS - 2}" height="${CS - 2}" rx="4" class="hgrid"/>`;
+    if (sb) g += `<rect x="-8" y="-8" width="${HC * CS + 16}" height="${HR * CS + 16}" rx="6" class="hwall"/>`;
+    for (let y = 0; y < HR; y++) for (let x = 0; x < HC; x++) g += `<rect x="${x * CS + 1}" y="${y * CS + 1}" width="${CS - 2}" height="${CS - 2}" rx="4" class="hgrid${(x + y) % 2 ? ' alt' : ''}"/>`;
+    if (sb) for (let x = 0; x <= HC; x += 4) for (const y of [-8, HR * CS - 2]) g += `<rect x="${Math.min(x * CS, HC * CS) - 6}" y="${y}" width="12" height="10" rx="2" class="hpil"/>`;
     if (cs.length) g += `<rect x="${Math.max(0, Math.min(...cs.map(c => c.x))) * CS + 3}" y="${Math.min(...cs.map(c => c.y)) * CS + 3}" width="${(Math.max(...cs.map(c => c.x)) - Math.min(...cs.map(c => c.x)) + 1) * CS - 6}" height="${(Math.max(...cs.map(c => c.y)) - Math.min(...cs.map(c => c.y)) + 1) * CS - 6}" rx="6" class="hsafe"/>`;
     $('hallGrid').innerHTML = g;
     let hit = '';
@@ -2023,6 +2176,7 @@ function renderHall(){
   }
   $('hallHit').classList.toggle('off', online);
   $('hallWrap').classList.toggle('edit', sb && !online);
+  $('hall').classList.toggle('nolab', sb && !!userHall.nolab);
   let g = '';
   for (const c of Object.values(H.cells)) g += compSvg(c, h.c[ck(c)] || {}, online, img, H, h);
   if (online) for (const it of h.items) g += itemSvg(it, it.x * CS, it.y * CS, 1);
@@ -2115,7 +2269,8 @@ function renderHallTools(){
     <button data-ha="undo" ${undoStack.length && !run ? '' : 'disabled'} title="Vrátit poslední změnu (Ctrl+Z)"><span class="ic">↶</span>Zpět</button>
     <span class="hsep"></span>
     <button data-ha="dir" title="Směr nové komponenty (klávesa R)">Směr <b class="dirb">${'→↓←↑'[bDir]}</b></button>
-    ${[1, 2, 3, 4].map(m => `<button data-ha="grp" data-v="${m}" class="${bGrp === m ? 'on' : ''}" title="Motor nových dopravníků: Pás ${m}">P${m}</button>`).join('')}</div>
+    ${[1, 2, 3, 4].map(m => `<button data-ha="grp" data-v="${m}" class="${bGrp === m ? 'on' : ''}" title="Motor nových dopravníků: Pás ${m}">P${m}</button>`).join('')}
+    <button data-ha="lab" class="${userHall.nolab ? '' : 'on'}" title="Zobrazit nebo skrýt názvy a adresy v hale">🏷 Popisky</button></div>
     <div class="hinfo" id="hInfo">${run ? 'PLC běží. Stavět můžeš po stisku ■ STOP.' : 'Vyber komponentu a klikni do haly. Dopravník můžeš táhnout, otočí se sám.'}</div>`;
 }
 $('hallTools').addEventListener('click', e => {
@@ -2125,6 +2280,7 @@ $('hallTools').addEventListener('click', e => {
   else if (d.ha === 'undo') return undo();
   else if (d.ha === 'dir') bDir = (bDir + 1) % 4;
   else if (d.ha === 'grp') bGrp = +d.v;
+  else if (d.ha === 'lab') { userHall.nolab = !userHall.nolab; save(); }
   renderHallTools();
 });
 function showHover(p){

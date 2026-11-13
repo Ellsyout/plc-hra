@@ -15,13 +15,15 @@ Hráč skládá program pro výrobní linku a simulace hned ukáže, jestli link
 7. **Ruční a automat** – přepínač režimů, ruční posuv, kontakty hrany -|P|- a -|N|-
 8. **Balení do krabic** – nová hala shora, balička a handshake se strojem, kamerová kontrola krabic
 9. **Robot a paletizace** – robot s dorazem a startem na hranu, paleta, kamera nad paletou, konec zakázky čítačem
+10. **Třídění výhybkou** – výhybka a sklad zmetků, sledování kusu paměťovým bitem, hlídání plného skladu
+11. **Zarážka a odstup** – pneumatická zarážka, fronta kusů, pouštění v taktu (taktovací bit + TP)
 
 ## Moje hala
 
 Volná hra, která se otevře po úrovni 1. Hráč si na mřížce postaví vlastní výrobní halu:
-vybere výrobek (džus, sušenky, med, voda, ozubená kola, jogurt, plechovky) a zakázku,
+vybere výrobek (džus, sušenky, med, voda, ozubená kola, jogurt, plechovky, čokoládové tyčinky) a zakázku,
 poskládá linku z komponent (dopravník stačí táhnout myší nebo prstem) a napíše pro ni program. Každá komponenta dostane adresy %I/%Q sama.
-Nové komponenty (pec, víčkovačka, kamera, balička, robot, paleta…) se odemykají splněním úrovní.
+Hala má mřížku 16 × 9 políček. Nové komponenty (pec, víčkovačka, kamera, výhybka, zarážka, chladicí tunel, balička, robot, paleta…) se odemykají splněním úrovní.
 
 ## Spuštění
 
