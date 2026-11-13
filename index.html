@@ -388,13 +388,16 @@ table.watch td.v.on{color:var(--live)}
 .intro p{margin:0;color:var(--fg2);font-size:16px;max-width:65ch}
 .intro h2{font-family:var(--display);font-size:19px;font-weight:600;margin:6px 0 0}
 .ilist{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:8px}
-.ilist div{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:10px 12px;font-size:14px;color:var(--fg2)}
+.ilist .icard{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:10px 12px;font-size:14px;color:var(--fg2);text-align:left;cursor:pointer;line-height:1.35}
+.ilist .icard:hover:not(:disabled){border-color:var(--amber);background:#1d1a12}
+.ilist .icard:disabled{opacity:.45;cursor:not-allowed}
 .ilist b{display:block;color:var(--fg);font-family:var(--display);font-weight:600;font-size:15px;margin-bottom:2px}
 .ilist span{font-family:var(--mono);font-size:10.5px;color:var(--amber);letter-spacing:.08em;text-transform:uppercase}
 .isteps{margin:0;padding-left:22px;color:var(--fg2);display:flex;flex-direction:column;gap:4px;font-size:15px}
 .ibtns{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .ibtns .btn.big{font-size:20px;padding:12px 30px}
 .idisc{font-size:13px!important;color:var(--dim)!important;border-top:1px solid var(--line);padding-top:12px}
+.study{z-index:50}
 .study .th-card{max-width:900px}
 .toc{display:flex;flex-wrap:wrap;gap:6px}
 .toc a{font-family:var(--mono);font-size:11.5px;color:var(--fg2);border:1px solid var(--line);border-radius:999px;padding:4px 10px;text-decoration:none}
@@ -419,6 +422,7 @@ table.watch td.v.on{color:var(--live)}
     <div class="brand">
       <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect x="1" y="1" width="32" height="32" rx="7" fill="none" stroke="#f3ae3d" stroke-width="2"/><path d="M7 8v18M27 8v18M7 17h6M21 17h6M13 11v12M21 11v12" stroke="#f3ae3d" stroke-width="2" fill="none"/></svg>
       <div><h1>Naplň flašku</h1><small id="brandSub">Siemens S7-1200 · LAD</small></div>
+      <button class="reset" id="btnMenu" title="Hlavní nabídka" aria-label="Hlavní nabídka">☰<span class="lt"> Nabídka</span></button>
       <button class="reset" id="btnStudy" title="Studijní materiály: PLC, S7-1200, TIA Portal, LAD" aria-label="Studijní materiály">📚<span class="lt"> Studijní materiály</span></button>
       <button class="reset" id="btnReset" title="Smaže všechny programy i postup a začne od úrovně 1" aria-label="Obnovit hru">↺<span class="lt"> Obnovit hru</span></button>
     </div>
@@ -603,7 +607,7 @@ table.watch td.v.on{color:var(--live)}
       <div><h1 id="inTitle">Naplň flašku</h1><div class="tag">Výuková hra · PLC Siemens S7-1200 · žebříček LAD</div></div>
     </div>
     <p>Ahoj! Tohle je hra <b>Naplň flašku</b>. Naučíš se v ní základy programování PLC, tedy počítačů, které řídí stroje ve výrobě. Program skládáš v žebříčkovém diagramu (LAD), stejně jako v prostředí Siemens TIA Portal. Simulace linky ti hned ukáže, jestli tvůj program funguje.</p>
-    <h2>Co ve hře najdeš</h2>
+    <h2>Co ve hře najdeš <small style="font-family:var(--mono);font-size:11px;color:var(--dim);font-weight:400">klikni a jdi rovnou na úroveň</small></h2>
     <div class="ilist" id="inList"></div>
     <h2>Jak se hraje</h2>
     <ol class="isteps">
@@ -3108,16 +3112,36 @@ window.addEventListener('resize', () => { fitProcess(); lastSig = ''; });
 fitProcess();
 
 // ---------- intro ----------
+const taskLevel = () => {
+  if (!LV().sandbox) return level;
+  let best = 1;
+  for (const L of LEVELS) if (!L.sandbox && (prog[L.id] || 0) >= 1) best = L.id;
+  for (const L of LEVELS) if (!L.sandbox && (prog[L.id] || 0) >= 1 && !lvDone(L.id)) return L.id;
+  return best;
+};
 function renderIntro(){
-  const items = LEVELS.filter(L => !L.sandbox).map(L => `<div><span>Úroveň ${L.id}</span><b>${esc(L.name)}</b>${L.steps.map(x => esc(x.title)).join(' · ')}</div>`);
-  items.push(`<div><span>Volná hra</span><b>Moje hala</b>Postav si vlastní výrobní linku z odemčených strojů a napiš pro ni program.</div>`);
-  items.push(`<div><span>Navíc</span><b>Studijní materiály</b>Shrnutí toho, co se ve hře učíš, a jak to vypadá ve skutečném PLC.</div>`);
+  const card = (l, tag, name, text) => { const open = (prog[l] || 0) >= 1, done = !LEVELS[l - 1].sandbox && lvDone(l);
+    return `<button class="icard" data-il="${l}" ${open ? '' : 'disabled title="Zatím zamčeno"'}><span>${tag}${done ? ' ✓' : ''}${open ? '' : ' 🔒'}</span><b>${esc(name)}</b>${text}</button>`; };
+  const items = LEVELS.filter(L => !L.sandbox).map(L => card(L.id, `Úroveň ${L.id}`, L.name, L.steps.map(x => esc(x.title)).join(' · ')));
+  items.push(card(SANDBOX, 'Volná hra', 'Moje hala', 'Postav si vlastní výrobní linku z odemčených strojů a napiš pro ni program.'));
+  items.push(`<button class="icard" data-is="1"><span>Navíc</span><b>Studijní materiály</b>Shrnutí toho, co se ve hře učíš, a jak to vypadá ve skutečném PLC.</button>`);
   $('inList').innerHTML = items.join('');
   const started = Object.keys(seen).length > 0;
-  $('btnStart').textContent = started ? `▶ Pokračovat (úroveň ${LV().sandbox ? 'Moje hala' : level})` : '▶ Start';
+  $('btnStart').textContent = started ? `▶ Pokračovat v úlohách (úroveň ${taskLevel()})` : '▶ Start';
 }
-function closeIntro(){ $('intro').hidden = true; document.body.style.overflow = ''; maybeTheory(); }
-$('btnStart').addEventListener('click', closeIntro);
+function closeIntro(){ $('intro').hidden = true; document.body.style.overflow = ''; }
+function enterLevel(l){
+  closeIntro();
+  if (l === level) { renderAll(); maybeTheory(); }
+  else goto(l, LEVELS[l - 1].sandbox ? 1 : Math.min(LEVELS[l - 1].steps.length, prog[l] || 1));
+  window.scrollTo(0, 0);
+}
+$('btnStart').addEventListener('click', () => enterLevel(taskLevel()));
+$('inList').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b || b.disabled) return;
+  if (b.dataset.is) return openStudy();
+  enterLevel(+b.dataset.il);
+});
 
 // ---------- study materials ----------
 const STUDY = [
@@ -3199,6 +3223,47 @@ const STUDY = [
   <ul><li>Tlačítko <b>STOP</b> se zapojuje jako rozpínací (NC). Když se přeruší vodič, PLC to vyhodnotí jako stisk STOP a stroj se zastaví. U spínacího tlačítka by přerušený vodič nikdo nepoznal.</li>
   <li><b>Nouzové zastavení (E-STOP)</b> musí stroj zastavit spolehlivě i při poruše řídicího systému. Ve skutečnosti se proto řeší bezpečnostním obvodem: bezpečnostním relé nebo bezpečnostním PLC (u Siemens řada F). Samotný běžný program na to nestačí.</li>
   <li>Po kvitování poruchy se stroj nesmí rozjet sám. Rozjet ho smí až nový povel obsluhy.</li></ul>`},
+ {id:'hrany', t:'Hrany signálu', h:`
+  <p>Často nezáleží na tom, jestli je signál 1, ale na <b>okamžiku, kdy se změní</b>.</p>
+  <ul><li><b>Náběžná hrana</b>: změna z 0 na 1 (tlačítko právě stisknuto, kus právě dojel).</li>
+  <li><b>Sestupná hrana</b>: změna z 1 na 0 (tlačítko právě puštěno, kus právě odjel).</li>
+  <li>PLC pozná hranu tak, že porovná současnou hodnotu s hodnotou z minulého cyklu. Proto potřebuje paměťový bit pro každou hranu zvlášť.</li>
+  <li>Čítače CTU/CTD a časovač TP reagují na náběžnou hranu samy, kontakty <code>-|P|-</code> a <code>-|N|-</code> umožňují hranu použít kdekoli v síti.</li></ul>
+  <p>Typické použití: START na hranu, aby zaseknuté nebo držené tlačítko nerozjelo stroj znovu po zastavení.</p>`},
+ {id:'handshake', t:'Domluva se strojem (handshake)', h:`
+  <p>Složitější zařízení (robot, balička, frekvenční měnič) mají vlastní řízení. PLC jim nedává pohyby, ale <b>povely</b>, a ony vracejí <b>stav</b>:</p>
+  <ol><li>Stroj hlásí připravenost, například „v klidu“ nebo „připraven“.</li><li>PLC pošle povel, například „start“.</li><li>Stroj hlásí, že pracuje, a nakonec „hotovo“.</li><li>PLC povel zruší a čeká na další připravenost.</li></ol>
+  <p>Povel se dává jen tehdy, když stroj hlásí, že ho zvládne. Signály mezi PLC a strojem mohou vést dráty na vstupy a výstupy, nebo po průmyslové síti (například PROFINET).</p>`},
+ {id:'postup', t:'Jak postupovat při psaní programu', h:`
+  <ol><li><b>Popiš stroj slovy.</b> Co má dělat, v jakém pořadí, co se smí a co ne.</li>
+  <li><b>Sepiš vstupy a výstupy.</b> Každému dej srozumitelné jméno v tabulce proměnných.</li>
+  <li><b>Začni chodem a bezpečností.</b> START/STOP se samodržením, STOP a nouzové zastavení jako rozpínací.</li>
+  <li><b>Pro každý výstup napiš jednu síť.</b> Zeptej se: kdy přesně má být zapnutý? Podmínky „a zároveň“ dej za sebe, „nebo“ pod sebe.</li>
+  <li><b>Kde je potřeba paměť, použij Set/Reset</b> a promysli, co bit nastaví a co ho smaže.</li>
+  <li><b>Hlídej poruchy.</b> Když se čeká na senzor, přidej hlídací časovač.</li>
+  <li><b>Testuj po kouscích.</b> Nejdřív jednu funkci, pak další. Sleduj signály ve sledovací tabulce (v TIA Portalu režim online a tabulka sledování).</li></ol>`},
+ {id:'chyby', t:'Časté chyby začátečníků', h:`
+  <ul><li><b>Jedna proměnná ve více cívkách.</b> Platí jen poslední síť. Spoj podmínky do jedné sítě nebo použij pomocné bity.</li>
+  <li><b>Chybí samodržení.</b> Výstup svítí, jen dokud držíš START.</li>
+  <li><b>Zdvojená negace u tlačítka STOP.</b> Tlačítko zapojené jako rozpínací dává v nestisknutém stavu 1. V programu proto patří na tuto proměnnou spínací kontakt. Rozpínací kontakt by logiku obrátil a linka by jela jen při stisknutém STOP.</li>
+  <li><b>Set bez Resetu.</b> Bit zůstane navždy v 1. Ke každému Set patří místo, kde se bit maže.</li>
+  <li><b>Čekání na čas místo na snímač.</b> Časovač nepozná, jestli se pohyb opravdu dokončil. Koncový spínač ano.</li>
+  <li><b>Kvitování, které rozjede stroj.</b> Po potvrzení poruchy se stroj smí rozjet až novým STARTEM.</li></ul>`},
+ {id:'slovnik', t:'Slovníček pojmů', h:`
+  <div class="tw"><table><tr><th>Pojem</th><th>Význam</th></tr>
+   <tr><td>PLC</td><td>programovatelný logický automat, průmyslový řídicí počítač</td></tr>
+   <tr><td>CPU</td><td>procesorová jednotka PLC, ve které běží program</td></tr>
+   <tr><td>HMI</td><td>operátorský panel (dotyková obrazovka) pro obsluhu stroje</td></tr>
+   <tr><td>OB1</td><td>hlavní cyklický organizační blok programu u Siemens</td></tr>
+   <tr><td>Cyklus (scan)</td><td>jedno přečtení vstupů, provedení programu a zápis výstupů</td></tr>
+   <tr><td>Síť (network)</td><td>jeden „řádek“ programu v LAD s kontakty a výstupem</td></tr>
+   <tr><td>Tag (proměnná)</td><td>pojmenovaná adresa, například „Senzor“ = <code>%I0.0</code></td></tr>
+   <tr><td>Instance (DB)</td><td>datový blok, ve kterém si časovač nebo čítač pamatuje svůj stav</td></tr>
+   <tr><td>Samodržení</td><td>výstup drží sám sebe přes vlastní kontakt</td></tr>
+   <tr><td>Kvitování</td><td>potvrzení poruchy obsluhou</td></tr>
+   <tr><td>Koncový spínač</td><td>snímač, který hlásí dojetí pohybu do krajní polohy</td></tr>
+   <tr><td>Stykač</td><td>silový spínač, kterým výstup PLC zapíná motor</td></tr>
+   <tr><td>Watchdog</td><td>hlídací časovač, který odhalí, že něco trvá moc dlouho</td></tr></table></div>`},
  {id:'zjednoduseni', t:'Co hra zjednodušuje', h:`
   <ul><li>Editor ve hře má v každé síti 5 pozic a v každé paralelní větvi jen jeden kontakt. V TIA Portalu můžeš kontakty řadit volněji.</li>
   <li>Simulace linky, časy strojů, chování robota a stroje v hale jsou vymyšlené pro výuku, ne podle skutečných strojů.</li>
@@ -3227,6 +3292,7 @@ $('study').addEventListener('click', e => {
   const a = e.target.closest('.toc a'); if (a) { e.preventDefault(); const t = $(a.getAttribute('href').slice(1)); if (t) t.scrollIntoView({behavior:'smooth'}); }
 });
 $('btnStudy').addEventListener('click', openStudy);
+$('btnMenu').addEventListener('click', () => { if (mode === 'run') stop(); renderIntro(); $('intro').hidden = false; $('intro').scrollTop = 0; document.body.style.overflow = 'hidden'; });
 $('btnStudy2').addEventListener('click', openStudy);
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('study').hidden) { e.stopImmediatePropagation(); closeStudy(); } }, true);
 
