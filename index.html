@@ -785,7 +785,7 @@ const DEMO = {
 };
 
 // ---------- hall: products, components, preset layouts ----------
-const CS = 80, HC = 16, HR = 9, HSPEED = 1.25, HGAP = 0.62, SANDBOX = 13;
+const CS = 80, HC = 16, HR = 9, HSPEED = 1.25, HGAP = 0.62, SANDBOX = 14;
 const DIRS = [[1, 0], [0, 1], [-1, 0], [0, -1]];
 const OPN = {fill:'plnění', bake:'pečení', label:'etiketa', cap:'víčko', press:'lisování', drill:'vrtání', seal:'zatavení fólie', seam:'zavíčkování', cool:'chlazení', wrap:'obal'};
 const PRODUCTS = {
@@ -1789,12 +1789,64 @@ const LEVELS = [
     {press:['start'], log:'Obsluha stiskla START', act:s => { s.goodBase = s.H.units; }},
     {when:s => s.H.units - s.goodBase >= 2, timeout:40, timeoutFail:['Linka se po poruše nerozjela', 'Po kvitování a startu se do 40 s nedostaly na expedici 2 kelímky.']},
     {win:true}],
-   win:['Hra dokončena!', 'Máš za sebou celou linku od prázdného programu: bezpečnost, takt se zarážkou, stanici s handshake, sledování kusu i hlídání poruch. V „Moje hala“ máš odemčené všechny komponenty a můžeš si postavit vlastní továrnu.'],
+   win:['Úroveň 12 hotová!', 'Linka funguje od prázdného programu: bezpečnost, takt se zarážkou, stanice s handshake, sledování kusu i hlídání poruch. Zbývá velké finále: totéž najednou, bez postupných kroků.'],
    theory:{title:'Hlídání stroje',
     intro:'Watchdog znáš z úrovně 5. Tady hlídá plničku: když pracuje moc dlouho a nehlásí hotovo, něco je špatně.',
     items:[
      {t:'Hlídací časovač', wide:true, p:'TON počítá, dokud je plnička zapnutá. Když se kelímek naplní, plnička se vypne a časovač se vynuluje. Když se zasekne, časovač doběhne a nastaví poruchu. Vyzkoušej si princip:', demo:'watch'},
      {t:'Po poruše', p:'Porucha shodí chod a s ním všechny pohony. Obsluha poruchu odstraní, stiskne KVITOVAT a pak START. Linka se nikdy nerozjede sama.'},
+    ]}},
+  ]},
+ {id:13, name:'Velké finále', hall:HALL12, panel:true, base:() => [emptyRung()],
+  steps:[
+  {title:'Celá linka najednou',
+   text:'Poslední úkol. Linka je stejná jako v závěrečné zkoušce, ale program je zase prázdný a tentokrát ho napíšeš celý najednou, bez postupných kroků. Test pak projde všechno v jednom běhu: plnění, třídění, STOP, E-STOP i zaseknutou plničku. Než začneš, projdi si shrnutí v teorii.',
+   goal:'Napiš celý program. Linka musí naplnit a roztřídit kelímky a zvládnout STOP, E-STOP i poruchu plničky.',
+   sig:[['I0.1', 'START'], ['I0.2', 'STOP (rozpínací)'], ['I0.3', 'E-STOP (rozpínací)'], ['I0.4', 'KVITOVAT'], ['Q0.2', 'kontrolka chodu'], ['Q0.5', 'kontrolka poruchy'], ['Q2.2', 'podavač'], ['Q2.0', 'pás 1'], ['Q2.3', 'zarážka'], ['I2.0', 'u zarážky čeká kelímek'], ['Q2.1', 'pás 2'], ['Q2.4', 'plnička'], ['I2.1', 'kelímek v plničce'], ['I2.2', 'kelímek naplněný'], ['I2.4', 'kamera: vada'], ['Q2.5', 'výhybka'], ['I2.5', 'senzor na větvi ke zmetkům']],
+   hint:['Chod se samodržením: START, STOP, E-STOP a rozpínací „Porucha“.', 'Kontrolka chodu, podavač a pás 1 podle chodu.', 'Zarážka: drží, dokud ji impulz TP neotevře. Uvolni jen když čeká kelímek, plnička je volná a žádný kelímek není na cestě (paměťový bit).', 'Stanice: pás 2 jede, když v plničce nic není nebo je hotovo. Plnička pracuje, když kelímek stojí a není hotový.', 'Třídění: vada z kamery do paměťového bitu, bit řídí výhybku, senzor na větvi bit maže.', 'Hlídání plničky: TON 4 s nastaví poruchu, kontrolka bliká s taktem 1 Hz, KVITOVAT poruchu maže.'],
+   sol:H12S4, noSol:true, defects:[3, 7], camSingle:true,
+   check(s){
+     if (s.H.items.filter(i => Math.floor(i.x) === 3 && Math.floor(i.y) === 0).length > 1) return fail(['K plničce jedou dva kelímky', 'Zarážka pustila další kelímek dřív, než ten předchozí dojel do plničky. Pamatuj si kelímek na cestě paměťovým bitem a uvolňuj jen když je v nule.']);
+     if (!s.jamEver && s.img['M1.0']) return fail(['Falešný poplach', 'Porucha se nahlásila, i když plnička pracuje normálně. Hlídací čas musí být delší než plnění (2 s), třeba 4 s.']);
+   },
+   script:[
+    {at:0.5, press:['start'], log:'Obsluha stiskla START'},
+    {after:1, check:s => !s.img['M0.2'] ? ['Linka se nerozjela', 'Po stisku START musí naskočit chod se samodržením.'] : !s.img['Q0.2'] ? ['Kontrolka chodu nesvítí', 'Když linka jede, musí svítit kontrolka chodu (%Q0.2).'] : null},
+    {when:s => s.H.reworked >= 1 && s.H.units >= 3, timeout:90, timeoutFail:['Linka nevyrábí', 'Za 90 s se nepodařilo poslat 3 plné kelímky na expedici a 1 vadný do zmetků. Projdi zarážku, plničku a třídění.']},
+    {press:['stop'], dur:0.4, log:'Obsluha stiskla STOP'},
+    {after:0.6, check:s => (s.img['M0.2'] || s.img['Q2.0'] || s.img['Q2.1'] || s.img['Q2.2']) ? ['STOP nezastavil linku', 'Po stisku STOP se musí vypnout chod a s ním podavač i oba pásy.'] : null},
+    {press:['start'], log:'Obsluha stiskla START'},
+    {after:0.8, check:s => !s.img['M0.2'] ? ['Linka se znovu nerozjela', 'Po novém stisku START musí chod znovu naskočit.'] : null},
+    {hold:'estop', log:'Obsluha stiskla E-STOP'},
+    {after:0.6, check:s => s.img['M0.2'] ? ['E-STOP nevypnul chod', 'Nouzové zastavení musí shodit chod. Patří do sítě „Chod“ jako spínací kontakt v sérii.'] : null},
+    {release:'estop', log:'Obsluha odjistila E-STOP'},
+    {after:1, check:s => s.img['M0.2'] ? ['Linka se rozjela sama', 'Po odjištění E-STOP se linka nesmí rozjet bez stisku START.'] : null},
+    {press:['start'], log:'Obsluha stiskla START'},
+    {after:0.8, check:s => !s.img['M0.2'] ? ['Linka se nerozjela', 'Po odjištění E-STOP a stisku START se má linka zase rozjet.'] : null},
+    {when:s => s.img['Q2.4'], timeout:20, timeoutFail:['Plnička nepracuje', 'Po novém startu se plnička do 20 s nezapnula.']},
+    {act:s => { s.H.jam = true; s.jamEver = true; }, log:'Pozor: plnička se zasekla!'},
+    {when:s => s.img['M1.0'], timeout:7, timeoutFail:['Porucha nebyla rozpoznána', 'Plnička je zapnutá a kelímek se neplní, ale „Porucha“ se nenastavila. Hlídej plničku časovačem TON (4 s).']},
+    {after:0.5, check:s => (s.img['M0.2'] || s.img['Q2.4']) ? ['Chod pořád běží', 'Porucha musí shodit chod linky: rozpínací „Porucha“ v síti „Chod“.'] : null},
+    {act:s => { s.blinkSeen = 0; s.lastQ5 = !!s.img['Q0.5']; }},
+    {after:2.2, check:s => s.blinkSeen < 2 ? ['Kontrolka nebliká', 'Při poruše musí kontrolka poruchy blikat: „Porucha“ a „Takt 1 Hz“ v sérii.'] : null},
+    {act:s => { s.H.jam = false; }, press:['ack'], dur:0.4, log:'Údržba plničku opravila, obsluha stiskla KVITOVAT'},
+    {after:0.6, check:s => s.img['M1.0'] ? ['Kvitování nefunguje', 'Po stisku KVITOVAT musí porucha zmizet.'] : null},
+    {after:0.8, check:s => s.img['M0.2'] ? ['Linka se rozjela sama', 'Po kvitování se linka nesmí rozjet bez stisku START.'] : null},
+    {press:['start'], log:'Obsluha stiskla START', act:s => { s.goodBase = s.H.units; }},
+    {when:s => s.H.reworked >= 2 && s.H.units - s.goodBase >= 2, timeout:70, timeoutFail:['Linka po poruše nedojela', 'Po kvitování a startu se do 70 s nepodařilo poslat další 2 kelímky a vytřídit druhý vadný.']},
+    {win:true}],
+   win:['Hra dokončena!', 'Celá linka od prázdného programu prošla všemi zkouškami najednou. To už je pořádná práce programátora PLC. V „Moje hala“ máš odemčené všechny komponenty a můžeš si postavit vlastní továrnu.'],
+   theory:{title:'Kompletní shrnutí',
+    intro:'Tady je všechno podstatné z celé hry na jednom místě. Ve velkém finále to budeš potřebovat celé.',
+    items:[
+     {t:'PLC a cyklus', p:'PLC přečte vstupy, provede program shora dolů a zapíše výstupy. Pak začne znovu. Na pořadí sítí záleží.'},
+     {t:'Kontakty a cívky', sym:SYM.NO + SYM.NC, ul:['Spínací (NO) vede při 1, rozpínací (NC) při 0.', 'Za sebou = A ZÁROVEŇ, pod sebou = NEBO.', 'Cívka zapisuje výsledek, Set drží 1, Reset maže.', 'Jednu proměnnou ovládej cívkou jen v jedné síti.'], p:'Základ každé sítě:'},
+     {t:'Chod a bezpečnost', ul:['Samodržení: kontakt „Chod“ paralelně ke START.', 'STOP a E-STOP jsou rozpínací tlačítka: v síti „Chod“ spínací kontakty v sérii.', 'Po STOP, E-STOP i kvitování se linka smí rozjet jen novým STARTEM.'], p:'Bezpečnost má přednost:'},
+     {t:'Časovače', ul:['TON: zpožděné zapnutí, hlídací časovač (watchdog).', 'TONR: čas si pamatuje, nuluje ho RT.', 'TP: impulz pevné délky, prodlouží krátký signál nebo otevře zarážku.'], p:'Tři časovače IEC:'},
+     {t:'Čítače a porovnání', ul:['CTU počítá náběžné hrany na CU, Q sepne při CV ≥ PV, R nuluje.', 'CMP porovná číslo, například hmotnost z analogové váhy.'], p:'Počítání a čísla:'},
+     {t:'Paměť a hrany', ul:['Set/Reset si pamatuje stav: vadný kus, kus na cestě, porucha.', 'Hrana -|P|- reaguje jen na okamžik stisku, ne na držení.', 'Taktovací bity %M100.x blikají samy, třeba pro kontrolku.'], p:'Když si program musí něco zapamatovat:'},
+     {t:'Stroje a senzory', ul:['Senzor hlásí kus, koncový spínač dojetí pohybu.', 'Handshake: stroj hlásí „kus“ a „hotovo“, PLC dává „start“. Pás u stroje stojí, dokud není hotovo.', 'Kamera s vyhazovačem nebo výhybkou třídí vadné kusy, zarážka dělá odstupy.'], p:'Linka kolem programu:'},
+     {t:'Postup při psaní', wide:true, ol:['Nejdřív chod a bezpečnost.', 'Pak pohony, které jen jedou s chodem (podavač, pás 1).', 'Pak stanice jedna po druhé: zarážka, plnička, třídění.', 'Nakonec hlídání poruch a kontrolky.', 'Po každé části spusť RUN a sleduj sledovací tabulku.'], p:'Doporučené pořadí:'},
     ]}},
   ]},
  {id:SANDBOX, name:'Moje hala', sandbox:true, panel:true, base:() => [emptyRung()],
@@ -1827,7 +1879,7 @@ const ST = () => LV().steps[step - 1];
 let sim = newSim();
 
 const KEY = 'plc-linka-v2';
-function save(){ programs[level] = program; try { localStorage.setItem(KEY, JSON.stringify({v:4, programs, level, step, prog, seen, hall:userHall})); } catch(e){} }
+function save(){ programs[level] = program; try { localStorage.setItem(KEY, JSON.stringify({v:5, programs, level, step, prog, seen, hall:userHall})); } catch(e){} }
 const sanitize = p => Array.isArray(p) && p.length ? p.map(r => ({slots: pad(r.slots), out: r.out || {kind:'none'}})) : null;
 function load(d){
   try {
@@ -1844,6 +1896,12 @@ function load(d){
       if (G[12] != null) { G[13] = G[12]; delete G[12]; }
       if (s.level === 12) s.level = 13;
       if ((G[8] || 0) > 4) G[8] = 6;
+    }
+    if (s && (s.v || 0) < 5) {
+      const P = s.programs || {}, G = s.prog || {};
+      if (P[13]) { P[14] = P[13]; delete P[13]; }
+      if (G[13] != null) { G[14] = G[13]; delete G[13]; }
+      if (s.level === 13) s.level = 14;
     }
     if (!s) { const o = JSON.parse(localStorage.getItem('plc-linka-v1') || 'null'); if (o) s = {programs:{1:o.program}, level:1, step:o.step || 1, prog:{1:o.unlocked || 1, 2:(o.unlocked || 1) > 3 ? 1 : 0, 3:0}, seen:{}}; }
     if (s) {
@@ -2933,7 +2991,7 @@ function renderLesson(){
   }
   $('lesson').innerHTML = `<div class="levels">${lv}</div><div class="steps">${dots}</div>` +
     `<h2>${step}/${n} · ${esc(S.title)}</h2><p>${esc(S.text)}</p>${sigHtml(S)}<button class="btn small ghost th-btn" data-act="theory">Teorie ke kroku ${step}</button><div class="goal"><span>Cíl</span>${esc(S.goal)}</div>${m}` +
-    `<details class="hint" id="hint" ${hintOpen ? 'open' : ''}><summary>Nápověda</summary>${Array.isArray(S.hint) ? `<ol class="hsteps">${S.hint.map(x => `<li>${esc(x)}</li>`).join('')}</ol>` : `<p>${esc(S.hint)}</p>`}<button class="btn small" data-act="solution">Vložit řešení kroku ${step}</button></details>`;
+    `<details class="hint" id="hint" ${hintOpen ? 'open' : ''}><summary>Nápověda</summary>${Array.isArray(S.hint) ? `<ol class="hsteps">${S.hint.map(x => `<li>${esc(x)}</li>`).join('')}</ol>` : `<p>${esc(S.hint)}</p>`}${S.noSol && !teacher ? `<p class="note">V tomto úkolu není hotové řešení. Zvládneš to i bez něj.</p>` : `<button class="btn small" data-act="solution">Vložit řešení kroku ${step}</button>`}</details>`;
   $('hint').addEventListener('toggle', e => { hintOpen = e.target.open; });
   $('brandSub').textContent = `Siemens S7-1200 · LAD · Úroveň ${level}`;
   $('procTitle').textContent = `Proces · ${L.name}`;
@@ -3245,7 +3303,8 @@ $('btnReset').addEventListener('click', () => {
   msg = {tone:'info', title:'Hra je obnovená', text:'Všechny programy i postup jsou smazané. Začínáš znovu od úrovně 1.'};
   renderAll(); window.scrollTo({top:0, behavior:'smooth'});
 });
-$('btnUnlock').addEventListener('click', () => { for (const L of LEVELS) prog[L.id] = L.steps.length + 1; save(); renderAll(); });
+let teacher = false;
+$('btnUnlock').addEventListener('click', () => { teacher = true; for (const L of LEVELS) prog[L.id] = L.steps.length + 1; save(); renderAll(); });
 
 // ---------- responsive process view ----------
 // On a phone, crop the empty left part of the line so the stations and labels get bigger.

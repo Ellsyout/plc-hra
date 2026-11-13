@@ -18,6 +18,7 @@ Hráč skládá program pro výrobní linku a simulace hned ukáže, jestli link
 10. **Třídění výhybkou** – výhybka a sklad zmetků, sledování kusu paměťovým bitem, hlídání plného skladu
 11. **Zarážka a odstup** – pneumatická zarážka, fronta kusů, pouštění v taktu (taktovací bit + TP)
 12. **Závěrečná zkouška** – celá linka od prázdného programu: chod a E-STOP, zarážka s pamětí kusu na cestě, stanice s handshake, třídění a hlídání zaseknuté plničky
+13. **Velké finále** – celá linka najednou od prázdného programu, test projde výrobu, třídění, STOP, E-STOP i poruchu v jednom běhu; před úkolem kompletní shrnutí, hotové řešení jen pro učitele
 
 ## Moje hala
 
