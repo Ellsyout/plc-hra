@@ -286,13 +286,41 @@ table.watch td.v.on{color:var(--live)}
 /* hall */
 .hallwrap{overflow-x:auto}
 .hallwrap svg{display:block;width:100%;height:auto;min-width:400px}
-.hallwrap.sb svg{min-width:560px}
-#hall .hgrid{fill:#11171a;stroke:#1b2327;stroke-width:1}
+.hallwrap.sb svg{min-width:0}
+#hall .hgrid{fill:#131a1d;stroke:#1d262a;stroke-width:1}
+#hall .hsafe{fill:none;stroke:#c9a24a;stroke-width:2;stroke-dasharray:10 7;opacity:.5}
+#hall .hroll{stroke:#28343b;stroke-width:2}
+#hall .hrail{stroke:#5a6870;stroke-width:3}
+#hall .hmtop{fill:#2a3439}
+#hall .hmtop.on{fill:var(--amber)}
+#hall .hico{font-size:14px}
+#hall .hled{fill:#2a3338;stroke:#0f1416;stroke-width:1}
+#hall .hled.work{fill:var(--amber)}
+#hall .hled.done{fill:var(--live)}
+#hall .hled.wait{fill:#5aa0e0}
+#hall .hdock{stroke:#c9a24a;stroke-width:4;stroke-dasharray:6 6}
+#hall .ghost{opacity:.5}
+#hall #hallGhost{pointer-events:none}
+#hall .garrow{stroke:var(--amber);stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round}
+#hall .gdel{stroke:var(--err);stroke-width:5;stroke-linecap:round}
+.hallwrap.sb.edit svg{touch-action:none}
+.grid.sbx > section:first-child{grid-column:1/-1}
+.grid.sbx .hallwrap svg{max-height:62vh}
+.htools{display:flex;flex-direction:column;gap:6px;padding:8px 10px;border-bottom:1px solid var(--line)}
+.hrow{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.htools button{border:1px solid var(--line);background:var(--panel2);border-radius:6px;padding:4px 7px;font-size:12px;cursor:pointer;display:inline-flex;align-items:center;gap:4px;color:var(--fg2);line-height:1.2}
+.htools button:hover:not(:disabled){border-color:var(--wire);color:var(--fg)}
+.htools button.on{border-color:var(--amber);background:#2a2214;color:var(--fg)}
+.htools button:disabled{opacity:.35;cursor:not-allowed}
+.htools .ic{font-size:13px}
+.htools .hsep{flex:1}
+.htools .dirb{color:var(--amber);font-size:15px}
+.hinfo{font-family:var(--mono);font-size:11.5px;color:var(--dim);min-height:1.4em}
 #hall .hcell{fill:transparent;cursor:pointer}
 #hall .hcell:hover{fill:rgba(243,174,61,.1);stroke:var(--amber);stroke-dasharray:4 3}
 #hall .off .hcell{cursor:default}
 #hall .off .hcell:hover{fill:transparent;stroke:none}
-#hall .hbelt{fill:#1d272c;stroke:var(--wire);stroke-width:1.5}
+#hall .hbelt{fill:#1b2429;stroke:none}
 #hall .hchev{fill:none;stroke:#3a474f;stroke-width:2.5}
 #hall .hchev.on{stroke:var(--live)}
 #hall .hg{font:600 9px var(--mono);fill:var(--dim);paint-order:stroke;stroke:#0f1416;stroke-width:3px}
@@ -315,9 +343,9 @@ table.watch td.v.on{color:var(--live)}
 #hall .hsrc{fill:#1a2226;stroke:var(--fg2);stroke-width:1.5}
 #hall .hsrc.on{stroke:var(--amber)}
 #hall .hout{fill:#12271e;stroke:#2a6b50;stroke-width:1.5}
-#hall .hrob{fill:var(--panel2);stroke:var(--fg2);stroke-width:2}
+#hall .hrob{fill:#2a2216;stroke:#e39b2d;stroke-width:2}
 #hall .hrob.on{stroke:var(--amber)}
-#hall .harm{stroke:#c9a24a;stroke-width:7;stroke-linecap:round}
+#hall .harm{stroke:#e39b2d;stroke-width:8;stroke-linecap:round}
 #hall .hpal{fill:#5a4630;stroke:#8a6d48;stroke-width:1.5}
 #hall .hslat{stroke:#3f3020;stroke-width:2}
 #hall .hph{fill:none;stroke:var(--wire);stroke-dasharray:4 4}
@@ -436,8 +464,9 @@ table.watch td.v.on{color:var(--live)}
         </g>
         <g id="bottles"></g>
       </svg>
+      <div class="htools" id="hallTools" hidden></div>
       <div class="hallwrap" id="hallWrap" hidden>
-        <svg id="hall" viewBox="0 0 800 480" role="img" aria-label="Výrobní hala shora"><g id="hallGrid"></g><g id="hallDyn"></g><g id="hallHit"></g></svg>
+        <svg id="hall" viewBox="0 0 800 480" role="img" aria-label="Výrobní hala shora"><g id="hallGrid"></g><g id="hallDyn"></g><g id="hallGhost"></g><g id="hallHit"></g></svg>
       </div>
       <div class="panel" id="panel" hidden>
         <button class="pb start" data-pb="start">START<small>%I0.1</small></button>
@@ -606,6 +635,15 @@ const L3S1 = () => [latch(true), lamp(), ...L3line([])];
 const L3S2 = () => [latch(true), lamp(), ...L3line([C('NC','C1.Q')]),
   R([C('NO','M0.0')], {kind:'ctu', counter:'C1', pv:CRATE, r:'I0.4', then:{kind:'none'}}),
   R([C('NO','C1.Q')], coil('Q0.3'))];
+const L3M = () => [latch(true), lamp(), ...L3line([]),
+  R([C('NO','M0.0')], {kind:'ctu', counter:'C1', pv:CRATE, r:'I0.4', then:{kind:'none'}}),
+  R([C('NO','C1.Q')], coil('Q0.3'))];
+const L4A = () => [latch(true), lamp(),
+  R([[C('NC','I0.0'), C('NO','M0.0')], C('NC','I0.5'), C('NO','M0.2')], coil('Q0.0')),
+  R([C('NO','I0.0'), C('NC','Q0.0'), C('NC','M0.0'), C('NO','M0.2')], coil('Q0.1')),
+  R([CMP('IW64', '>=', 500)], {kind:'set', tag:'M0.0'}),
+  R([C('NC','I0.0')], {kind:'reset', tag:'M0.0'}),
+  R([C('NO','I0.5'), C('NC','Q0.0'), C('NO','M0.2')], coil('Q0.4'))];
 const L4line = (porucha, helper) => [latch(true, porucha), lamp(),
   R([[C('NC','I0.0'), C('NO','M0.0')], [C('NC','I0.5'), C('NO', helper ? 'M0.4' : 'M0.3')], C('NO','M0.2')], coil('Q0.0')),
   R([C('NO','I0.0'), C('NC','Q0.0'), C('NC','M0.0'), C('NO','M0.2')], coil('Q0.1')),
@@ -619,6 +657,7 @@ const L4S1 = () => L4line(false, false);
 const L4S2 = () => L4line(false, true);
 const L5S1 = () => [...L4line(true, true), R([C('NO','Q0.1')], {kind:'ton', timer:'T2', pt:6, then:{kind:'set', tag:'M1.0'}})];
 const L5S2 = () => [...L5S1(), R([C('NO','M1.0'), C('NO','M100.5')], coil('Q0.5')), R([C('NO','I0.4')], {kind:'reset', tag:'M1.0'})];
+const L5M = () => [...L5S1(), R([C('NO','M1.0')], coil('Q0.5')), R([C('NO','I0.4')], {kind:'reset', tag:'M1.0'})];
 const L6S1 = () => [...L5S2(), R([C('NO','I1.0')], {kind:'tp', timer:'T3', pt:0.5, then:coil('Q0.6')})];
 const L6S2 = () => [...L6S1(), R([C('NO','Q0.6')], {kind:'ctu', counter:'C2', pv:3, r:'I0.4', then:{kind:'set', tag:'M1.0'}})];
 const L7prog = edge => {
@@ -712,6 +751,7 @@ const COMPS = {
   pal:   {name:'Paleta', unlock:9, io:[['full', 'I', 'Paleta {n} plná'], ['rdy', 'I', 'Paleta {n} připr.'], ['ok', 'I', 'Paleta {n} OK'], ['go', 'Q', 'Paleta {n} odvézt']],
           desc:'Místo pro paletu (4 krabice nebo kusy). „Odvézt“ pošle plnou paletu k nakládce, prázdná přijede za 3 s. Kamera nad paletou hlásí „OK“.'},
 };
+const ICON = {belt:'⇉', src:'📥', sens:'🔦', fill:'💧', out:'🚚', bake:'🔥', label:'🏷️', cap:'🧢', press:'🔨', drill:'🔩', seal:'🔒', seam:'🥫', beacon:'🚨', cam:'📷', push:'💨', pack:'📦', robot:'🦾', pal:'🟫'};
 const COMP_ORDER = ['belt', 'src', 'sens', 'fill', 'out', 'bake', 'label', 'cap', 'press', 'drill', 'seal', 'seam', 'beacon', 'cam', 'push', 'pack', 'robot', 'pal'];
 const HALL_BASE = [
   {id:'I0.1', name:'Start', ad:'%I0.1'}, {id:'I0.2', name:'Stop', ad:'%I0.2'}, {id:'I0.3', name:'E-STOP', ad:'%I0.3'}, {id:'I0.4', name:'Kvitovat', ad:'%I0.4'},
@@ -943,10 +983,37 @@ const LEVELS = [
       ul:['Posuň hmotností a sleduj, kdy kontakt sepne.'], demo:'cmp'},
      {t:'Proč ne čas', wide:true, p:'Časovač předpokládá, že kapalina teče pořád stejně rychle. Když kolísá tlak nebo se ucpává tryska, 3 s jednou nestačí a jindy je to moc. Váha měří výsledek, a proto je přesnější. Zkus si nejdřív spustit linku s časovačem z minulé úrovně a uvidíš.'},
     ]}},
-  {title:'Počítání do bedny',
-   text:'Plné lahve padají do bedny na 4 kusy. Čítač CTU počítá naplněné lahve. Když je bedna plná, ventil se nesmí otevřít, rozsvítí se kontrolka „Vyměň bednu“ (%Q0.3) a obsluha bednu vymění a stiskne KVITOVAT (%I0.4).',
+  {title:'Počítej lahve',
+   text:'Plné lahve padají do bedny, do které se vejdou 4 kusy. Obsluha musí vědět, kdy je bedna plná. Spočítej naplněné lahve čítačem CTU. Po 4. lahvi rozsviť kontrolku „Vyměň bednu“ (%Q0.3). Obsluha bednu vymění a stiskne KVITOVAT (%I0.4), tím se čítač vynuluje.',
+   goal:'Po 4 lahvích rozsviť kontrolku, kvitování ji zhasne.',
+   sig:[['M0.0', 'lahev je plná, každý náběh = 1 lahev'], ['Q0.3', 'kontrolka „Vyměň bednu“'], ['I0.4', 'obsluha vyměnila bednu'], ['C1.Q', 'čítač napočítal 4 kusy']],
+   hint:['Přidej síť: spínací „Naplněno“ → čítač CTU.', 'Instance "C1", PV = 4, R = „Kvitovat“.', 'Přidej síť: spínací "C1".Q → cívka „Vyměň bednu“.'],
+   sol:L3M,
+   script:[
+    {at:0.5, press:['start'], log:'Obsluha stiskla START'},
+    {when:s => s.good >= 2, timeout:25, timeoutFail:['Linka neplní', 'Za 25 s se nenaplnily ani 2 lahve. Nech plnění podle váhy z minulého kroku, jak bylo.']},
+    {after:0.1, check:s => s.img['Q0.3'] ? ['Kontrolka svítí moc brzy', 'Bedna ještě není plná, a kontrolka už svítí. Předvolba PV čítače má být 4.'] : null},
+    {when:s => s.img['Q0.3'], timeout:25, timeoutFail:['Kontrolka nesvítí', 'Po 4 naplněných lahvích se má rozsvítit „Vyměň bednu“. Spočítej bit „Naplněno“ čítačem CTU "C1" s PV = 4 a jeho výstupem Q zapni kontrolku.']},
+    {after:1, press:['ack'], dur:0.4, log:'Obsluha vyměnila bednu a stiskla KVITOVAT'},
+    {after:0.6, check:s => s.img['Q0.3'] ? ['Kvitování nefunguje', 'Po stisku KVITOVAT má kontrolka zhasnout. Nastav vstup R čítače "C1" na „Kvitovat“.'] : null},
+    {win:true},
+   ],
+   win:['Čítač počítá', 'Po 4. lahvi se rozsvítila kontrolka a KVITOVAT čítač vynuloval. Linka ale mezitím plnila dál, i do plné bedny. To spravíš v dalším kroku.'],
+   theory:{title:'Čítač CTU',
+    intro:'Váha hlídá jednu lahev. Teď potřebuješ hlídat celou bednu, a k tomu je potřeba počítat.',
+    items:[
+     {t:'Čítač CTU', wide:true,
+      p:'CTU = čítač nahoru (Count Up). Má vlastní instanci, tady "C1".',
+      ul:['CU: vstup pro počítání. Každý náběh z 0 na 1 přičte k CV jedničku.', 'R: reset. Dokud je 1, čítač stojí na nule.', 'PV: předvolba, kolik kusů chceš napočítat.', 'CV: aktuální stav počítadla.', 'Q: sepne, když CV ≥ PV.'],
+      demo:'ctu'},
+     {t:'Náběžná hrana', p:'Bit „Naplněno“ je 1 po mnoho cyklů za sebou, dokud lahev neodjede. Kdyby čítač přičítal v každém cyklu, napočítal by tisíce. CTU proto reaguje jen na náběžnou hranu: okamžik, kdy se signál změní z 0 na 1. Jedna lahev = jedna hrana = +1.'},
+     {t:'Kvitování', ad:'%I0.4', p:'Kvitovat znamená potvrdit. Obsluha vymění bednu a tlačítkem KVITOVAT dá PLC vědět, že je hotovo. Tlačítko je zapojené do vstupu R čítače, takže ho vynuluje.'},
+    ]}},
+  {title:'Plná bedna zastaví plnění',
+   text:'Čítač už počítá a kontrolka svítí. Linka ale plní dál a další lahev by spadla vedle plné bedny. Když je bedna plná, ventil se nesmí otevřít. Lahev počká pod ventilem, obsluha bednu vymění a stiskne KVITOVAT.',
    goal:'Naplň 2 bedny (8 lahví) bez chyby.',
-   hint:'Nová síť: spínací „Naplněno“ → CTU "C1", PV = 4, R = „Kvitovat“. Další síť: spínací "C1".Q → cívka „Vyměň bednu“. Do sítě ventilu přidej v sérii rozpínací "C1".Q.',
+   sig:[['C1.Q', 'bedna je plná'], ['Q0.1', 'ventil, nesmí se otevřít do plné bedny']],
+   hint:['Čítač a kontrolku už máš z minulého kroku.', 'Do sítě „Ventil“ přidej v sérii rozpínací kontakt "C1".Q.', 'Když je bedna plná, kontakt rozepne a ventil zůstane zavřený, dokud obsluha nekvituje.'],
    sol:L3S2, crate:true,
    idleOk:s => s.img['Q0.3'] || s.crate.count >= CRATE,
    operator(s){
@@ -964,40 +1031,56 @@ const LEVELS = [
    script:[{at:0.5, press:['start'], log:'Obsluha stiskla START'}],
    failText:(code, t) => code === 'overflow' ? 'Lahev přetekla. Plnění musí dál končit podle váhy (Hmotnost >= 500).' : t,
    win:['Úroveň 3 hotová!', 'Linka zastaví, naplní podle váhy, spočítá lahve a počká na výměnu bedny. Další úroveň: druhá stanice s pneumatickým pístem.'],
-   theory:{title:'Čítač, hrana a kvitování',
-    intro:'Váha hlídá jednu lahev. Teď potřebuješ hlídat celou bednu: spočítat lahve, včas zastavit a počkat na obsluhu.',
+   theory:{title:'Plná bedna blokuje ventil',
+    intro:'Kontrolka obsluhu zavolá. Než ale obsluha přijde, musí linka počkat a nic dalšího nenaplnit.',
     items:[
-     {t:'Čítač CTU', wide:true,
-      p:'CTU = čítač nahoru (Count Up). Má vlastní instanci, tady "C1".',
-      ul:['CU: vstup pro počítání. Každý náběh z 0 na 1 přičte k CV jedničku.', 'R: reset. Dokud je 1, čítač stojí na nule.', 'PV: předvolba, kolik kusů chceš napočítat.', 'CV: aktuální stav počítadla.', 'Q: sepne, když CV ≥ PV.'],
-      demo:'ctu'},
-     {t:'Náběžná hrana', p:'Bit „Naplněno“ je 1 po mnoho cyklů za sebou, dokud lahev neodjede. Kdyby čítač přičítal v každém cyklu, napočítal by tisíce. CTU proto reaguje jen na náběžnou hranu: okamžik, kdy se signál změní z 0 na 1. Jedna lahev = jedna hrana = +1.'},
-     {t:'Kvitování', ad:'%I0.4', p:'Kvitovat znamená potvrdit. Obsluha vymění bednu a tlačítkem KVITOVAT dá PLC vědět, že je hotovo. Tlačítko je zapojené do vstupu R čítače, takže ho vynuluje a linka pokračuje.'},
-     {t:'Plná bedna blokuje ventil', wide:true, p:'Když je bedna plná ("C1".Q = 1), další lahev se nesmí naplnit, jinak by spadla vedle. Rozpínací kontakt "C1".Q v síti ventilu plnění zablokuje. Lahev počká pod ventilem, pás stojí a obsluha může bezpečně vyměnit bednu. Kontrolka „Vyměň bednu“ ji zavolá.'},
+     {t:'Blokování rozpínacím kontaktem', wide:true, p:'Když je bedna plná ("C1".Q = 1), další lahev se nesmí naplnit, jinak by spadla vedle. Rozpínací kontakt "C1".Q v síti ventilu plnění zablokuje. Lahev počká pod ventilem, pás stojí a obsluha může bezpečně vyměnit bednu.'},
+     {t:'Proč pás stojí', p:'Pás jede, až když je lahev plná. Plnění je zablokované, takže lahev zůstane pod ventilem a pás počká. Po kvitování se čítač vynuluje, kontakt "C1".Q zase sepne a plnění pokračuje samo.'},
+     {t:'Obsluha v testu', p:'Simulovaná obsluha přijde, když svítí kontrolka a linka stojí. Vymění bednu a stiskne KVITOVAT. Test chce 2 vyměněné bedny.'},
     ]}},
   ]},
  {id:4, name:'Víčkovačka', min:0.96, max:1.08, panel:true, scale:true, cap:true, base:L3S1,
   steps:[
-  {title:'Píst a koncové spínače',
-   text:'Za plnicím ventilem přibyla druhá stanice: pneumatický píst, který lahvi nasadí víčko. Když senzor %I0.5 uvidí lahev, pás se zastaví a píst %Q0.4 sjede dolů. Jakmile koncový spínač „Píst dole“ (%I0.6) hlásí, že je víčko nasazené, nastav bit „Zavíčkováno“ (%M0.3). Píst se pak vrátí a pás se rozjede.',
-   goal:'Zavíčkuj první lahev.',
-   hint:'Síť motoru: přidej druhý sloupec, paralelně rozpínací „Senzor víčka“ a spínací „Zavíčkováno“. Nová síť: spínací „Senzor víčka“ + rozpínací „Zavíčkováno“ + rozpínací „Motor pásu“ + spínací „Chod“ → cívka „Píst“. Dále: spínací „Píst dole“ → Set „Zavíčkováno“ a rozpínací „Senzor víčka“ → Reset „Zavíčkováno“.',
-   sol:L4S1,
+  {title:'Píst sjede dolů',
+   text:'Za plnicím ventilem přibyla druhá stanice: pneumatický píst, který lahvi nasadí víčko. Nejdřív musí lahev pod pístem zastavit: když ji senzor víčka (%I0.5) uvidí, pás se zastaví. Pak píst (%Q0.4) sjede dolů a nasadí víčko.',
+   goal:'Nasaď víčko první lahvi.',
+   sig:[['I0.5', 'lahev stojí pod pístem'], ['Q0.4', 'píst: 1 = dolů, 0 = nahoru'], ['Q0.0', 'motor pásu, píst smí jen při stojícím pásu']],
+   hint:['V síti „Motor pásu“ přidej do volné pozice rozpínací „Senzor víčka“. Pás se tak u víčkovačky zastaví.', 'Nová síť: spínací „Senzor víčka“ + rozpínací „Motor pásu“ + spínací „Chod“ → cívka „Píst“.', 'Pás pak u víčkovačky zůstane stát napořád. To spravíš v dalším kroku.'],
+   sol:L4A,
    script:[
     {at:0.5, press:['start'], log:'Obsluha stiskla START'},
-    {when:s => s.capN >= 1, timeout:20, timeoutFail:['Žádná lahev nemá víčko', 'Do 20 s se nepodařilo zavíčkovat ani jednu lahev. Zastaví se pás u druhé stanice a sjede píst?']},
+    {when:s => s.capN >= 1, timeout:20, timeoutFail:['Žádná lahev nemá víčko', 'Do 20 s se nepodařilo zavíčkovat ani jednu lahev. Zastaví se pás u senzoru víčka a sjede píst?']},
     {win:true},
    ],
-   win:['Víčko sedí', 'Píst sjel dolů, koncový spínač potvrdil nasazení a bit „Zavíčkováno“ se nastavil. Jenže pás se rozjíždí hned, ještě než se píst vrátí nahoru. V dalším kroku zjistíš, proč je to problém.'],
-   theory:{title:'Pneumatika a koncové spínače',
-    intro:'Druhá stanice nepracuje s kapalinou, ale se stlačeným vzduchem. Píst je rychlý a silný, a proto musí PLC přesně vědět, kde se právě nachází.',
+   win:['Víčko sedí', 'Pás zastavil pod pístem a píst sjel dolů. Jenže pás teď u víčkovačky stojí pořád a píst zůstává dole. V dalším kroku linku rozjedeš.'],
+   theory:{title:'Pneumatický píst',
+    intro:'Druhá stanice nepracuje s kapalinou, ale se stlačeným vzduchem. Píst je rychlý a silný, a proto se smí hýbat jen ve správnou chvíli.',
     items:[
      {t:'Pneumatický válec', ad:'%Q0.4', p:'Válec ovládá elektromagnetický ventil 5/2 s pružinou. Když PLC zapíše 1, ventil pustí vzduch nad píst a ten sjede dolů. Při 0 ventil přepne zpět a píst se vrátí nahoru. Pohyb trvá zlomek sekundy, ve hře půl sekundy.'},
+     {t:'Senzor víčka', ad:'%I0.5', p:'Druhý optický senzor hlídá místo pod pístem. Funguje stejně jako senzor u ventilu: když vidí lahev, je 1, a pás se má zastavit.'},
+     {t:'Píst jen při stojícím pásu', wide:true, p:'Píst nesmí sjet, když se pás hýbe, jinak by zachytil jedoucí lahev. Do sítě pístu proto patří rozpínací kontakt „Motor pásu“. Píst sjede, jen když lahev stojí pod ním A ZÁROVEŇ pás stojí A ZÁROVEŇ linka jede.'},
+    ]}},
+  {title:'Víčko a rozjezd',
+   text:'Píst sjede, ale pás u víčkovačky stojí napořád. Linka si musí zapamatovat, že je víčko nasazené. Jakmile koncový spínač „Píst dole“ (%I0.6) hlásí, že píst dojel, nastav bit „Zavíčkováno“ (%M0.3). Ten vrátí píst nahoru a rozjede pás. Když lahev odjede od senzoru, bit se zase vynuluje.',
+   goal:'Nastav „Zavíčkováno“ po nasazení víčka.',
+   sig:[['I0.6', 'koncový spínač: píst je dole'], ['M0.3', 'paměť: lahev je zavíčkovaná'], ['I0.5', 'lahev pod pístem']],
+   hint:['Nová síť: spínací „Píst dole“ → Set „Zavíčkováno“.', 'Nová síť: rozpínací „Senzor víčka“ → Reset „Zavíčkováno“.', 'V síti motoru dej k rozpínacímu „Senzor víčka“ paralelně spínací „Zavíčkováno“ (+ Paralelně).', 'Do sítě pístu přidej rozpínací „Zavíčkováno“, aby se píst po nasazení vrátil.'],
+   sol:L4S1, noCrash:true,
+   stallCode:(s, c) => s.capN >= 1 && !s.img['M0.3'] ? ['Pás stojí u víčkovačky', 'Píst sjel a víčko sedí, ale linka neví, že je hotovo. Přidej síť: spínací „Píst dole“ → Set „Zavíčkováno“. V síti motoru pak dej k rozpínacímu „Senzor víčka“ paralelně spínací „Zavíčkováno“.'] : c.under ? 'noValve' : 'stuckEmpty',
+   script:[
+    {at:0.5, press:['start'], log:'Obsluha stiskla START'},
+    {when:s => s.capN >= 1 && s.img['M0.3'], timeout:20, timeoutFail:['Zavíčkováno se nenastavilo', 'Píst sice sjel, ale bit „Zavíčkováno“ se nenastavil. Přidej síť: spínací „Píst dole“ → Set „Zavíčkováno“.']},
+    {win:true},
+   ],
+   win:['Zavíčkováno', 'Píst sjel dolů, koncový spínač potvrdil nasazení a bit „Zavíčkováno“ se nastavil. Jenže pás se rozjíždí hned, ještě než se píst vrátí nahoru. V dalším kroku zjistíš, proč je to problém.'],
+   theory:{title:'Koncové spínače a dvě stanice',
+    intro:'Aby linka mohla pokračovat, musí PLC přesně vědět, kde se píst právě nachází, a zapamatovat si, že je víčko nasazené.',
+    items:[
      {t:'Koncové spínače', ad:'%I0.6 · %I0.7', p:'Na těle válce jsou dva magnetické snímače. Jeden hlásí „píst je dole“, druhý „píst je nahoře“. Program tak nemusí hádat, kdy pohyb skončil. Ví to přesně, i když se píst jednou pohne pomaleji.', ul:['Píst dole (%I0.6) = víčko je nasazené', 'Píst nahoře (%I0.7) = cesta pro lahev je volná']},
      {t:'Dvě stanice na jednom pásu', wide:true,
       p:'Pás je jen jeden, ale stanice jsou dvě. Pás smí jet jen tehdy, když jsou spokojené obě: na stanici 1 není lahev NEBO je plná, A ZÁROVEŇ na stanici 2 není lahev NEBO je hotová. V žebříčku to jsou dva paralelní sloupce za sebou.',
       ul:['Zkus zapnout „Stanice 1 lahev“: motor stojí, dokud nezapneš i „Stanice 1 hotovo“.'], demo:'two'},
-     {t:'Píst jen při stojícím pásu', p:'Píst nesmí sjet, když se pás hýbe, jinak by zachytil jedoucí lahev. Do sítě pístu proto patří rozpínací kontakt „Motor pásu“.'},
+     {t:'Zavíčkováno jako paměť', ad:'%M0.3', p:'Set „Zavíčkováno“ si zapamatuje, že víčko sedí, i když píst odjede nahoru. Reset přijde, až lahev odjede od senzoru víčka. Další lahev tak začíná s čistým štítem.'},
     ]}},
   {title:'Počkej na píst',
    text:'Když se pás rozjede dřív, než se píst vrátí nahoru, hlava pístu zachytí odjíždějící lahev. Pás se smí rozjet, až když je lahev zavíčkovaná A ZÁROVEŇ píst je zase nahoře (%I0.7).',
@@ -1047,10 +1130,41 @@ const LEVELS = [
      {t:'Jak dlouhý limit zvolit', p:'Delší než nejpomalejší normální běh, jinak vznikají falešné poplachy. Ale ne zbytečně dlouhý, aby se porucha poznala včas. Na lince trvá plnění 2 až 4,5 s, takže 6 s je rozumná rezerva.'},
      {t:'Porucha jako paměť', ad:'%M1.0', p:'Bit „Porucha“ se nastavuje přes Set, aby zůstal, i když příčina zmizí. Obsluha se tak vždycky dozví, že se něco stalo. Porucha shodí chod, takže linka se zastaví a sama se nerozjede.'},
     ]}},
-  {title:'Blikání a kvitování',
-   text:'Kontrolka poruchy (%Q0.5) musí blikat, aby si jí obsluha všimla. K blikání použij taktovací paměť CPU: bit %M100.5 se sám přepíná s frekvencí 1 Hz. Po odstranění příčiny obsluha poruchu potvrdí tlačítkem KVITOVAT (%I0.4) a linku znovu spustí tlačítkem START.',
+  {title:'Kontrolka a kvitování',
+   text:'Linka se při poruše zastaví, ale obsluha neví proč a poruchu nejde smazat. Rozsviť kontrolku poruchy (%Q0.5), dokud porucha trvá. Po doplnění zásobníku obsluha stiskne KVITOVAT (%I0.4): porucha zmizí a linku znovu spustí START.',
+   goal:'Kontrolka svítí při poruše, kvitování ji smaže a linka pak naplní 3 lahve.',
+   sig:[['M1.0', 'porucha (z minulého kroku)'], ['Q0.5', 'kontrolka poruchy na panelu'], ['I0.4', 'obsluha poruchu potvrdila']],
+   hint:['Přidej síť: spínací „Porucha“ → cívka „Kontrolka poruchy“.', 'Přidej síť: spínací „Kvitovat“ → Reset „Porucha“.', 'Kvitování linku nerozjede. To smí jen START.'],
+   sol:L5M,
+   check(s){ if (!s.tankEmpty && !s.alarmSeen && s.img['M1.0']) return fail(['Falešný poplach', 'Porucha se nahlásila, i když plnění běží normálně. Hlídací čas musí být delší než nejpomalejší normální plnění, třeba 6 s.']); },
+   script:[
+    {at:0.5, press:['start'], log:'Obsluha stiskla START'},
+    {when:s => s.capN >= 1, timeout:25, timeoutFail:['Linka nejede', 'Do 25 s se nepodařilo naplnit a zavíčkovat ani jednu lahev.']},
+    {act:s => { s.tankEmpty = true; }, log:'Pozor: v zásobníku došla kapalina!'},
+    {when:s => s.img['M1.0'], timeout:9, timeoutFail:['Porucha nebyla rozpoznána', 'Zásobník je prázdný, ale bit „Porucha“ se do 9 s nenastavil.']},
+    {act:s => { s.alarmSeen = true; }},
+    {after:1, check:s => !s.img['Q0.5'] ? ['Kontrolka nesvítí', 'Při poruše musí svítit kontrolka poruchy. Přidej síť: spínací „Porucha“ → cívka „Kontrolka poruchy“.'] : null},
+    {act:s => { s.tankEmpty = false; }, press:['ack'], dur:0.4, log:'Obsluha doplnila zásobník a stiskla KVITOVAT'},
+    {after:0.5, check:s => s.img['M1.0'] ? ['Kvitování nefunguje', 'Po stisku KVITOVAT musí bit „Porucha“ zmizet. Přidej síť: spínací „Kvitovat“ → Reset „Porucha“.'] : s.img['Q0.5'] ? ['Kontrolka svítí dál', 'Po kvitování musí kontrolka poruchy zhasnout.'] : null},
+    {after:0.8, check:s => (s.img['Q0.0'] || s.img['Q0.1']) ? ['Linka se rozjela sama', 'Po kvitování se linka nesmí rozjet bez stisku START.'] : null},
+    {press:['start'], log:'Obsluha stiskla START'},
+    {act:s => { s.capBase = s.capN; }},
+    {when:s => s.capN - s.capBase >= 3, timeout:30, timeoutFail:['Linka se po poruše nerozjela', 'Po kvitování a novém startu se do 30 s nepodařilo dokončit 3 lahve.']},
+    {win:true},
+   ],
+   win:['Porucha se dá potvrdit', 'Kontrolka ukázala poruchu, kvitování ji smazalo a linka se rozjela až po START. Trvale svítící kontrolku ale obsluha v hluku haly snadno přehlédne.'],
+   theory:{title:'Kvitování poruchy',
+    intro:'Linka se po poruše zastavila. Teď musí obsluha poznat, že se něco stalo, opravit to a dát PLC vědět, že může pokračovat.',
+    items:[
+     {t:'Kontrolka poruchy', ad:'%Q0.5', p:'Červená kontrolka na panelu. Svítí, dokud je bit „Porucha“ nastavený. Obsluha tak ví, že linka nestojí jen kvůli tlačítku STOP.'},
+     {t:'Kvitování poruchy', ad:'%I0.4', p:'Kvitovat = potvrdit, že o poruše vím a příčina je odstraněná. Kvitování smaže bit poruchy, ale linku nerozjede. Rozjet ji smí zase jen START. Stroj se tak nikdy nerozběhne nečekaně.'},
+     {t:'V praxi: alarmy na HMI', p:'Ve skutečném provozu se poruchy zobrazují i na dotykovém panelu (HMI, u Siemens WinCC) jako text s časem vzniku. Obsluha je tam potvrzuje a historie alarmů se ukládá. Princip v PLC je ale stejný jako tady.'},
+    ]}},
+  {title:'Blikání',
+   text:'Kontrolka poruchy (%Q0.5) má blikat, aby si jí obsluha všimla. K blikání použij taktovací paměť CPU: bit %M100.5 se sám přepíná s frekvencí 1 Hz. Kvitování a nový start už máš hotové z minulého kroku.',
    goal:'Kontrolka bliká, kvitování poruchu smaže a linka pak naplní další 3 lahve.',
-   hint:'Nová síť: spínací „Porucha“ + spínací „Takt 1 Hz“ → cívka „Kontrolka poruchy“. Další síť: spínací „Kvitovat“ → Reset „Porucha“.',
+   sig:[['M100.5', 'takt 1 Hz: půl sekundy 1, půl sekundy 0'], ['Q0.5', 'kontrolka poruchy']],
+   hint:['V síti „Kontrolka poruchy“ přidej za kontakt „Porucha“ v sérii spínací „Takt 1 Hz“ (%M100.5).', 'Kontrolka pak svítí jen když je porucha A ZÁROVEŇ takt v 1, takže bliká.'],
    sol:L5S2,
    check(s){ if (!s.tankEmpty && !s.alarmSeen && s.img['M1.0']) return fail(['Falešný poplach', 'Porucha se nahlásila, i když plnění běží normálně. Hlídací čas musí být delší než nejpomalejší normální plnění, třeba 6 s.']); },
    script:[
@@ -1069,15 +1183,14 @@ const LEVELS = [
     {win:true},
    ],
    win:['Úroveň 5 hotová!', 'Linka plní podle váhy, víčkuje, hlídá poruchy, bliká a čeká na kvitování. Další úroveň: kontrola kvality kamerou.'],
-   theory:{title:'Signalizace a kvitování',
-    intro:'Linka se po poruše zastavila. Teď musí obsluha poznat, co se stalo, opravit to a dát PLC vědět, že může pokračovat.',
+   theory:{title:'Blikání',
+    intro:'Blikající světlo upoutá pozornost mnohem víc než trvale svítící. Proto poruchové kontrolky blikají.',
     items:[
      {t:'Taktovací paměť', ad:'%M100.5', wide:true,
       p:'S7-1200 umí sám generovat blikající bity. V TIA Portalu je zapneš ve vlastnostech CPU (Systémové a taktovací paměti) a zvolíš bajt, obvykle 100. Každý bit pak bliká jinou frekvencí:',
       ul:['%M100.0 = 10 Hz, %M100.1 = 5 Hz, %M100.2 = 2,5 Hz, %M100.3 = 2 Hz', '%M100.4 = 1,25 Hz, %M100.5 = 1 Hz, %M100.6 = 0,625 Hz, %M100.7 = 0,5 Hz'],
       p2:'Blikání vytvoříš tak, že poruchu zapojíš v sérii s taktem: kontrolka svítí, jen když je porucha A ZÁROVEŇ takt právě v 1.', demo:'blink'},
-     {t:'Kvitování poruchy', ad:'%I0.4', p:'Kvitovat = potvrdit, že o poruše vím a příčinu jsem odstranil(a). Kvitování smaže bit poruchy, ale linku nerozjede. Rozjet ji smí zase jen START. Stroj se tak nikdy nerozběhne nečekaně.'},
-     {t:'V praxi: alarmy na HMI', p:'Ve skutečném provozu se poruchy zobrazují i na dotykovém panelu (HMI, u Siemens WinCC) jako text s časem vzniku. Obsluha je tam potvrzuje a historie alarmů se ukládá. Princip v PLC je ale stejný jako tady.'},
+     {t:'Proč zrovna 1 Hz', p:'Rychlé blikání (2 Hz a víc) se v praxi používá pro naléhavé stavy, pomalé pro upozornění. Na lince stačí 1 Hz: dobře viditelné a neruší.'},
     ]}},
   ]},
  {id:6, name:'Kontrola kvality', min:0.96, max:1.08, panel:true, scale:true, cap:true, qc:true,
@@ -1383,7 +1496,7 @@ const ST = () => LV().steps[step - 1];
 let sim = newSim();
 
 const KEY = 'plc-linka-v2';
-function save(){ programs[level] = program; try { localStorage.setItem(KEY, JSON.stringify({programs, level, step, prog, seen, hall:userHall})); } catch(e){} }
+function save(){ programs[level] = program; try { localStorage.setItem(KEY, JSON.stringify({v:2, programs, level, step, prog, seen, hall:userHall})); } catch(e){} }
 const sanitize = p => Array.isArray(p) && p.length ? p.map(r => ({slots: pad(r.slots), out: r.out || {kind:'none'}})) : null;
 function load(d){
   try {
@@ -1392,6 +1505,7 @@ function load(d){
     if (s) {
       for (const k of LEVELS.map(x => x.id)) { const p = sanitize(s.programs && s.programs[k]); if (p) programs[k] = p; }
       prog = Object.assign({1:1, 2:0, 3:0, 4:0, 5:0}, s.prog || {});
+      if (!s.v) for (const id of [3, 4, 5]) if ((prog[id] || 0) > 2) prog[id] = LEVELS[id - 1].steps.length + 1;
       seen = s.seen || {};
       level = Math.min(LEVELS.length, Math.max(1, s.level || 1));
       step = Math.min(LV().steps.length, Math.max(1, s.step || 1));
@@ -1736,7 +1850,7 @@ function hallTick(dt){
 // ---------- hall rendering ----------
 function itemSvg(it, x, y, k){
   const t = `transform="translate(${x.toFixed(1)} ${y.toFixed(1)})${k !== 1 ? ` scale(${k})` : ''}"`;
-  if (it.kind === 'box') return `<g ${t}><rect x="-15" y="-15" width="30" height="30" rx="3" class="ibox"/><path d="M-15 0h30" class="itape"/><text y="4" class="icnt">${it.contents.length}</text>${it.contents.some(x => x.defect) ? '<circle cx="10" cy="-10" r="4" class="idef"/>' : ''}</g>`;
+  if (it.kind === 'box') return `<g ${t}><rect x="-12" y="-11" width="30" height="30" rx="3" fill="rgba(0,0,0,.35)"/><rect x="-15" y="-15" width="30" height="30" rx="3" class="ibox"/><path d="M-15 0h30" class="itape"/><text y="4" class="icnt">${it.contents.length}</text>${it.contents.some(x => x.defect) ? '<circle cx="10" cy="-10" r="4" class="idef"/>' : ''}</g>`;
   const o = it.ops, has = op => o.includes(op);
   let s = '';
   switch (it.prod) {
@@ -1749,7 +1863,7 @@ function itemSvg(it, x, y, k){
     case 'gear': s = `<circle r="11" fill="none" stroke="${has('press') ? '#c3ccd1' : '#6f7b82'}" stroke-width="5" stroke-dasharray="4 4.6"/><circle r="9" fill="${has('press') ? '#c3ccd1' : '#6f7b82'}"/>${has('drill') ? '<circle r="3.5" fill="#0d1113"/>' : ''}`; break;
   }
   if (it.defect) s += '<path d="M-9 -9L9 9" class="idefl"/>';
-  return `<g ${t}>${s}</g>`;
+  return `<g ${t}><ellipse cx="2" cy="3" rx="13" ry="12" fill="rgba(0,0,0,.35)"/>${s}</g>`;
 }
 function ioText(c, on, img, X, Y){
   const ids = COMPS[c.t].io.map(([k]) => c.io[k]).filter(Boolean);
@@ -1766,9 +1880,13 @@ function compSvg(c, st, on, img, H, h){
   let s = '';
   if (K.belt || c.t === 'pack') {
     const run = K.belt && sig(H.groups[c.m]);
-    let ch = '';
-    if (K.belt) { const off = ((h.ph[c.m] || 0) * CS) % 22; for (let i = 0; i < 3; i++) { const x = 6 + ((i * 22 + off) % 66); ch += `<path d="M${x.toFixed(1)} 31l8 9l-8 9" class="hchev${run ? ' on' : ''}"/>`; } }
-    s += `<g ${rot}><rect x="1" y="17" width="78" height="46" rx="3" class="hbelt"/>${ch}</g>`;
+    let ch = '', rl = '';
+    if (K.belt) {
+      const ph = (h.ph[c.m] || 0) * CS, off = ph % 22, ro = ph % 10;
+      for (let i = 0; i < 8; i++) { const x = (i * 10 + ro) % 80; rl += `<line x1="${x.toFixed(1)}" y1="19" x2="${x.toFixed(1)}" y2="61" class="hroll"/>`; }
+      for (let i = 0; i < 3; i++) { const x = 6 + ((i * 22 + off) % 66); ch += `<path d="M${x.toFixed(1)} 32l7 8l-7 8" class="hchev${run ? ' on' : ''}"/>`; }
+    }
+    s += `<g ${rot}><rect x="0" y="16" width="80" height="48" class="hbelt"/>${rl}${ch}<line x1="0" y1="16" x2="80" y2="16" class="hrail"/><line x1="0" y1="64" x2="80" y2="64" class="hrail"/></g>`;
     if (K.belt) s += `<text x="${X + 76}" y="${Y + 11}" text-anchor="end" class="hg${run ? ' on' : ''}">P${c.m}</text>`;
   }
   switch (c.t) {
@@ -1776,7 +1894,7 @@ function compSvg(c, st, on, img, H, h){
     case 'cam': s += `<g ${rot}><rect x="30" y="2" width="20" height="12" rx="3" class="hst"/><path d="M33 14L24 62M47 14L56 62" class="hbeam${sig(io.bad) ? ' bad' : sig(io.ok) ? ' ok' : ''}"/></g>`; break;
     case 'push': { const q = sig(io.q); s += `<g ${rot}><rect x="26" y="1" width="28" height="11" rx="2" class="hcyl${q ? ' on' : ''}"/>${q ? '<rect x="37" y="12" width="6" height="24" class="hrod"/><rect x="24" y="34" width="32" height="5" class="hrod"/>' : ''}<rect x="22" y="68" width="36" height="11" rx="2" class="hbin"/></g>`; break; }
     case 'src': s += `<g ${rot}><path d="M10 12h50l-10 56h-30z" class="hsrc${sig(io.q) ? ' on' : ''}"/><path d="M62 40h14m-6 -6l6 6l-6 6" class="hst" style="fill:none"/></g>`; { const cf = srcCfg(c, H); s += cf.kind === 'box' ? itemSvg({kind:'box', contents:new Array(H.boxN).fill({}), prod:cf.prod}, cx - dx * 6, cy - dy * 6, .6) : itemSvg({kind:'item', prod:cf.prod, ops:cf.done || [], defect:false}, cx - dx * 6, cy - dy * 6, .8); } break;
-    case 'out': s += `<rect x="${X + 6}" y="${Y + 14}" width="68" height="52" rx="6" class="hout"/><text x="${cx}" y="${cy - 2}" text-anchor="middle" class="hn">Expedice</text><text x="${cx}" y="${cy + 14}" text-anchor="middle" class="hcnt">${on ? h.units : 0} ks</text>`; break;
+    case 'out': s += `<rect x="${X + 6}" y="${Y + 12}" width="68" height="58" rx="6" class="hout"/><path d="M${X + 10} ${Y + 14}h60" class="hdock"/><text x="${cx}" y="${Y + 38}" text-anchor="middle" class="hico" style="font-size:18px">🚚</text><text x="${cx}" y="${Y + 51}" text-anchor="middle" class="hn">Expedice</text><text x="${cx}" y="${Y + 65}" text-anchor="middle" class="hcnt">${on ? h.units : 0} ks</text>`; break;
     case 'beacon': s += `<rect x="${X + 30}" y="${Y + 14}" width="20" height="52" rx="4" class="hst"/><circle cx="${cx}" cy="${Y + 28}" r="7" fill="${sig(io.g) ? 'var(--live)' : '#24312b'}"/><circle cx="${cx}" cy="${Y + 50}" r="7" fill="${sig(io.r) ? 'var(--err)' : '#3a2220'}"/>`; break;
     case 'pack': {
       const bx = cx + dx * 12, by = cy + dy * 12;
@@ -1812,7 +1930,10 @@ function compSvg(c, st, on, img, H, h){
     default:
       if (K.op) {
         const q = sig(io.q);
-        s += `<g ${rot}><rect x="17" y="9" width="46" height="62" rx="6" class="hmach${q ? ' on' : ''}"/></g>`;
+        const it = on ? atCenter(h, c, 0.15) : null, done = !!it && it.kind === 'item' && it.ops.includes(K.op);
+        const led = q ? 'work' : done ? 'done' : it ? 'wait' : '';
+        s += `<g ${rot}><rect x="15" y="8" width="50" height="64" rx="7" class="hmach${q ? ' on' : ''}"/><rect x="15" y="8" width="50" height="7" rx="3" class="hmtop${q ? ' on' : ''}"/></g>`;
+        s += `<text x="${cx}" y="${Y + 27}" text-anchor="middle" class="hico">${ICON[c.t]}</text><circle cx="${X + 67}" cy="${Y + 21}" r="4" class="hled ${led}"><title>${led === 'work' ? 'pracuje' : led === 'done' ? 'hotovo' : led === 'wait' ? 'kus čeká' : 'prázdný'}</title></circle>`;
         if (on && st.prog > 0) s += `<rect x="${X + 14}" y="${Y + 66}" width="${(52 * Math.min(1, st.prog / K.T)).toFixed(1)}" height="3" class="hbar"/>`;
       }
   }
@@ -1833,16 +1954,18 @@ function renderHall(){
       y0 = Math.max(0, Math.min(...cs.map(c => c.y)) - mg); y1 = Math.min(HR - 1, Math.max(...cs.map(c => c.y)) + mg);
       if (sb) { while (x1 - x0 < 4) { if (x1 < HC - 1) x1++; else x0--; } while (y1 - y0 < 2) { if (y1 < HR - 1) y1++; else y0--; } }
     }
-    $('hall').setAttribute('viewBox', `${x0 * CS} ${y0 * CS} ${(x1 - x0 + 1) * CS} ${(y1 - y0 + 1) * CS}`);
+    if (!(sb && drag)) $('hall').setAttribute('viewBox', `${x0 * CS} ${y0 * CS} ${(x1 - x0 + 1) * CS} ${(y1 - y0 + 1) * CS}`);
     $('hallWrap').classList.toggle('sb', sb);
     let g = '';
     for (let y = 0; y < HR; y++) for (let x = 0; x < HC; x++) g += `<rect x="${x * CS + 1}" y="${y * CS + 1}" width="${CS - 2}" height="${CS - 2}" rx="4" class="hgrid"/>`;
+    if (cs.length) g += `<rect x="${Math.max(0, Math.min(...cs.map(c => c.x))) * CS + 3}" y="${Math.min(...cs.map(c => c.y)) * CS + 3}" width="${(Math.max(...cs.map(c => c.x)) - Math.min(...cs.map(c => c.x)) + 1) * CS - 6}" height="${(Math.max(...cs.map(c => c.y)) - Math.min(...cs.map(c => c.y)) + 1) * CS - 6}" rx="6" class="hsafe"/>`;
     $('hallGrid').innerHTML = g;
     let hit = '';
     if (sb) for (let y = 0; y < HR; y++) for (let x = 0; x < HC; x++) hit += `<rect x="${x * CS}" y="${y * CS}" width="${CS}" height="${CS}" class="hcell" data-x="${x}" data-y="${y}"/>`;
     $('hallHit').innerHTML = hit;
   }
   $('hallHit').classList.toggle('off', online);
+  $('hallWrap').classList.toggle('edit', sb && !online);
   let g = '';
   for (const c of Object.values(H.cells)) g += compSvg(c, h.c[ck(c)] || {}, online, img, H, h);
   if (online) for (const it of h.items) g += itemSvg(it, it.x * CS, it.y * CS, 1);
@@ -1883,11 +2006,7 @@ function builderHtml(){
     <div class="lbl">Výrobek</div><div class="seg">${prods}</div>
     <div class="lbl">Počet a balení</div><div class="seg">${counts}</div><div class="seg">${packs}</div>
     <div class="seg">${btn('defects', 1, 'Občas vadné kusy: ' + (H.defects ? 'ANO' : 'NE') + (lvDone(6) ? '' : lock(6)), H.defects, run || !lvDone(6))}</div>
-    <div class="lbl">Komponenty · vyber a klikni do haly</div><div class="pal">${pal}</div>
-    <div class="seg">${tools}</div>
-    <div class="lbl">Směr nové komponenty</div><div class="seg">${dirs}</div>
-    <div class="lbl">Motor nového dopravníku</div><div class="seg">${grps}</div>
-    <p class="note">${esc(desc)}</p>
+    <p class="note">Komponenty vybíráš v liště přímo nad halou. Klikni do haly a postav je. Dopravník můžeš táhnout myší nebo prstem a otočí se sám. Klávesa R mění směr, Ctrl+Z vrací změnu.</p>
     <div class="seg">${btn('hsample', 1, 'Vzorová linka pro výrobek', false, run)}${btn('hclear', 1, 'Vyprázdnit halu', false, run)}</div>
   </div>`;
 }
@@ -1897,6 +2016,7 @@ function builderAct(a, v){
   if (a === 'tool') { bTool = v; return renderLesson(); }
   if (a === 'dir') { bDir = +v; return renderLesson(); }
   if (a === 'grp') { bGrp = +v; return renderLesson(); }
+  snap();
   if (a === 'prod') H.product = v;
   else if (a === 'ordn') H.order.n = +v;
   else if (a === 'pack') H.order.pack = v;
@@ -1905,6 +2025,119 @@ function builderAct(a, v){
   else if (a === 'hclear') { userHall = {...H, cells:{}, groups:{}}; }
   msg = null; hallChanged();
 }
+let drag = null, undoStack = [], hoverCell = null;
+function snap(){ undoStack.push(JSON.stringify(userHall)); if (undoStack.length > 40) undoStack.shift(); }
+function undo(){ if (!undoStack.length || mode !== 'stop' || !LV().sandbox) return; userHall = JSON.parse(undoStack.pop()); msg = null; hallChanged(); }
+const canEdit = () => !!LV().sandbox && mode === 'stop';
+function lightChange(){ refreshTags(); hallVer++; sim = newSim(); progVersion++; lastSig = ''; }
+function cellFromEvent(e){
+  const svg = $('hall'), m = svg.getScreenCTM(); if (!m) return null;
+  const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
+  const q = pt.matrixTransform(m.inverse()), x = Math.floor(q.x / CS), y = Math.floor(q.y / CS);
+  return x >= 0 && y >= 0 && x < HC && y < HR ? {x, y} : null;
+}
+function placeAt(x, y, t, d){
+  const H = userHall, c = cellAt(H, x, y);
+  if (c && c.t === t) { c.d = d; if (COMPS[t].belt && c.m !== bGrp) { c.m = bGrp; if (!H.groups[bGrp]) H.groups[bGrp] = allocIO(H, 'Q'); } return; }
+  if (c) delete H.cells[ck(c)];
+  addComp(H, x, y, t, d, bGrp);
+}
+function compInfo(c){
+  const K = COMPS[c.t], parts = K.io.map(([k, , tpl]) => c.io[k] ? `%${c.io[k]} ${tpl.replace('{n}', c.n)}` : '').filter(Boolean);
+  if (K.belt) parts.unshift(`motor Pás ${c.m} (%${userHall.groups[c.m]})`);
+  return `${ICON[c.t]} ${cname(c)}: ${parts.join(' · ') || 'bez signálů'}`;
+}
+function renderHallTools(){
+  const el = $('hallTools'), sb = !!LV().sandbox;
+  el.hidden = !sb; if (!sb) return;
+  const run = mode !== 'stop';
+  const tb = (v, label, title, dis) => `<button data-ht="${v}" class="${bTool === v ? 'on' : ''}" ${dis ? 'disabled' : ''} title="${esc(title)}">${label}</button>`;
+  const comps = COMP_ORDER.map(t => { const ok = unlockedC(t); return tb(t, `<span class="ic">${ok ? ICON[t] : '🔒'}</span>${esc(COMPS[t].name)}`, ok ? COMPS[t].desc : `Odemkne se po úrovni ${COMPS[t].unlock}`, !ok); }).join('');
+  el.innerHTML = `<div class="hrow">${comps}</div>
+    <div class="hrow">${tb('rot', '<span class="ic">↻</span>Otočit', 'Klikni na komponentu a otočí se o čtvrt otáčky')}${tb('del', '<span class="ic">✕</span>Smazat', 'Klikni nebo táhni přes komponenty a zmizí')}
+    <button data-ha="undo" ${undoStack.length && !run ? '' : 'disabled'} title="Vrátit poslední změnu (Ctrl+Z)"><span class="ic">↶</span>Zpět</button>
+    <span class="hsep"></span>
+    <button data-ha="dir" title="Směr nové komponenty (klávesa R)">Směr <b class="dirb">${'→↓←↑'[bDir]}</b></button>
+    ${[1, 2, 3, 4].map(m => `<button data-ha="grp" data-v="${m}" class="${bGrp === m ? 'on' : ''}" title="Motor nových dopravníků: Pás ${m}">P${m}</button>`).join('')}</div>
+    <div class="hinfo" id="hInfo">${run ? 'PLC běží. Stavět můžeš po stisku ■ STOP.' : 'Vyber komponentu a klikni do haly. Dopravník můžeš táhnout, otočí se sám.'}</div>`;
+}
+$('hallTools').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  const d = b.dataset;
+  if (d.ht) bTool = d.ht;
+  else if (d.ha === 'undo') return undo();
+  else if (d.ha === 'dir') bDir = (bDir + 1) % 4;
+  else if (d.ha === 'grp') bGrp = +d.v;
+  renderHallTools();
+});
+function showHover(p){
+  hoverCell = p;
+  if (!LV().sandbox) return;
+  const g = $('hallGhost'), info = $('hInfo');
+  if (!p) { g.innerHTML = ''; return; }
+  const H = userHall, c = cellAt(H, p.x, p.y), X = p.x * CS, Y = p.y * CS;
+  if (info) info.textContent = c ? compInfo(c) : mode === 'stop' ? `Prázdné místo (sloupec ${p.x + 1}, řádek ${p.y + 1})` : '';
+  if (mode !== 'stop' || drag) { g.innerHTML = ''; return; }
+  if (bTool === 'del') g.innerHTML = c ? `<path d="M${X + 20} ${Y + 20}L${X + 60} ${Y + 60}M${X + 60} ${Y + 20}L${X + 20} ${Y + 60}" class="gdel"/>` : '';
+  else if (bTool === 'rot') g.innerHTML = c ? `<path d="M${X + 58} ${Y + 40}a18 18 0 1 1 -5 -12.5" class="garrow"/><path d="M${X + 54} ${Y + 18}v10h-10" class="garrow"/>` : '';
+  else if (!unlockedC(bTool)) g.innerHTML = '';
+  else {
+    const fd = c && c.t === bTool ? (c.d + 1) % 4 : bDir, [dx, dy] = DIRS[fd], cx = X + 40, cy = Y + 40, tx = cx + dx * 24, ty = cy + dy * 24;
+    const fake = {x:p.x, y:p.y, t:bTool, d:fd, m:bGrp, n:'', io:{}};
+    g.innerHTML = `<g class="ghost">${compSvg(fake, {}, false, {}, H, {ph:{}, c:{}, units:0})}</g><path d="M${cx - dx * 24} ${cy - dy * 24}L${tx} ${ty}M${tx - dx * 9 - dy * 9} ${ty - dy * 9 + dx * 9}L${tx} ${ty}L${tx - dx * 9 + dy * 9} ${ty - dy * 9 - dx * 9}" class="garrow"/>`;
+  }
+}
+function stepDrag(ax, ay, bx, by){
+  const H = userHall, d = bx > ax ? 0 : by > ay ? 1 : bx < ax ? 2 : 3;
+  if (bTool === 'del') { const c = cellAt(H, bx, by); if (c) { delete H.cells[ck(c)]; drag.acted = true; } return; }
+  if (bTool === 'rot' || !unlockedC(bTool) || !COMPS[bTool].belt) return;
+  const a = cellAt(H, ax, ay); if (a && COMPS[a.t].belt) a.d = d;
+  placeAt(bx, by, bTool, d); drag.acted = true;
+}
+$('hall').addEventListener('pointerdown', e => {
+  if (!LV().sandbox) return;
+  if (mode !== 'stop') { msg = {tone:'info', title:'Nejdřív STOP', text:'Halu můžeš přestavovat jen když PLC stojí. Stiskni ■ STOP.'}; return renderLesson(); }
+  const p = cellFromEvent(e); if (!p) return;
+  e.preventDefault();
+  try { $('hall').setPointerCapture(e.pointerId); } catch(err){}
+  snap();
+  drag = {start:p, last:p, moved:false, acted:false};
+  const H = userHall, c = cellAt(H, p.x, p.y);
+  if (bTool === 'del') { if (c) { delete H.cells[ck(c)]; drag.acted = true; lightChange(); } }
+  else if (bTool !== 'rot' && unlockedC(bTool) && COMPS[bTool].belt && !(c && c.t === bTool)) { placeAt(p.x, p.y, bTool, bDir); drag.acted = true; lightChange(); }
+  showHover(p);
+});
+$('hall').addEventListener('pointermove', e => {
+  const p = cellFromEvent(e);
+  if (!drag || !p || !canEdit()) { if (!drag) showHover(p); return; }
+  let cx = drag.last.x, cy = drag.last.y;
+  if (p.x === cx && p.y === cy) return;
+  while (cx !== p.x || cy !== p.y) {
+    const nx = cx !== p.x ? cx + Math.sign(p.x - cx) : cx, ny = cx !== p.x ? cy : cy + Math.sign(p.y - cy);
+    stepDrag(cx, cy, nx, ny); cx = nx; cy = ny;
+  }
+  drag.last = p; drag.moved = true; lightChange();
+});
+function endDrag(){
+  if (!drag) return;
+  const d = drag; drag = null;
+  if (!d.moved && !d.acted) {
+    const p = d.start, H = userHall, c = cellAt(H, p.x, p.y);
+    if (bTool === 'rot' && c) c.d = (c.d + 1) % 4;
+    else if (bTool === 'rot' || bTool === 'del' || !unlockedC(bTool)) { undoStack.pop(); return; }
+    else if (c && c.t === bTool) c.d = (c.d + 1) % 4;
+    else { if (c) delete H.cells[ck(c)]; addComp(H, p.x, p.y, bTool, bDir, bGrp); }
+  } else if (!d.acted) { undoStack.pop(); return; }
+  msg = null; hallChanged(); showHover(hoverCell);
+}
+$('hall').addEventListener('pointerup', endDrag);
+$('hall').addEventListener('pointercancel', endDrag);
+$('hall').addEventListener('pointerleave', () => { if (!drag) showHover(null); });
+document.addEventListener('keydown', e => {
+  if (!LV().sandbox || (e.target.closest && e.target.closest('input,textarea,select'))) return;
+  if ((e.key === 'r' || e.key === 'R') && !e.ctrlKey && !e.metaKey) { bDir = (bDir + 1) % 4; renderHallTools(); showHover(hoverCell); }
+  else if ((e.ctrlKey || e.metaKey) && (e.key === 'z' || e.key === 'Z')) { e.preventDefault(); undo(); }
+});
 function hallClick(e){
   const t = e.target.closest('[data-x]'); if (!t || !LV().sandbox) return;
   if (mode !== 'stop') { msg = {tone:'info', title:'Nejdřív STOP', text:'Halu můžeš přestavovat jen když PLC stojí. Stiskni ■ STOP.'}; return renderLesson(); }
@@ -1972,7 +2205,7 @@ function evaluate(c){
       }
     }
     if (L.cap) {
-      if (c.motor && s.pist > 0.3 && s.bottles.some(b => Math.abs(b.x - CAP) < 30)) return fail(['Píst narazil do lahve', 'Pás se rozjel, zatímco byl píst ještě dole, a hlava pístu zachytila lahev. Pás se smí rozjet, až když je píst zase nahoře (%I0.7).']);
+      if (!S.noCrash && c.motor && s.pist > 0.3 && s.bottles.some(b => Math.abs(b.x - CAP) < 30)) return fail(['Píst narazil do lahve', 'Pás se rozjel, zatímco byl píst ještě dole, a hlava pístu zachytila lahev. Pás se smí rozjet, až když je píst zase nahoře (%I0.7).']);
       for (const b of s.bottles) if (!b.capChecked && b.x > CAP + MOUTH + 4) {
         b.capChecked = true;
         if (!b.capped) { b.bad = true; return fail(['Lahev bez víčka', 'Lahev projela víčkovačkou a víčko nedostala. Pás se musí u senzoru víčka (%I0.5) zastavit a počkat, až píst sjede dolů.']); }
@@ -2098,7 +2331,7 @@ const BPATH = 'M-18 0 L-18 -48 Q-18 -57 -6 -61 L-6 -74 L6 -74 L6 -61 Q18 -57 18 
 function setVal(id, v){ const e = $(id); e.textContent = v ? '1' : '0'; e.setAttribute('class', 'tv' + (v ? ' on' : '')); }
 function renderProcess(){
   if (isHall()) return renderHall();
-  $('proc').toggleAttribute('hidden', false); $('hallWrap').hidden = true; $('stGoodL').textContent = 'Správně naplněno';
+  $('proc').toggleAttribute('hidden', false); $('hallWrap').hidden = true; $('hallTools').hidden = true; $('stGoodL').textContent = 'Správně naplněno';
   const img = sim.img, online = mode !== 'stop', L = LV(), S = ST();
   const motor = online && img['Q0.0'], valve = online && img['Q0.1'], sens = online && img['I0.0'];
   $('valve').setAttribute('class', 'valve' + (valve ? ' on' : ''));
@@ -2310,6 +2543,8 @@ function sigHtml(S){
   return `<div class="sigs"><div class="lbl">Signály v tomto kroku</div>${S.sig.map(([id, t]) => { const g = TAG[id] || {name:id, ad:id}; return `<div class="sig"><code>${esc(g.ad)}</code><b>${esc(g.name)}</b><span>${esc(t)}</span></div>`; }).join('')}</div>`;
 }
 function renderLesson(){
+  renderHallTools();
+  document.querySelector('.grid').classList.toggle('sbx', !!LV().sandbox);
   const L = LV(), S = ST(), n = L.steps.length;
   const lv = LEVELS.map(x => {
     const done = (prog[x.id] || 0) > x.steps.length;
@@ -2610,7 +2845,6 @@ panelEl.addEventListener('pointerdown', e => {
 const release = e => { const b = e.target.closest('.pb'); if (b && b.dataset.pb !== 'estop' && b.dataset.pb !== 'man') sim.manual[b.dataset.pb] = false; };
 panelEl.addEventListener('pointerup', release);
 panelEl.addEventListener('pointercancel', release);
-$('hall').addEventListener('click', hallClick);
 $('btnRun').addEventListener('click', run);
 $('btnStop').addEventListener('click', stop);
 $('btnSpeed').addEventListener('click', () => { speed = speed === 1 ? 2 : speed === 2 ? 4 : 1; $('btnSpeed').textContent = `Rychlost ${speed}×`; });

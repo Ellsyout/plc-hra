@@ -20,7 +20,7 @@ Hráč skládá program pro výrobní linku a simulace hned ukáže, jestli link
 
 Volná hra, která se otevře po úrovni 1. Hráč si na mřížce postaví vlastní výrobní halu:
 vybere výrobek (džus, sušenky, med, voda, ozubená kola, jogurt, plechovky) a zakázku,
-poskládá linku z komponent a napíše pro ni program. Každá komponenta dostane adresy %I/%Q sama.
+poskládá linku z komponent (dopravník stačí táhnout myší nebo prstem) a napíše pro ni program. Každá komponenta dostane adresy %I/%Q sama.
 Nové komponenty (pec, víčkovačka, kamera, balička, robot, paleta…) se odemykají splněním úrovní.
 
 ## Spuštění
