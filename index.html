@@ -1,6 +1,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>PLC Plnicí linka</title>
+<title>Naplň flašku · PLC hra</title>
 <meta name="author" content="Eliška Sosnová">
 <!-- © 2026 Eliška Sosnová. Všechna práva vyhrazena. Šíření bez písemného souhlasu autorky je zakázáno. Viz LICENSE. -->
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -27,6 +27,7 @@ button{font:inherit;color:inherit}
 
 header{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;justify-content:space-between;padding-block:4px 14px;border-bottom:1px solid var(--line);margin-bottom:14px}
 .brand{display:flex;align-items:center;gap:12px;min-width:0;flex:1}
+.reset + .reset{margin-left:0}
 .reset{margin-left:auto;font-family:var(--mono);font-size:11px;letter-spacing:.06em;background:none;border:1px solid var(--line);color:var(--fg2);border-radius:6px;padding:6px 10px;cursor:pointer;white-space:nowrap}
 .reset:hover{border-color:var(--err);color:var(--err)}
 .reset.arm{border-color:var(--err);color:var(--err);background:rgba(255,80,80,.08)}
@@ -367,6 +368,39 @@ table.watch td.v.on{color:var(--live)}
 .pal button.on{border-color:var(--amber);background:#2a2214}
 .pal button:disabled{opacity:.4;cursor:not-allowed}
 .lvl.sbx{border-style:dashed}
+/* intro + study */
+.intro{position:fixed;inset:0;z-index:40;background:radial-gradient(ellipse at top,#1a2428 0%,var(--bg) 70%);overflow:auto;padding:max(24px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 40px max(16px,env(safe-area-inset-left,0px))}
+.intro-card{max-width:820px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+.intro-hero{display:flex;gap:18px;align-items:center}
+.intro-hero svg{flex:none}
+.intro h1{font-family:var(--display);font-size:clamp(32px,6vw,52px);font-weight:700;margin:0;line-height:1;letter-spacing:.01em}
+.intro .tag{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--amber);margin-top:6px}
+.intro p{margin:0;color:var(--fg2);font-size:16px;max-width:65ch}
+.intro h2{font-family:var(--display);font-size:19px;font-weight:600;margin:6px 0 0}
+.ilist{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:8px}
+.ilist div{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:10px 12px;font-size:14px;color:var(--fg2)}
+.ilist b{display:block;color:var(--fg);font-family:var(--display);font-weight:600;font-size:15px;margin-bottom:2px}
+.ilist span{font-family:var(--mono);font-size:10.5px;color:var(--amber);letter-spacing:.08em;text-transform:uppercase}
+.isteps{margin:0;padding-left:22px;color:var(--fg2);display:flex;flex-direction:column;gap:4px;font-size:15px}
+.ibtns{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.ibtns .btn.big{font-size:20px;padding:12px 30px}
+.idisc{font-size:13px!important;color:var(--dim)!important;border-top:1px solid var(--line);padding-top:12px}
+.study .th-card{max-width:900px}
+.toc{display:flex;flex-wrap:wrap;gap:6px}
+.toc a{font-family:var(--mono);font-size:11.5px;color:var(--fg2);border:1px solid var(--line);border-radius:999px;padding:4px 10px;text-decoration:none}
+.toc a:hover{border-color:var(--amber);color:var(--amber)}
+.sm{display:flex;flex-direction:column;gap:10px;scroll-margin-top:16px}
+.sm h3{font-family:var(--display);font-size:19px;margin:6px 0 0;color:var(--fg)}
+.sm p,.sm li{color:var(--fg2);font-size:15px;max-width:72ch}
+.sm p{margin:0}
+.sm ul,.sm ol{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:4px}
+.sm table{border-collapse:collapse;font-size:14px;width:100%;max-width:720px}
+.sm th,.sm td{border-top:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top;color:var(--fg2)}
+.sm th{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);font-weight:400}
+.sm code{font-family:var(--mono);color:var(--amber);font-size:13px}
+.sm .tw{overflow-x:auto}
+.sm .note{font-size:13.5px;color:var(--dim)}
+@media (max-width:640px){.intro-hero svg{width:56px;height:56px}.brand .reset{padding:5px 8px;font-size:14px}.brand .lt{display:none}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
@@ -374,8 +408,9 @@ table.watch td.v.on{color:var(--live)}
   <header>
     <div class="brand">
       <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect x="1" y="1" width="32" height="32" rx="7" fill="none" stroke="#f3ae3d" stroke-width="2"/><path d="M7 8v18M27 8v18M7 17h6M21 17h6M13 11v12M21 11v12" stroke="#f3ae3d" stroke-width="2" fill="none"/></svg>
-      <div><h1>PLC Plnicí linka</h1><small id="brandSub">Siemens S7-1200 · LAD</small></div>
-      <button class="reset" id="btnReset" title="Smaže všechny programy i postup a začne od úrovně 1">↺ Obnovit hru</button>
+      <div><h1>Naplň flašku</h1><small id="brandSub">Siemens S7-1200 · LAD</small></div>
+      <button class="reset" id="btnStudy" title="Studijní materiály: PLC, S7-1200, TIA Portal, LAD" aria-label="Studijní materiály">📚<span class="lt"> Studijní materiály</span></button>
+      <button class="reset" id="btnReset" title="Smaže všechny programy i postup a začne od úrovně 1" aria-label="Obnovit hru">↺<span class="lt"> Obnovit hru</span></button>
     </div>
     <div class="ctrl">
       <div class="cpu" aria-live="polite"><span><span class="led stop" id="ledRun"></span><b id="cpuState">STOP</b></span><span><span class="led" id="ledErr"></span>ERROR</span></div>
@@ -532,7 +567,7 @@ table.watch td.v.on{color:var(--live)}
   </div>
   <div class="foot"><button class="linkbtn" id="btnUnlock">Odemknout všechny úrovně (pro učitele)</button></div>
   <footer class="lic">
-    <p>© 2026 Eliška Sosnová. Všechna práva vyhrazena.</p>
+    <p>© 2026 Eliška Sosnová. Všechna práva vyhrazena. Pouze učební pomůcka, informace nemusí být vždy přesné.</p>
     <details>
       <summary>Licenční podmínky</summary>
       <ol>
@@ -540,6 +575,7 @@ table.watch td.v.on{color:var(--live)}
         <li>Hru je dovoleno hrát a používat k osobnímu studiu a ve výuce prostřednictvím oficiální adresy <a href="https://ellsyout.github.io/plc-hra/">ellsyout.github.io/plc-hra</a>.</li>
         <li>Bez předchozího písemného souhlasu autorky je zakázáno hru nebo jakoukoli její část dále šířit, kopírovat nebo zveřejňovat na jiných místech, upravovat ji nebo z ní vytvářet odvozená díla, prodávat ji nebo jinak komerčně využívat a vydávat ji za vlastní či odstraňovat údaje o autorce.</li>
         <li>Žádost o souhlas zašlete autorce přes GitHub: <a href="https://github.com/Ellsyout">github.com/Ellsyout</a>.</li>
+        <li>Hra je pouze učební pomůcka. Simulace i texty jsou zjednodušené a některé informace nemusí být úplně přesné nebo pravdivé. Pro skutečnou práci s PLC a stroji vždy vycházejte z dokumentace výrobce a pokynů vyučujícího.</li>
         <li>Hra je poskytována tak, jak je, bez jakékoli záruky.</li>
       </ol>
     </details>
@@ -549,6 +585,27 @@ table.watch td.v.on{color:var(--live)}
 <div class="backdrop" id="backdrop" hidden></div>
 <div class="sheet" id="sheet" role="dialog" aria-modal="true" hidden></div>
 <div class="theory" id="theory" role="dialog" aria-modal="true" aria-labelledby="thTitle" hidden></div>
+<div class="theory study" id="study" role="dialog" aria-modal="true" aria-labelledby="stTitle" hidden></div>
+<div class="intro" id="intro" role="dialog" aria-modal="true" aria-labelledby="inTitle">
+  <div class="intro-card">
+    <div class="intro-hero">
+      <svg width="80" height="80" viewBox="0 0 80 80" aria-hidden="true"><rect x="2" y="2" width="76" height="76" rx="16" fill="#141a1d" stroke="#f3ae3d" stroke-width="2.5"/><path d="M32 66V38q0-6 5-8v-8h6v8q5 2 5 8v28z" fill="#1c262b" stroke="#b4c0c7" stroke-width="2"/><path d="M33 66V48h14v18z" fill="#f3ae3d"/><rect x="36" y="16" width="8" height="5" rx="1.5" fill="#c0473a"/><path d="M14 66h52" stroke="#3a474f" stroke-width="3"/></svg>
+      <div><h1 id="inTitle">Naplň flašku</h1><div class="tag">Výuková hra · PLC Siemens S7-1200 · žebříček LAD</div></div>
+    </div>
+    <p>Ahoj! Tohle je hra <b>Naplň flašku</b>. Naučíš se v ní základy programování PLC, tedy počítačů, které řídí stroje ve výrobě. Program skládáš v žebříčkovém diagramu (LAD), stejně jako v prostředí Siemens TIA Portal. Simulace linky ti hned ukáže, jestli tvůj program funguje.</p>
+    <h2>Co ve hře najdeš</h2>
+    <div class="ilist" id="inList"></div>
+    <h2>Jak se hraje</h2>
+    <ol class="isteps">
+      <li>Přečti si teorii. Před každým úkolem je krátké vysvětlení a ukázky na vyzkoušení.</li>
+      <li>V žebříčku poskládej síť z kontaktů a výstupů.</li>
+      <li>Stiskni ▶ RUN a sleduj linku. Když něco nefunguje, hra ti řekne proč.</li>
+      <li>Když si nevíš rady, otevři nápovědu. Najdeš tam postup i hotové řešení.</li>
+    </ol>
+    <div class="ibtns"><button class="btn run big" id="btnStart">▶ Start</button><button class="btn" id="btnStudy2">📚 Studijní materiály</button></div>
+    <p class="idisc">Hra je pouze učební pomůcka. Simulace i texty jsou zjednodušené a některé informace nemusí být úplně přesné nebo pravdivé. © 2026 Eliška Sosnová. Všechna práva vyhrazena.</p>
+  </div>
+</div>
 
 <script>
 (() => {
@@ -2871,10 +2928,10 @@ $('btnReset').addEventListener('click', () => {
   const b = $('btnReset');
   if (!resetArm) {
     resetArm = true; b.classList.add('arm'); b.textContent = 'Opravdu? Smaže celý postup';
-    clearTimeout(resetT); resetT = setTimeout(() => { resetArm = false; b.classList.remove('arm'); b.textContent = '↺ Obnovit hru'; }, 4000);
+    clearTimeout(resetT); resetT = setTimeout(() => { resetArm = false; b.classList.remove('arm'); b.innerHTML = '↺<span class="lt"> Obnovit hru</span>'; }, 4000);
     return;
   }
-  clearTimeout(resetT); resetArm = false; b.classList.remove('arm'); b.textContent = '↺ Obnovit hru';
+  clearTimeout(resetT); resetArm = false; b.classList.remove('arm'); b.innerHTML = '↺<span class="lt"> Obnovit hru</span>';
   try { localStorage.removeItem(KEY); localStorage.removeItem('plc-linka-v1'); } catch(e){}
   programs = {}; prog = {1:1, 2:0, 3:0, 4:0, 5:0}; seen = {}; userHall = sampleHall('cup');
   level = 1; step = 1; program = [emptyRung()];
@@ -2894,13 +2951,136 @@ function fitProcess(){
 window.addEventListener('resize', () => { fitProcess(); lastSig = ''; });
 fitProcess();
 
+// ---------- intro ----------
+function renderIntro(){
+  const items = LEVELS.filter(L => !L.sandbox).map(L => `<div><span>Úroveň ${L.id}</span><b>${esc(L.name)}</b>${L.steps.map(x => esc(x.title)).join(' · ')}</div>`);
+  items.push(`<div><span>Volná hra</span><b>Moje hala</b>Postav si vlastní výrobní linku z odemčených strojů a napiš pro ni program.</div>`);
+  items.push(`<div><span>Navíc</span><b>Studijní materiály</b>Shrnutí toho, co se ve hře učíš, a jak to vypadá ve skutečném PLC.</div>`);
+  $('inList').innerHTML = items.join('');
+  const started = Object.keys(seen).length > 0;
+  $('btnStart').textContent = started ? `▶ Pokračovat (úroveň ${LV().sandbox ? 'Moje hala' : level})` : '▶ Start';
+}
+function closeIntro(){ $('intro').hidden = true; document.body.style.overflow = ''; maybeTheory(); }
+$('btnStart').addEventListener('click', closeIntro);
+
+// ---------- study materials ----------
+const STUDY = [
+ {id:'hra', t:'Co se ve hře učíš', h:`
+  <p>Hra učí základy programování <b>PLC</b> (programovatelný logický automat) v jazyce <b>LAD</b> (Ladder Diagram, česky žebříčkový diagram). Vzorem je řídicí systém <b>Siemens SIMATIC S7-1200</b> a jeho vývojové prostředí <b>TIA Portal</b>.</p>
+  <table><tr><th>Co</th><th>Ve hře</th><th>Ve skutečnosti</th></tr>
+   <tr><td>Jazyk</td><td>LAD (žebříček)</td><td>LAD, dále FBD a SCL</td></tr>
+   <tr><td>Řídicí systém</td><td>simulované S7-1200</td><td>Siemens SIMATIC S7-1200</td></tr>
+   <tr><td>Prostředí</td><td>editor ve hře</td><td>TIA Portal (STEP 7 Basic nebo Professional)</td></tr>
+   <tr><td>Test programu</td><td>simulace linky</td><td>skutečné PLC, nebo simulátor S7-PLCSIM</td></tr></table>`},
+ {id:'plc', t:'Co je PLC a jak pracuje', h:`
+  <p>PLC je průmyslový počítač, který řídí stroje a linky. Na jeho <b>vstupy</b> se připojují tlačítka a snímače, na <b>výstupy</b> motory, ventily, stykače a kontrolky.</p>
+  <p>Program v PLC běží pořád dokola v <b>cyklu</b>:</p>
+  <ol><li>PLC přečte stav všech vstupů a uloží ho do <b>obrazu vstupů</b> (process image).</li><li>Provede program, u Siemens hlavně organizační blok <b>OB1 „Main“</b>. Sítě se zpracují shora dolů.</li><li>Výsledky zapíše z <b>obrazu výstupů</b> na fyzické výstupy.</li><li>Začne znovu. Jeden cyklus trvá obvykle jednotky až desítky milisekund.</li></ol>
+  <p>Protože se program provádí shora dolů, záleží na pořadí sítí: síť níž už vidí, co v tomtéž cyklu zapsala síť nad ní.</p>`},
+ {id:'s7', t:'Siemens S7-1200 a TIA Portal', h:`
+  <ul><li><b>S7-1200</b> je kompaktní řada PLC od Siemens. Patří do ní procesorové jednotky (CPU) 1211C, 1212C, 1214C, 1215C a 1217C. Mají vestavěné digitální i analogové vstupy a výstupy a lze je rozšiřovat moduly.</li>
+  <li>Každé CPU S7-1200 má rozhraní <b>PROFINET</b> (průmyslový Ethernet). Přes něj se programuje a komunikuje s dalšími zařízeními, třeba s dotykovým panelem.</li>
+  <li><b>TIA Portal</b> (Totally Integrated Automation Portal) je vývojové prostředí Siemens. PLC se v něm programuje částí <b>STEP 7</b>, operátorské panely (HMI) částí <b>WinCC</b>.</li>
+  <li><b>S7-PLCSIM</b> je simulátor, ve kterém můžeš program vyzkoušet bez skutečného PLC.</li>
+  <li>S7-1200 lze programovat v jazycích <b>LAD</b>, <b>FBD</b> a <b>SCL</b>.</li></ul>`},
+ {id:'jazyky', t:'Programovací jazyky PLC', h:`
+  <p>Jazyky pro PLC popisuje mezinárodní norma <b>IEC 61131-3</b>. Siemens pro ně používá vlastní názvy:</p>
+  <div class="tw"><table><tr><th>IEC 61131-3</th><th>Siemens</th><th>Jak vypadá</th></tr>
+   <tr><td>LD (Ladder Diagram)</td><td>LAD (KOP)</td><td>grafický, kontakty a cívky jako v elektrickém schématu</td></tr>
+   <tr><td>FBD (Function Block Diagram)</td><td>FBD (FUP)</td><td>grafický, logické bloky AND, OR…</td></tr>
+   <tr><td>ST (Structured Text)</td><td>SCL</td><td>textový, podobný jazyku Pascal</td></tr>
+   <tr><td>SFC (Sequential Function Chart)</td><td>GRAPH</td><td>grafický, kroky a přechody</td></tr>
+   <tr><td>IL (Instruction List)</td><td>STL (AWL)</td><td>textový, podobný assembleru, dnes zastaralý</td></tr></table></div>
+  <p class="note">Zkratky v závorce (KOP, FUP, AWL) jsou německé názvy, se kterými se v TIA Portalu také setkáš. GRAPH a STL nejsou pro S7-1200 dostupné.</p>`},
+ {id:'adresy', t:'Adresování a proměnné', h:`
+  <div class="tw"><table><tr><th>Zápis</th><th>Význam</th><th>Příklad</th></tr>
+   <tr><td><code>%I</code></td><td>digitální vstup (Input), jeden bit</td><td><code>%I0.0</code> = bajt 0, bit 0</td></tr>
+   <tr><td><code>%Q</code></td><td>digitální výstup (Output)</td><td><code>%Q0.1</code></td></tr>
+   <tr><td><code>%M</code></td><td>paměťový bit (merker) uvnitř PLC</td><td><code>%M0.0</code></td></tr>
+   <tr><td><code>%IW</code></td><td>vstupní slovo (16 bitů), typicky analogový vstup</td><td><code>%IW64</code></td></tr>
+   <tr><td><code>%MB</code>, <code>%MW</code></td><td>paměťový bajt / slovo</td><td><code>%MB100</code></td></tr></table></div>
+  <p>Bity se číslují 0 až 7, takže po <code>%I0.7</code> následuje <code>%I1.0</code>. V německé verzi se místo I a Q píše <b>E</b> (Eingang) a <b>A</b> (Ausgang).</p>
+  <p>V TIA Portalu dáváš adresám jména v <b>tabulce proměnných PLC</b> (PLC tags), třeba „Senzor“ pro <code>%I0.0</code>. V programu pak pracuješ s názvy.</p>
+  <p>Základní datové typy: <code>BOOL</code> (1 bit, TRUE/FALSE), <code>INT</code> (celé číslo 16 bitů se znaménkem), <code>WORD</code> (16 bitů), <code>REAL</code> (desetinné číslo), <code>TIME</code> (čas, zápis <code>T#3s</code>).</p>`},
+ {id:'lad', t:'Kontakty a cívky v LAD', h:`
+  <div class="tw"><table><tr><th>Prvek</th><th>Značka</th><th>Funkce</th></tr>
+   <tr><td>Spínací kontakt (NO)</td><td><code>-| |-</code></td><td>propustí proud, když je proměnná 1</td></tr>
+   <tr><td>Rozpínací kontakt (NC)</td><td><code>-|/|-</code></td><td>propustí proud, když je proměnná 0</td></tr>
+   <tr><td>Cívka</td><td><code>-( )-</code></td><td>zapíše výsledek sítě do proměnné</td></tr>
+   <tr><td>Set / Reset</td><td><code>-(S)-</code> <code>-(R)-</code></td><td>nastaví 1 a drží / vynuluje</td></tr>
+   <tr><td>Náběžná hrana</td><td><code>-|P|-</code></td><td>propustí proud jen v cyklu, kdy se proměnná změní z 0 na 1</td></tr>
+   <tr><td>Sestupná hrana</td><td><code>-|N|-</code></td><td>propustí proud jen v cyklu, kdy se změní z 1 na 0</td></tr></table></div>
+  <ul><li>Kontakty <b>za sebou</b> (sériově) = logický součin AND. Kontakty <b>pod sebou</b> (paralelně) = logický součet OR.</li>
+  <li>Jednu proměnnou zapisuj cívkou jen v jedné síti. Při více cívkách platí ta, která se v cyklu provede jako poslední.</li>
+  <li>Kontakt hrany potřebuje v TIA Portalu vlastní paměťový bit, ve kterém si PLC pamatuje předchozí stav.</li>
+  <li><b>Samodržení:</b> výstup drží sám sebe přes vlastní kontakt zapojený paralelně k tlačítku START, vypne ho STOP v sérii.</li></ul>`},
+ {id:'casovace', t:'Časovače IEC', h:`
+  <p>Každý časovač IEC má v TIA Portalu vlastní <b>instanci</b> (instanční datový blok), třeba <code>"T1"</code>. Má vstup <b>IN</b>, předvolbu <b>PT</b>, výstup <b>Q</b> a uběhlý čas <b>ET</b>.</p>
+  <div class="tw"><table><tr><th>Časovač</th><th>Název</th><th>Chování</th></tr>
+   <tr><td>TON</td><td>zpožděné zapnutí</td><td>Q sepne, když IN trvá déle než PT. Při pádu IN se ET vynuluje.</td></tr>
+   <tr><td>TOF</td><td>zpožděné vypnutí</td><td>Q sepne hned s IN a vypne se až PT po pádu IN.</td></tr>
+   <tr><td>TP</td><td>impulz</td><td>po náběžné hraně IN sepne Q přesně na dobu PT.</td></tr>
+   <tr><td>TONR</td><td>zpožděné zapnutí s pamětí</td><td>jako TON, ale ET si pamatuje i přes přerušení IN. Nuluje se vstupem R nebo cívkou RT.</td></tr></table></div>
+  <p class="note">Časovač TOF ve hře není, ostatní ano.</p>`},
+ {id:'citace', t:'Čítače a porovnání', h:`
+  <div class="tw"><table><tr><th>Čítač</th><th>Chování</th></tr>
+   <tr><td>CTU</td><td>čítá nahoru: každá náběžná hrana na CU přičte 1 k CV. Q = 1, když CV ≥ PV. R vynuluje.</td></tr>
+   <tr><td>CTD</td><td>čítá dolů: hrana na CD odečte 1. LD nahraje předvolbu PV. Q = 1, když CV ≤ 0.</td></tr>
+   <tr><td>CTUD</td><td>čítá nahoru i dolů, má oba výstupy QU a QD.</td></tr></table></div>
+  <p><b>Porovnávací kontakty</b> (CMP) vedou proud, když platí porovnání dvou čísel: <code>==</code>, <code>&lt;&gt;</code>, <code>&gt;=</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&lt;</code>.</p>
+  <p class="note">Ve hře je jen CTU.</p>`},
+ {id:'analog', t:'Analogové signály', h:`
+  <ul><li>Snímač měří spojitou veličinu (hmotnost, teplotu, tlak) a posílá ji jako napětí <b>0–10 V</b> nebo proud <b>4–20 mA</b>.</li>
+  <li>Analogový vstup S7-1200 převede jmenovitý rozsah na číslo <b>0 až 27 648</b> (například 0 V → 0, 10 V → 27 648).</li>
+  <li>Na skutečné jednotky se hodnota přepočítá instrukcemi <b>NORM_X</b> (převod na 0,0–1,0) a <b>SCALE_X</b> (převod na zvolený rozsah, třeba 0–1000 g).</li></ul>
+  <p class="note">Ve hře už je hodnota z váhy přepočtená na gramy.</p>`},
+ {id:'takt', t:'Taktovací paměť', h:`
+  <p>Ve vlastnostech CPU můžeš zapnout <b>taktovací paměť</b> (clock memory) a zvolit pro ni bajt, často <code>%MB100</code>. Jeho bity pak samy blikají:</p>
+  <div class="tw"><table><tr><th>Bit</th><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th></tr>
+   <tr><td>Frekvence</td><td>10 Hz</td><td>5 Hz</td><td>2,5 Hz</td><td>2 Hz</td><td>1,25 Hz</td><td>1 Hz</td><td>0,625 Hz</td><td>0,5 Hz</td></tr></table></div>
+  <p>Při bajtu 100 tedy <code>%M100.5</code> bliká s frekvencí 1 Hz. Stejně tam jde zapnout i <b>systémová paměť</b> s bity jako „první cyklus“ (FirstScan).</p>`},
+ {id:'bezpecnost', t:'Bezpečnost', h:`
+  <ul><li>Tlačítko <b>STOP</b> se zapojuje jako rozpínací (NC). Když se přeruší vodič, PLC to vyhodnotí jako stisk STOP a stroj se zastaví. U spínacího tlačítka by přerušený vodič nikdo nepoznal.</li>
+  <li><b>Nouzové zastavení (E-STOP)</b> musí stroj zastavit spolehlivě i při poruše řídicího systému. Ve skutečnosti se proto řeší bezpečnostním obvodem: bezpečnostním relé nebo bezpečnostním PLC (u Siemens řada F). Samotný běžný program na to nestačí.</li>
+  <li>Po kvitování poruchy se stroj nesmí rozjet sám. Rozjet ho smí až nový povel obsluhy.</li></ul>`},
+ {id:'zjednoduseni', t:'Co hra zjednodušuje', h:`
+  <ul><li>Editor ve hře má v každé síti 5 pozic a v každé paralelní větvi jen jeden kontakt. V TIA Portalu můžeš kontakty řadit volněji.</li>
+  <li>Simulace linky, časy strojů, chování robota a stroje v hale jsou vymyšlené pro výuku, ne podle skutečných strojů.</li>
+  <li>Ve hře chybí datové bloky, funkce a funkční bloky (FC, FB), přetypování a spousta dalších instrukcí.</li>
+  <li>Adresy strojů v hale (<code>%I2.0</code> a dál) přiděluje hra sama. Ve skutečnosti je určuje zapojení a konfigurace hardwaru.</li></ul>`},
+ {id:'dal', t:'Kde se učit dál', h:`
+  <ul><li><b>Systémový manuál S7-1200</b> od Siemens (S7-1200 Programmable Controller System Manual), zdarma na stránkách podpory Siemens.</li>
+  <li><b>Nápověda TIA Portalu</b> (klávesa F1 u každé instrukce) s popisem a příklady.</li>
+  <li><b>Siemens SCE</b> (Siemens Automation Cooperates with Education): výukové moduly pro školy.</li>
+  <li>Norma <b>IEC 61131-3</b> pro programovací jazyky PLC.</li></ul>
+  <p class="note">Hra je pouze učební pomůcka. Některé informace nemusí být úplně přesné nebo pravdivé. Pro skutečnou práci vždy vycházej z dokumentace výrobce a pokynů vyučujícího.</p>`},
+];
+function openStudy(){
+  $('study').innerHTML = `<div class="th-card">
+    <div class="th-top"><div><div class="eyebrow">Naplň flašku · studijní materiály</div><h2 id="stTitle">PLC, S7-1200 a jazyk LAD</h2></div>
+    <button class="btn small ghost" data-st="close" aria-label="Zavřít studijní materiály">✕</button></div>
+    <nav class="toc">${STUDY.map(x => `<a href="#sm-${x.id}">${esc(x.t)}</a>`).join('')}</nav>
+    ${STUDY.map(x => `<section class="sm" id="sm-${x.id}"><h3>${esc(x.t)}</h3>${x.h}</section>`).join('')}
+    <div class="th-foot"><button class="btn run" data-st="close">Zavřít</button></div></div>`;
+  $('study').hidden = false; $('study').scrollTop = 0; document.body.style.overflow = 'hidden';
+  $('study').querySelector('[data-st="close"]').focus();
+}
+function closeStudy(){ $('study').hidden = true; if ($('intro').hidden && $('theory').hidden) document.body.style.overflow = ''; }
+$('study').addEventListener('click', e => {
+  if (e.target === $('study') || e.target.closest('[data-st="close"]')) return closeStudy();
+  const a = e.target.closest('.toc a'); if (a) { e.preventDefault(); const t = $(a.getAttribute('href').slice(1)); if (t) t.scrollIntoView({behavior:'smooth'}); }
+});
+$('btnStudy').addEventListener('click', openStudy);
+$('btnStudy2').addEventListener('click', openStudy);
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('study').hidden) { e.stopImmediatePropagation(); closeStudy(); } }, true);
+
 // ---------- boot ----------
 function start(data){
   load(data);
   refreshTags();
   sim = newSim();
   renderAll();
-  maybeTheory();
+  renderIntro(); document.body.style.overflow = 'hidden';
   last = performance.now();
   requestAnimationFrame(loop);
 }

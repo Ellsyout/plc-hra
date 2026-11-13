@@ -1,4 +1,4 @@
-# PLC Plnicí linka
+# Naplň flašku – PLC hra
 
 Výuková hra o programování PLC v žebříčkovém diagramu (LAD) ve stylu Siemens S7-1200 / TIA Portal.
 
@@ -33,4 +33,6 @@ Copyright © 2026 Eliška Sosnová. Všechna práva vyhrazena.
 
 Hru můžeš hrát a používat ke studiu i ve výuce na adrese https://ellsyout.github.io/plc-hra/.
 Bez předchozího písemného souhlasu autorky ji nelze dále šířit, kopírovat, upravovat ani komerčně využívat.
+
+Hra je pouze učební pomůcka. Simulace i texty jsou zjednodušené a některé informace nemusí být úplně přesné nebo pravdivé.
 Celé znění je v souboru [LICENSE](LICENSE).

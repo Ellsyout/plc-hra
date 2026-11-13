@@ -1,4 +1,4 @@
-Licenční podmínky – PLC Plnicí linka
+Licenční podmínky – Naplň flašku (PLC hra)
 
 Copyright © 2026 Eliška Sosnová. Všechna práva vyhrazena.
 
@@ -17,12 +17,17 @@ podoby aplikace, je autorským dílem Elišky Sosnové.
 
 3. Žádost o souhlas zašlete autorce přes GitHub: https://github.com/Ellsyout
 
-4. Hra je poskytována tak, jak je, bez jakékoli záruky. Autorka neodpovídá
+4. Hra je pouze učební pomůcka. Simulace i texty jsou zjednodušené
+   a některé informace nemusí být úplně přesné nebo pravdivé. Pro skutečnou
+   práci s PLC a stroji vždy vycházejte z dokumentace výrobce a pokynů
+   vyučujícího.
+
+5. Hra je poskytována tak, jak je, bez jakékoli záruky. Autorka neodpovídá
    za škody vzniklé jejím používáním.
 
 ------------------------------------------------------------------------
 
-License terms – PLC Plnicí linka
+License terms – Naplň flašku (PLC game)
 
 Copyright © 2026 Eliška Sosnová. All rights reserved.
 
@@ -30,5 +35,6 @@ You may play and use this game for personal study and teaching via its
 official address https://ellsyout.github.io/plc-hra/. Redistribution,
 copying, publishing elsewhere, modification, derivative works and any
 commercial use, in whole or in part, are prohibited without the author's
-prior written consent. The game is provided "as is", without warranty
-of any kind.
+prior written consent. The game is a learning aid only; the simulation and
+texts are simplified and some information may not be accurate. The game is
+provided "as is", without warranty of any kind.
